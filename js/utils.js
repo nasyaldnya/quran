@@ -38,6 +38,21 @@ export const DOM = {
     visualizerCanvas: document.getElementById('visualizer'),
     toastContainer: document.getElementById('toast-container'),
     statusAnnouncer: document.createElement('div'), // For accessibility
+
+    // --- New EQ and Loop Elements ---
+    eqToggleBtn: document.getElementById('eq-toggle-btn'),
+    eqPanel: document.getElementById('eq-panel'),
+    eqSliders: document.querySelectorAll('.eq-slider'),
+    eqValSpans: [
+        document.getElementById('eq-val-0'),
+        document.getElementById('eq-val-1'),
+        document.getElementById('eq-val-2'),
+    ],
+    loopSetStartBtn: document.getElementById('loop-set-start-btn'),
+    loopSetEndBtn: document.getElementById('loop-set-end-btn'),
+    loopClearBtn: document.getElementById('loop-clear-btn'),
+    loopStartTimeDisplay: document.getElementById('loop-start-time-display'),
+    loopEndTimeDisplay: document.getElementById('loop-end-time-display'),
 };
 
 // Add accessibility announcer to body

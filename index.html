@@ -76,7 +76,7 @@
         
         #player-container {
             transition: max-height 0.5s ease-in-out, transform 0.3s ease-in-out;
-            max-height: 180px; 
+            max-height: 220px; 
             background-color: var(--player-bg);
         }
         #player-container.queue-open { max-height: 85vh; }
@@ -232,6 +232,40 @@
                     <span id="total-duration" class="font-mono">00:00</span>
                 </div>
 
+                <div id="eq-panel" class="hidden bg-secondary p-3 rounded-lg mt-3">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <label for="eq-band-0" class="text-xs">Bass</label>
+                            <input type="range" id="eq-band-0" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
+                            <span class="text-xs font-mono" id="eq-val-0">0 dB</span>
+                        </div>
+                        <div>
+                            <label for="eq-band-1" class="text-xs">Mid</label>
+                            <input type="range" id="eq-band-1" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
+                            <span class="text-xs font-mono" id="eq-val-1">0 dB</span>
+                        </div>
+                        <div>
+                            <label for="eq-band-2" class="text-xs">Treble</label>
+                            <input type="range" id="eq-band-2" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
+                            <span class="text-xs font-mono" id="eq-val-2">0 dB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-secondary p-3 rounded-lg mt-3 flex items-center justify-between gap-2 text-sm">
+                    <span class="font-semibold">التكرار للحفظ:</span>
+                    <div class="flex items-center gap-2">
+                        <button id="loop-set-start-btn" class="px-3 py-1 rounded-md border border-custom hover:bg-gray-300 dark:hover:bg-gray-700">تحديد البداية</button>
+                        <button id="loop-set-end-btn" class="px-3 py-1 rounded-md border border-custom hover:bg-gray-300 dark:hover:bg-gray-700" disabled>تحديد النهاية</button>
+                    </div>
+                    <div class="font-mono text-xs bg-card p-2 rounded-md">
+                        <span id="loop-start-time-display">00:00</span> - <span id="loop-end-time-display">00:00</span>
+                    </div>
+                    <button id="loop-clear-btn" class="p-2 rounded-full hover:bg-red-200 dark:hover:bg-red-800" title="إلغاء التكرار">
+                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
                 <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mt-2">
                      <div class="flex items-center gap-3 order-2 sm:order-1">
                          <button id="prev-btn" aria-label="السابق" title="السابق" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden" disabled>
@@ -246,6 +280,9 @@
                          </button>
                          <button id="repeat-btn" aria-label="تكرار" title="تكرار" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom">تكرار</button>
                          <button id="shuffle-btn-player" aria-label="تشغيل عشوائي" title="تشغيل عشوائي" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom">عشوائي</button>
+                         <button id="eq-toggle-btn" aria-label="معادل الصوت" title="معادل الصوت" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path><path d="M7 4v4M12 10v4M17 16v4"></path></svg>
+                        </button>
                      </div>
 
                     <div class="flex items-center gap-2 text-xs order-1 sm:order-2 flex-wrap justify-center">
@@ -283,5 +320,6 @@
     <div id="toast-container" class="fixed bottom-24 md:bottom-52 right-4 z-50 space-y-2" aria-live="polite"></div>
     
     <script type="module" src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 </body>
 </html>

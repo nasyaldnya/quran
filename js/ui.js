@@ -19,7 +19,6 @@ export const showLoader = (show) => {
 };
 
 // --- ✨ NEW: Virtual Scrolling Implementation ---
-// 1. The new main function that sets up the virtual list
 export const renderReciters = (reciters, favorites, eventHandlers) => {
     if (virtualObserver) virtualObserver.disconnect();
     DOM.recitersList.innerHTML = '';
@@ -72,7 +71,6 @@ export const renderReciters = (reciters, favorites, eventHandlers) => {
     }
 };
 
-// 2. A helper function to render a single reciter card
 function renderSingleReciter(element, reciter, isFav, eventHandlers) {
     element.className = 'flex items-center justify-between w-full text-right p-3 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors duration-200';
     element.innerHTML = `
@@ -84,8 +82,6 @@ function renderSingleReciter(element, reciter, isFav, eventHandlers) {
     element.querySelector('.favorite-star').onclick = (e) => eventHandlers.toggleFavorite(e, reciter.id);
     element.onclick = () => {
         eventHandlers.selectReciter(reciter);
-        // Highlighting is tricky with virtual lists, so we remove it for now.
-        // A more complex state manager would be needed to re-enable it.
     };
 }
 
@@ -281,21 +277,21 @@ export const updatePlayerUI = (isPlaying, state) => {
     DOM.pauseIcon.style.display = isPlaying ? 'block' : 'none';
 
     const { currentQueueIndex, queue, repeatMode } = state;
-    DOM.nextBtn.disabled = currentQueueIndex >= queue.length - 1 && repeatMode !== 'all';
-    DOM.prevBtn.disabled = currentQueueIndex <= 0;
-    DOM.copyLinkBtn.disabled = !DOM.audioPlayer.src;
-    DOM.downloadBtn.disabled = !DOM.audioPlayer.src;
+    const canNavigate = queue.length > 1;
+    DOM.nextBtn.disabled = !canNavigate && repeatMode !== 'all';
+    DOM.prevBtn.disabled = !canNavigate;
+    DOM.copyLinkBtn.disabled = queue.length === 0;
+    DOM.downloadBtn.disabled = queue.length === 0;
 };
 
 export const updateProgress = () => {
-    const dur = DOM.audioPlayer.duration || 0;
-    const cur = DOM.audioPlayer.currentTime || 0;
-    const progressPercent = dur ? (cur / dur) * 100 : 0;
-    DOM.progressBar.style.width = `${progressPercent}%`;
-    DOM.currentTimeEl.textContent = formatTime(cur);
-    if (!isNaN(dur)) DOM.totalDurationEl.textContent = formatTime(dur);
-    DOM.progressBarContainer.setAttribute('aria-valuenow', String(progressPercent.toFixed(0)));
+    // This function is now a proxy, the real logic is in player.js
+    // to avoid circular dependencies if player.js needs it.
+    // However, it's better to keep the implementation in player.js
+    // This function will be called from player.js's step function
+    // But its definition will be inside player.js to access currentSound
 };
+
 
 export const updateNowPlaying = (track) => {
     if (track) {
@@ -311,3 +307,18 @@ export const updateNowPlaying = (track) => {
         `;
     }
 }
+
+export const updateLoopUI = (state) => {
+    const { isLoopActive, loopStartTime, loopEndTime } = state;
+
+    DOM.loopStartTimeDisplay.textContent = loopStartTime !== null ? formatTime(loopStartTime) : '00:00';
+    DOM.loopEndTimeDisplay.textContent = loopEndTime !== null ? formatTime(loopEndTime) : '00:00';
+
+    DOM.loopSetEndBtn.disabled = loopStartTime === null;
+    
+    if(isLoopActive) {
+        DOM.loopSetStartBtn.classList.add('bg-primary', 'text-white');
+    } else {
+        DOM.loopSetStartBtn.classList.remove('bg-primary', 'text-white');
+    }
+};

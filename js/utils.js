@@ -73,7 +73,6 @@ export const showToast = (message, type = 'success') => {
     toast.className = `p-3 rounded-lg text-white shadow-lg animate-toast ${bgColor}`;
     toast.textContent = message;
     
-    // Announce the message for screen readers
     DOM.statusAnnouncer.textContent = message;
 
     DOM.toastContainer.appendChild(toast);

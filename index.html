@@ -7,6 +7,8 @@
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d9488">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +78,7 @@
         
         #player-container {
             transition: max-height 0.5s ease-in-out, transform 0.3s ease-in-out;
-            max-height: 220px; 
+            max-height: 280px; /* تم زيادة الارتفاع ليشمل الأزرار الجديدة */
             background-color: var(--player-bg);
         }
         #player-container.queue-open { max-height: 85vh; }
@@ -87,17 +89,6 @@
             100% { opacity: 0; transform: translateX(100%); }
         }
         .animate-toast { animation: fade-in-out 3s ease-in-out forwards; }
-        
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.7);
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-        }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
         
         .sr-only {
             position: absolute;
@@ -286,7 +277,7 @@
                      </div>
 
                     <div class="flex items-center gap-2 text-xs order-1 sm:order-2 flex-wrap justify-center">
-                        <canvas id="visualizer" width="100" height="20" class="hidden sm:block"></canvas>
+                        <canvas id="visualizer" width="100" height="20" class="block"></canvas>
                         <span>مؤقت النوم:</span>
                         <button data-time="15" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">15 د</button>
                         <button data-time="30" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">30 د</button>
@@ -320,6 +311,5 @@
     <div id="toast-container" class="fixed bottom-24 md:bottom-52 right-4 z-50 space-y-2" aria-live="polite"></div>
     
     <script type="module" src="js/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 </body>
 </html>

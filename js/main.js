@@ -130,7 +130,6 @@ function restoreSessionState() {
         
         DOM.playbackSpeed.value = savedState.speed || 1;
         
-        // Restore EQ settings
         if (savedState.eq) {
             DOM.eqSliders.forEach((slider, index) => {
                 const value = savedState.eq[index] || 0;
@@ -145,7 +144,21 @@ function restoreSessionState() {
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-        // ... (keyboard shortcut logic remains the same)
+
+        switch (e.code) {
+            case 'Space':
+                e.preventDefault();
+                DOM.playPauseBtn.click();
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                DOM.nextBtn.click();
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                DOM.prevBtn.click();
+                break;
+        }
     });
 }
 
@@ -173,13 +186,16 @@ function setupEventListeners() {
     DOM.toggleQueueBtn.addEventListener('click', () => DOM.playerContainer.classList.toggle('queue-open'));
     DOM.queueHandle.addEventListener('click', () => DOM.playerContainer.classList.toggle('queue-open'));
     DOM.queueList.addEventListener('drop', () => {
-        // ... (drop logic remains the same)
+        const currentTrack = state.queue[state.currentQueueIndex];
+        const newOrder = [...DOM.queueList.querySelectorAll('.queue-item')].map(item => state.queue[item.dataset.index]);
+        state.queue = newOrder;
+        state.currentQueueIndex = state.queue.indexOf(currentTrack);
+        ui.renderQueue(state.queue, state.currentQueueIndex, state.eventHandlers);
     });
 
     DOM.sleepTimerBtns.forEach(btn => btn.addEventListener('click', () => player.setSleepTimer(btn.dataset.time)));
     DOM.cancelSleepTimerBtn.addEventListener('click', player.cancelSleepTimer);
     
-    // --- New Event Listeners ---
     DOM.eqToggleBtn.addEventListener('click', () => {
         DOM.eqPanel.classList.toggle('hidden');
     });
@@ -206,7 +222,6 @@ function setupEventListeners() {
         state.loopEndTime = currentTime;
         state.isLoopActive = true;
         ui.updateLoopUI(state);
-
         showToast('تم تفعيل التكرار المحدد', 'success');
     });
 
@@ -217,7 +232,6 @@ function setupEventListeners() {
         ui.updateLoopUI(state);
         showToast('تم إلغاء التكرار المحدد', 'warning');
     });
-
 
     setupTheme();
     setupDownloadAndCopy();
@@ -238,11 +252,40 @@ function setupEventListeners() {
 }
 
 function setupTheme() {
-    // ... (theme logic remains the same)
+    const applyTheme = () => {
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            DOM.themeText.textContent = 'الوضع الليلي';
+        } else {
+            document.documentElement.classList.remove('dark');
+            DOM.themeText.textContent = 'الوضع الفاتح';
+        }
+    };
+    DOM.themeToggleBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        applyTheme();
+    });
+    applyTheme();
 }
 
 function setupDownloadAndCopy() {
-    // ... (download/copy logic remains the same)
+    DOM.copyLinkBtn.addEventListener('click', () => {
+        if (!currentSound) return;
+        const src = currentSound._src;
+        navigator.clipboard.writeText(src).then(() => showToast('تم نسخ الرابط'));
+    });
+    DOM.downloadBtn.addEventListener('click', () => {
+        const t = state.queue[state.currentQueueIndex];
+        if (!t || !currentSound) return;
+        const a = Object.assign(document.createElement('a'), { 
+            href: currentSound._src, 
+            download: `${t.reciter.name} - ${t.surah.name}.mp3` 
+        });
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -252,5 +295,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 if ('serviceWorker' in navigator) {
-    // ... (service worker logic remains the same)
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js') 
+      .then((registration) => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch((error) => {
+        console.error('Service Worker registration failed:', error);
+      });
+  });
 }

@@ -118,7 +118,6 @@ export const playFromQueue = () => {
                 if (!analyser) {
                     const audioCtx = Howler.ctx;
                     analyser = audioCtx.createAnalyser();
-                    // Connect master gain to analyser, which is then connected to destination
                     Howler.masterGain.connect(analyser);
                     analyser.fftSize = 128;
                     bufferLength = analyser.frequencyBinCount;
@@ -168,10 +167,6 @@ export const playFromQueue = () => {
 
 function step() {
     if (!currentSound) return;
-
-    if (appState.isLoopActive && appState.loopEndTime !== null && currentSound.seek() >= appState.loopEndTime) {
-        currentSound.seek(appState.loopStartTime);
-    }
 
     if (currentSound.playing()) {
         updateProgress();
@@ -307,7 +302,6 @@ export const setSleepTimer = (minutes) => {
     DOM.cancelSleepTimerBtn.classList.remove('hidden');
 };
 
-
 export const cancelSleepTimer = () => {
     clearTimeout(appState.sleepTimerId);
     clearInterval(appState.sleepIntervalId);
@@ -327,7 +321,7 @@ export const getCurrentTime = () => {
     if (currentSound) {
         return currentSound.seek() || 0;
     }
-    return null;
+    return 0;
 };
 
 export const getCurrentRate = () => {

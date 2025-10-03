@@ -15,10 +15,6 @@ const state = {
     isShuffled: false,
     repeatMode: 'off', // 'off', 'one', 'all'
     currentFetchCtrl: null,
-    // New state for advanced loop
-    isLoopActive: false,
-    loopStartTime: null,
-    loopEndTime: null,
     eventHandlers: {
         toggleFavorite,
         selectReciter,
@@ -200,38 +196,6 @@ function setupEventListeners() {
         DOM.eqPanel.classList.toggle('hidden');
     });
     player.setupEqEventListeners();
-
-    DOM.loopSetStartBtn.addEventListener('click', () => {
-        const currentTime = player.getCurrentTime();
-        if (currentTime === null) return;
-
-        state.loopStartTime = currentTime;
-        state.loopEndTime = null;
-        state.isLoopActive = false;
-        ui.updateLoopUI(state);
-        showToast('تم تحديد نقطة البداية');
-    });
-
-    DOM.loopSetEndBtn.addEventListener('click', () => {
-        const currentTime = player.getCurrentTime();
-        if (currentTime === null || state.loopStartTime === null || currentTime <= state.loopStartTime) {
-            showToast('يجب أن تكون نقطة النهاية بعد نقطة البداية', 'error');
-            return;
-        }
-
-        state.loopEndTime = currentTime;
-        state.isLoopActive = true;
-        ui.updateLoopUI(state);
-        showToast('تم تفعيل التكرار المحدد', 'success');
-    });
-
-    DOM.loopClearBtn.addEventListener('click', () => {
-        state.isLoopActive = false;
-        state.loopStartTime = null;
-        state.loopEndTime = null;
-        ui.updateLoopUI(state);
-        showToast('تم إلغاء التكرار المحدد', 'warning');
-    });
 
     setupTheme();
     setupDownloadAndCopy();

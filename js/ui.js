@@ -1,9 +1,8 @@
 import { DOM, normalizeArabic, collator, showToast, makkiIcon, madaniIcon, playingIcon, formatTime } from './utils.js';
 
-// --- ✨ NEW: Virtual Scrolling State ---
 let virtualObserver;
-const VIRTUAL_ITEM_HEIGHT = 48; // Estimated height of each reciter item in pixels
-const VIRTUAL_OVERSCAN = 5;     // Number of items to render above/below the visible area
+const VIRTUAL_ITEM_HEIGHT = 48;
+const VIRTUAL_OVERSCAN = 5;
 
 export const showLoader = (show) => {
     DOM.loader.style.display = 'none';
@@ -18,7 +17,6 @@ export const showLoader = (show) => {
     }
 };
 
-// --- ✨ NEW: Virtual Scrolling Implementation ---
 export const renderReciters = (reciters, favorites, eventHandlers) => {
     if (virtualObserver) virtualObserver.disconnect();
     DOM.recitersList.innerHTML = '';
@@ -85,8 +83,6 @@ function renderSingleReciter(element, reciter, isFav, eventHandlers) {
     };
 }
 
-
-// --- Other Rendering Functions (Unchanged) ---
 export const renderLanguages = (data, currentLang) => {
     if (!data || !data.language) return;
     DOM.languageSelect.innerHTML = '';
@@ -284,12 +280,16 @@ export const updatePlayerUI = (isPlaying, state) => {
     DOM.downloadBtn.disabled = queue.length === 0;
 };
 
-export const updateProgress = () => {
-    // This function is now a proxy, the real logic is in player.js
-    // to avoid circular dependencies if player.js needs it.
-    // However, it's better to keep the implementation in player.js
-    // This function will be called from player.js's step function
-    // But its definition will be inside player.js to access currentSound
+export const updateProgress = (currentSound) => {
+    if (!currentSound) return;
+    const seek = currentSound.seek() || 0;
+    const duration = currentSound.duration() || 0;
+    
+    const progressPercent = duration ? (seek / duration) * 100 : 0;
+    DOM.progressBar.style.width = `${progressPercent}%`;
+    DOM.currentTimeEl.textContent = formatTime(seek);
+    if (!isNaN(duration)) DOM.totalDurationEl.textContent = formatTime(duration);
+    DOM.progressBarContainer.setAttribute('aria-valuenow', String(progressPercent.toFixed(0)));
 };
 
 
@@ -307,18 +307,3 @@ export const updateNowPlaying = (track) => {
         `;
     }
 }
-
-export const updateLoopUI = (state) => {
-    const { isLoopActive, loopStartTime, loopEndTime } = state;
-
-    DOM.loopStartTimeDisplay.textContent = loopStartTime !== null ? formatTime(loopStartTime) : '00:00';
-    DOM.loopEndTimeDisplay.textContent = loopEndTime !== null ? formatTime(loopEndTime) : '00:00';
-
-    DOM.loopSetEndBtn.disabled = loopStartTime === null;
-    
-    if(isLoopActive) {
-        DOM.loopSetStartBtn.classList.add('bg-primary', 'text-white');
-    } else {
-        DOM.loopSetStartBtn.classList.remove('bg-primary', 'text-white');
-    }
-};

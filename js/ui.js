@@ -107,6 +107,7 @@ const getLanguageCode = (url) => {
 
 export const renderRiwayat = (data) => {
     if (!data || !data.riwayat) return;
+    // ✨ تم التعديل هنا
     DOM.riwayaSelect.innerHTML = '<option value="" data-i18n-key="allRiwayat">كل الروايات</option>';
     data.riwayat.forEach(riwaya => {
         const option = document.createElement('option');
@@ -118,6 +119,7 @@ export const renderRiwayat = (data) => {
 
 export const renderSurahs = (data) => {
     if (!data || !data.suwar) return [];
+    // ✨ تم التعديل هنا
     DOM.surahSelect.innerHTML = '<option value="" data-i18n-key="allSurahs">كل السور</option>';
     data.suwar.forEach(surah => {
         const option = document.createElement('option');
@@ -160,7 +162,6 @@ export const renderReciterDetails = (reciter, allSurahs, eventHandlers) => {
         const availableIds = new Set(moshaf.surah_list.split(','));
         const surahsToRender = allSurahs.filter(s => s && availableIds.has(String(s.id)));
 
-        // ✨ بداية التعديل: استخدام DocumentFragment لتحسين الأداء والذاكرة
         const fragment = document.createDocumentFragment();
 
         surahsToRender.forEach(surah => {
@@ -186,10 +187,8 @@ export const renderReciterDetails = (reciter, allSurahs, eventHandlers) => {
             fragment.appendChild(surahItem);
         });
 
-        // إفراغ الحاوية الحالية ثم إضافة كل العناصر الجديدة دفعة واحدة
         surahListContainer.innerHTML = ''; 
         surahListContainer.appendChild(fragment);
-        // ✨ نهاية التعديل
 
         DOM.reciterDetails.querySelector(`[data-moshaf-index-play="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, true);
         DOM.reciterDetails.querySelector(`[data-moshaf-index-add="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, false);

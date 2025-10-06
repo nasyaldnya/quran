@@ -3,18 +3,19 @@ import * as api from './api.js';
 import * as ui from './ui.js';
 import * as player from './player.js';
 import * as storage from './storage.js';
-import { initI18n, setLanguage } from './i18n.js';
+import { initI18n, setLanguage, translateUI } from './i18n.js';
 
 const state = {
     allSurahs: [],
-    allReciters: [],
+    masterReciterList: [], // ✨ متغير جديد للقائمة الكاملة
+    displayedReciters: [], // ✨ متغير جديد للقائمة المعروضة
     favorites: [],
     queue: [],
     currentQueueIndex: -1,
     sleepTimerId: null,
     sleepIntervalId: null,
     isShuffled: false,
-    repeatMode: 'off', // 'off', 'one', 'all'
+    repeatMode: 'off',
     currentFetchCtrl: null,
     eventHandlers: {
         toggleFavorite,
@@ -37,7 +38,7 @@ function toggleFavorite(event, reciterId) {
         state.favorites.push(reciterId);
     }
     storage.saveFavorites(state.favorites);
-    ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+    ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
 }
 
 function selectReciter(reciter) {
@@ -66,15 +67,27 @@ function removeFromQueue(index) {
     player.removeFromQueue(index);
 }
 
+// ✨ تم إعادة كتابة هذه الدالة بالكامل
 const loadReciters = async () => {
     state.currentFetchCtrl?.abort();
     state.currentFetchCtrl = new AbortController();
     const { signal } = state.currentFetchCtrl;
 
     showLoader(true);
+
     const lang = DOM.languageSelect.value || 'ar';
     const riwaya = DOM.riwayaSelect.value;
     const sura = DOM.surahSelect.value;
+
+    // إذا لم يتم تحديد أي فلتر، اعرض القائمة الرئيسية الكاملة
+    if (!riwaya && !sura) {
+        state.displayedReciters = [...state.masterReciterList];
+        ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
+        showLoader(false);
+        return;
+    }
+
+    // إذا تم تحديد فلتر، اطلب البيانات من الـ API
     let query = `reciters?language=${lang}${riwaya ? `&rewaya=${riwaya}` : ''}${sura ? `&sura=${sura}` : ''}`;
     
     try {
@@ -82,8 +95,8 @@ const loadReciters = async () => {
         if (signal.aborted) return;
 
         if (data && data.reciters) {
-            state.allReciters = data.reciters;
-            ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+            state.displayedReciters = data.reciters;
+            ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
         }
     } catch (error) {
         if (!signal.aborted) {
@@ -97,6 +110,7 @@ const loadReciters = async () => {
     }
 };
 
+// ✨ تم تعديل هذه الدالة
 const loadInitialData = async () => {
     showLoader(true);
     const langCode = localStorage.getItem('quranLang') || 'ar';
@@ -117,8 +131,11 @@ const loadInitialData = async () => {
         if (riwayat) ui.renderRiwayat(riwayat);
         if (suwar) state.allSurahs = ui.renderSurahs(suwar);
         if (recitersData && recitersData.reciters) {
-            state.allReciters = recitersData.reciters;
-            ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+            // تخزين القائمة الكاملة في المتغير الرئيسي
+            state.masterReciterList = recitersData.reciters;
+            // عرض القائمة الكاملة عند التحميل لأول مرة
+            state.displayedReciters = [...state.masterReciterList];
+            ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
         }
 
     } catch (error) {
@@ -130,6 +147,7 @@ const loadInitialData = async () => {
         setTimeout(player.applyDeepLink, 500);
     }
 };
+
 
 function restoreSessionState() {
     const savedState = storage.loadState();
@@ -195,17 +213,26 @@ function setupKeyboardShortcuts() {
 }
 
 function setupEventListeners() {
+    const filterChangeHandler = () => {
+        DOM.searchReciterInput.value = '';
+        loadReciters();
+    };
+
     DOM.languageSelect.addEventListener('change', () => {
         const selectedLang = DOM.languageSelect.value;
         setLanguage(selectedLang);
+        // إعادة تحميل كل شيء باللغة الجديدة
         DOM.riwayaSelect.value = '';
         DOM.surahSelect.value = '';
-        loadInitialData();
+        loadInitialData(); 
     });
-    DOM.riwayaSelect.addEventListener('change', loadReciters);
-    DOM.surahSelect.addEventListener('change', loadReciters);
+
+    DOM.riwayaSelect.addEventListener('change', filterChangeHandler);
+    DOM.surahSelect.addEventListener('change', filterChangeHandler);
+    
     DOM.searchReciterInput.addEventListener('input', debounce(() => {
-        ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+        // البحث الآن يتم على القائمة المعروضة حاليًا فقط
+        ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
     }, 250));
 
     player.setupPlayerEventListeners();
@@ -256,31 +283,19 @@ function setupEventListeners() {
 
 function setupTheme() {
     const applyTheme = () => {
-        const theme = localStorage.getItem('color-theme');
-        const themeTextKey = document.documentElement.classList.contains('dark') ? 'themeLight' : 'themeNight';
+        const isDark = localStorage.getItem('color-theme') === 'dark' || 
+                       (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-        
-        // Translate theme text
-        const themeToggleText = document.querySelector('#theme-text');
-        if(themeToggleText) {
-             const key = document.documentElement.classList.contains('dark') ? 'themeLight' : 'themeNight';
-             themeToggleText.setAttribute('data-i18n-key', key);
-             // We may need to call a translate function here if the language has already been set.
-        }
+        document.documentElement.classList.toggle('dark', isDark);
+        const key = isDark ? 'themeLight' : 'themeNight';
+        DOM.themeText.setAttribute('data-i18n-key', key);
     };
 
     DOM.themeToggleBtn.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        localStorage.setItem('color-theme', theme);
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
         applyTheme();
-        // Re-translate UI to update the theme button text
-        setLanguage(localStorage.getItem('quranLang') || 'ar');
+        translateUI();
     });
     
     applyTheme();
@@ -290,29 +305,28 @@ function setupDownloadAndCopy() {
     DOM.copyLinkBtn.addEventListener('click', () => {
         const track = state.queue[state.currentQueueIndex];
         if (!track) return;
-        
-        const surahNumber = player.padSurahNumber(track.surah.id);
-        const audioSrc = `${player.withSlash(track.moshaf.server)}${surahNumber}.mp3`;
-        
+        const { moshaf, surah } = track;
+        const surahNumber = padSurahNumber(surah.id);
+        const audioSrc = `${withSlash(moshaf.server)}${surahNumber}.mp3`;
         navigator.clipboard.writeText(audioSrc).then(() => showToast('تم نسخ الرابط'));
     });
 
     DOM.downloadBtn.addEventListener('click', () => {
         const track = state.queue[state.currentQueueIndex];
         if (!track) return;
-
-        const surahNumber = player.padSurahNumber(track.surah.id);
-        const audioSrc = `${player.withSlash(track.moshaf.server)}${surahNumber}.mp3`;
-
+        const { moshaf, surah, reciter } = track;
+        const surahNumber = padSurahNumber(surah.id);
+        const audioSrc = `${withSlash(moshaf.server)}${surahNumber}.mp3`;
         const a = Object.assign(document.createElement('a'), { 
             href: audioSrc, 
-            download: `${track.reciter.name} - ${track.surah.name}.mp3` 
+            download: `${reciter.name} - ${surah.name}.mp3` 
         });
         document.body.appendChild(a);
         a.click();
         a.remove();
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     initI18n();

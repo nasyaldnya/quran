@@ -3,6 +3,7 @@ import * as api from './api.js';
 import * as ui from './ui.js';
 import * as player from './player.js';
 import * as storage from './storage.js';
+import { initI18n, setLanguage } from './i18n.js';
 
 const state = {
     allSurahs: [],
@@ -137,6 +138,27 @@ function restoreSessionState() {
     ui.renderQueue(state.queue, state.currentQueueIndex, state.eventHandlers);
 }
 
+function handleResponsiveLayout() {
+    const queuePanel = document.getElementById('queue-panel');
+    const desktopContainer = document.getElementById('desktop-queue-container');
+    const playerContainer = document.getElementById('player-container').querySelector('.container');
+
+    if (!queuePanel || !desktopContainer || !playerContainer) return;
+
+    if (window.innerWidth > 1023) { 
+        if (!desktopContainer.contains(queuePanel)) {
+            desktopContainer.appendChild(queuePanel);
+            queuePanel.className = 'bg-card rounded-xl shadow-lg p-3 h-[75vh] overflow-y-auto';
+            DOM.playerContainer.classList.remove('queue-open');
+        }
+    } else {
+        if (!playerContainer.contains(queuePanel)) {
+            playerContainer.appendChild(queuePanel);
+            queuePanel.className = 'flex-grow overflow-y-auto p-4 pt-0';
+        }
+    }
+}
+
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
@@ -160,7 +182,8 @@ function setupKeyboardShortcuts() {
 
 function setupEventListeners() {
     DOM.languageSelect.addEventListener('change', () => {
-        localStorage.setItem('quranLang', DOM.languageSelect.value);
+        const selectedLang = DOM.languageSelect.value;
+        setLanguage(selectedLang);
         DOM.riwayaSelect.value = '';
         DOM.surahSelect.value = '';
         loadInitialData();
@@ -200,6 +223,8 @@ function setupEventListeners() {
     setupTheme();
     setupDownloadAndCopy();
     setupKeyboardShortcuts();
+
+    window.addEventListener('resize', debounce(handleResponsiveLayout, 200));
 
     window.addEventListener('beforeunload', () => {
         const eqSettings = Array.from(DOM.eqSliders).map(s => s.value);
@@ -253,9 +278,11 @@ function setupDownloadAndCopy() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initI18n();
     state.favorites = storage.loadFavorites();
     setupEventListeners();
     loadInitialData();
+    handleResponsiveLayout();
 });
 
 if ('serviceWorker' in navigator) {

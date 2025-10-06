@@ -35,7 +35,7 @@ export const renderReciters = (reciters, favorites, eventHandlers) => {
     });
 
     if (filteredReciters.length === 0) {
-        DOM.recitersList.innerHTML = `<p class="text-center text-gray-500 p-4">لم يتم العثور على قراء.</p>`;
+        DOM.recitersList.innerHTML = `<p class="text-center text-gray-500 p-4" data-i18n-key="noReciterFound">لم يتم العثور على قراء.</p>`;
         return;
     }
 
@@ -107,7 +107,7 @@ const getLanguageCode = (url) => {
 
 export const renderRiwayat = (data) => {
     if (!data || !data.riwayat) return;
-    DOM.riwayaSelect.innerHTML = '<option value="">كل الروايات</option>';
+    DOM.riwayaSelect.innerHTML = '<option value="" data-i18n-key="allRiwayat">كل الروايات</option>';
     data.riwayat.forEach(riwaya => {
         const option = document.createElement('option');
         option.value = riwaya.id;
@@ -118,7 +118,7 @@ export const renderRiwayat = (data) => {
 
 export const renderSurahs = (data) => {
     if (!data || !data.suwar) return [];
-    DOM.surahSelect.innerHTML = '<option value="">كل السور</option>';
+    DOM.surahSelect.innerHTML = '<option value="" data-i18n-key="allSurahs">كل السور</option>';
     data.suwar.forEach(surah => {
         const option = document.createElement('option');
         option.value = surah.id;
@@ -160,6 +160,9 @@ export const renderReciterDetails = (reciter, allSurahs, eventHandlers) => {
         const availableIds = new Set(moshaf.surah_list.split(','));
         const surahsToRender = allSurahs.filter(s => s && availableIds.has(String(s.id)));
 
+        // ✨ بداية التعديل: استخدام DocumentFragment لتحسين الأداء والذاكرة
+        const fragment = document.createDocumentFragment();
+
         surahsToRender.forEach(surah => {
             const surahItem = document.createElement('div');
             const icon = surah.makkia === 1 ? makkiIcon : madaniIcon;
@@ -179,20 +182,27 @@ export const renderReciterDetails = (reciter, allSurahs, eventHandlers) => {
 
             surahItem.querySelector('.play-surah-btn').onclick = () => eventHandlers.playSurah({ reciter, moshaf, surah });
             surahItem.querySelector('.add-to-queue-btn').onclick = () => eventHandlers.addSurahToQueue({ reciter, moshaf, surah });
-            surahListContainer.appendChild(surahItem);
+            
+            fragment.appendChild(surahItem);
         });
-        
+
+        // إفراغ الحاوية الحالية ثم إضافة كل العناصر الجديدة دفعة واحدة
+        surahListContainer.innerHTML = ''; 
+        surahListContainer.appendChild(fragment);
+        // ✨ نهاية التعديل
+
         DOM.reciterDetails.querySelector(`[data-moshaf-index-play="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, true);
         DOM.reciterDetails.querySelector(`[data-moshaf-index-add="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, false);
         DOM.reciterDetails.querySelector(`#search-surah-input-${index}`).addEventListener('input', (e) => {
             const searchTerm = normalizeArabic(e.target.value.trim().replace('سورة', '').trim());
-            const items = surahListContainer.querySelectorAll('div');
+            const items = surahListContainer.querySelectorAll('div[id^="surah-item-"]');
             items.forEach(item => {
                 const surahName = normalizeArabic(item.querySelector('span.truncate').textContent);
                 item.style.display = surahName.includes(searchTerm) ? '' : 'none';
             });
         });
     });
+
     if (window.innerWidth < 1024) DOM.reciterDetails.scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -302,7 +312,7 @@ export const updateNowPlaying = (track) => {
         DOM.playerContainer.style.transform = 'translateY(0)';
     } else {
         DOM.nowPlaying.innerHTML = `
-            <p class="font-bold text-primary truncate">لم يتم تحديد أي مقطع</p>
+            <p class="font-bold text-primary truncate" data-i18n-key="nowPlayingDefault">لم يتم تحديد أي مقطع</p>
             <p class="text-sm text-gray-600 dark:text-gray-300 truncate">-</p>
         `;
     }

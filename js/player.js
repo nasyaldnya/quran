@@ -106,20 +106,17 @@ export const playFromQueue = () => {
 
         currentSound = new Howl({
             src: [audioSrc],
-            // html5: true, // <-- تم الحذف لإصلاح مشكلة شريط التقدم
+            html5: true, // <-- تم إعادة هذا السطر لحل مشكلة الذاكرة
             volume: 0,
             onplay: () => {
                 currentSound.fade(0, 1, 800);
 
                 if (!isEqSetup) {
-                    // تفعيل AudioContext إذا كان معلقاً
                     if (Howler.ctx && Howler.ctx.state === 'suspended') {
                         Howler.ctx.resume();
                     }
                     setupEqualizer();
                 }
-
-                // تم حذف كتلة إنشاء المحلل الصوتي من هنا ونقلها إلى setupEqualizer
                 
                 updatePlayerUI(true, appState);
                 requestAnimationFrame(step);
@@ -162,17 +159,17 @@ export const playFromQueue = () => {
     }
 };
 
+// === تم تعديل هذه الدالة ===
 function step() {
     if (!currentSound) return;
 
-    if (currentSound.playing()) {
-        updateProgress(currentSound);
-        if (analyser) {
-            analyser.getByteFrequencyData(dataArray);
-            drawVisualizer();
-        }
-        animationFrameId = requestAnimationFrame(step);
+    // تم حذف شرط playing() من هنا لضمان استمرار التحديث
+    updateProgress(currentSound);
+    if (analyser) {
+        analyser.getByteFrequencyData(dataArray);
+        drawVisualizer();
     }
+    animationFrameId = requestAnimationFrame(step);
 }
 
 function drawVisualizer() {
@@ -328,7 +325,6 @@ export const getCurrentRate = () => {
     return 1;
 };
 
-// --- دالة معادل الصوت المُعدلة ---
 function setupEqualizer() {
     const audioCtx = Howler.ctx;
     if (audioCtx.state === 'suspended') {
@@ -346,25 +342,20 @@ function setupEqualizer() {
         return filter;
     });
 
-    // إنشاء وتكوين المحلل الصوتي هنا مرة واحدة
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 128;
     bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
 
-    // فصل المسار الافتراضي للبدء من جديد
     Howler.masterGain.disconnect();
     
-    // ربط الفلاتر بالتسلسل الصحيح
     let currentNode = Howler.masterGain;
     eqBands.forEach(filter => {
         currentNode.connect(filter);
         currentNode = filter;
     });
 
-    // ربط آخر فلتر بالمحلل الصوتي
     currentNode.connect(analyser);
-    // ربط المحلل الصوتي بالوجهة النهائية (السماعات)
     analyser.connect(audioCtx.destination);
     
     isEqSetup = true;

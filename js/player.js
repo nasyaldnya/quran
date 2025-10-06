@@ -106,7 +106,7 @@ export const playFromQueue = () => {
 
         currentSound = new Howl({
             src: [audioSrc],
-            html5: true,
+            // html5: true, // <-- تم الحذف لإصلاح مشكلة شريط التقدم
             volume: 0,
             onplay: () => {
                 currentSound.fade(0, 1, 800);
@@ -119,14 +119,7 @@ export const playFromQueue = () => {
                     setupEqualizer();
                 }
 
-                if (!analyser) {
-                    const audioCtx = Howler.ctx;
-                    analyser = audioCtx.createAnalyser();
-                    Howler.masterGain.connect(analyser);
-                    analyser.fftSize = 128;
-                    bufferLength = analyser.frequencyBinCount;
-                    dataArray = new Uint8Array(bufferLength);
-                }
+                // تم حذف كتلة إنشاء المحلل الصوتي من هنا ونقلها إلى setupEqualizer
                 
                 updatePlayerUI(true, appState);
                 requestAnimationFrame(step);
@@ -173,7 +166,7 @@ function step() {
     if (!currentSound) return;
 
     if (currentSound.playing()) {
-        updateProgress(currentSound);  // ✅ صحيح: تمرير currentSound كمعامل
+        updateProgress(currentSound);
         if (analyser) {
             analyser.getByteFrequencyData(dataArray);
             drawVisualizer();
@@ -335,9 +328,9 @@ export const getCurrentRate = () => {
     return 1;
 };
 
+// --- دالة معادل الصوت المُعدلة ---
 function setupEqualizer() {
     const audioCtx = Howler.ctx;
-    // تأكد من تفعيل AudioContext قبل الاستخدام
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
@@ -353,22 +346,30 @@ function setupEqualizer() {
         return filter;
     });
 
+    // إنشاء وتكوين المحلل الصوتي هنا مرة واحدة
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
+
+    // فصل المسار الافتراضي للبدء من جديد
     Howler.masterGain.disconnect();
     
+    // ربط الفلاتر بالتسلسل الصحيح
     let currentNode = Howler.masterGain;
     eqBands.forEach(filter => {
         currentNode.connect(filter);
         currentNode = filter;
     });
 
-    if (analyser) {
-        currentNode.connect(analyser);
-    } else {
-        currentNode.connect(audioCtx.destination);
-    }
+    // ربط آخر فلتر بالمحلل الصوتي
+    currentNode.connect(analyser);
+    // ربط المحلل الصوتي بالوجهة النهائية (السماعات)
+    analyser.connect(audioCtx.destination);
     
     isEqSetup = true;
 }
+
 
 export function setupEqEventListeners() {
     DOM.eqSliders.forEach((slider, index) => {

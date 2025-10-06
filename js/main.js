@@ -77,44 +77,58 @@ const loadReciters = async () => {
     const sura = DOM.surahSelect.value;
     let query = `reciters?language=${lang}${riwaya ? `&rewaya=${riwaya}` : ''}${sura ? `&sura=${sura}` : ''}`;
     
-    const data = await api.fetchData(query, signal);
-    if (signal.aborted) return;
+    try {
+        const data = await api.fetchData(query, signal);
+        if (signal.aborted) return;
 
-    if (data && data.reciters) {
-        state.allReciters = data.reciters;
-        ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+        if (data && data.reciters) {
+            state.allReciters = data.reciters;
+            ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+        }
+    } catch (error) {
+        if (!signal.aborted) {
+            console.error("Failed to load reciters:", error);
+            showToast('فشل تحميل قائمة القراء.', 'error');
+        }
+    } finally {
+        if (!signal.aborted) {
+            showLoader(false);
+        }
     }
-    showLoader(false);
 };
 
 const loadInitialData = async () => {
     showLoader(true);
     const langCode = localStorage.getItem('quranLang') || 'ar';
-    
     const initialCtrl = new AbortController();
     const { signal } = initialCtrl;
 
-    const [languages, riwayat, suwar, recitersData] = await Promise.all([
-        api.fetchData('languages', signal),
-        api.fetchData(`riwayat?language=${langCode}`, signal),
-        api.fetchData(`suwar?language=${langCode}`, signal),
-        api.fetchData(`reciters?language=${langCode}`, signal)
-    ]);
+    try {
+        const [languages, riwayat, suwar, recitersData] = await Promise.all([
+            api.fetchData('languages', signal),
+            api.fetchData(`riwayat?language=${langCode}`, signal),
+            api.fetchData(`suwar?language=${langCode}`, signal),
+            api.fetchData(`reciters?language=${langCode}`, signal)
+        ]);
 
-    if (signal.aborted) return;
+        if (signal.aborted) return;
 
-    if (languages) ui.renderLanguages(languages, langCode);
-    if (riwayat) ui.renderRiwayat(riwayat);
-    if (suwar) state.allSurahs = ui.renderSurahs(suwar);
-    if (recitersData && recitersData.reciters) {
-        state.allReciters = recitersData.reciters;
-        ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+        if (languages) ui.renderLanguages(languages, langCode);
+        if (riwayat) ui.renderRiwayat(riwayat);
+        if (suwar) state.allSurahs = ui.renderSurahs(suwar);
+        if (recitersData && recitersData.reciters) {
+            state.allReciters = recitersData.reciters;
+            ui.renderReciters(state.allReciters, state.favorites, state.eventHandlers);
+        }
+
+    } catch (error) {
+        console.error("Failed to load initial data:", error);
+        showToast('فشل تحميل البيانات. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.', 'error');
+    } finally {
+        showLoader(false);
+        restoreSessionState();
+        setTimeout(player.applyDeepLink, 500);
     }
-
-    showLoader(false);
-    
-    restoreSessionState();
-    setTimeout(player.applyDeepLink, 500); 
 };
 
 function restoreSessionState() {
@@ -242,34 +256,57 @@ function setupEventListeners() {
 
 function setupTheme() {
     const applyTheme = () => {
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        const theme = localStorage.getItem('color-theme');
+        const themeTextKey = document.documentElement.classList.contains('dark') ? 'themeLight' : 'themeNight';
+
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
-            DOM.themeText.textContent = 'الوضع الليلي';
         } else {
             document.documentElement.classList.remove('dark');
-            DOM.themeText.textContent = 'الوضع الفاتح';
+        }
+        
+        // Translate theme text
+        const themeToggleText = document.querySelector('#theme-text');
+        if(themeToggleText) {
+             const key = document.documentElement.classList.contains('dark') ? 'themeLight' : 'themeNight';
+             themeToggleText.setAttribute('data-i18n-key', key);
+             // We may need to call a translate function here if the language has already been set.
         }
     };
+
     DOM.themeToggleBtn.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        document.documentElement.classList.toggle('dark');
+        const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        localStorage.setItem('color-theme', theme);
         applyTheme();
+        // Re-translate UI to update the theme button text
+        setLanguage(localStorage.getItem('quranLang') || 'ar');
     });
+    
     applyTheme();
 }
 
 function setupDownloadAndCopy() {
     DOM.copyLinkBtn.addEventListener('click', () => {
-        if (!currentSound) return;
-        const src = currentSound._src;
-        navigator.clipboard.writeText(src).then(() => showToast('تم نسخ الرابط'));
+        const track = state.queue[state.currentQueueIndex];
+        if (!track) return;
+        
+        const surahNumber = player.padSurahNumber(track.surah.id);
+        const audioSrc = `${player.withSlash(track.moshaf.server)}${surahNumber}.mp3`;
+        
+        navigator.clipboard.writeText(audioSrc).then(() => showToast('تم نسخ الرابط'));
     });
+
     DOM.downloadBtn.addEventListener('click', () => {
-        const t = state.queue[state.currentQueueIndex];
-        if (!t || !currentSound) return;
+        const track = state.queue[state.currentQueueIndex];
+        if (!track) return;
+
+        const surahNumber = player.padSurahNumber(track.surah.id);
+        const audioSrc = `${player.withSlash(track.moshaf.server)}${surahNumber}.mp3`;
+
         const a = Object.assign(document.createElement('a'), { 
-            href: currentSound._src, 
-            download: `${t.reciter.name} - ${t.surah.name}.mp3` 
+            href: audioSrc, 
+            download: `${track.reciter.name} - ${track.surah.name}.mp3` 
         });
         document.body.appendChild(a);
         a.click();

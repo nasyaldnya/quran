@@ -14,7 +14,7 @@ const URLS_TO_CACHE = [
   'js/player.js',
   'js/storage.js',
   'js/utils.js',
-  'https://cdn.tailwindcss.com',
+  // تم حذف سطر cdn.tailwindcss.com من هنا لأنه يسبب خطأ CORS
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap'
 ];
 

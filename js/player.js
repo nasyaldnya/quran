@@ -111,7 +111,11 @@ export const playFromQueue = () => {
             onplay: () => {
                 currentSound.fade(0, 1, 800);
 
-                if (!isEqSetup && Howler.ctx) {
+                if (!isEqSetup) {
+                    // تفعيل AudioContext إذا كان معلقاً
+                    if (Howler.ctx && Howler.ctx.state === 'suspended') {
+                        Howler.ctx.resume();
+                    }
                     setupEqualizer();
                 }
 
@@ -169,7 +173,7 @@ function step() {
     if (!currentSound) return;
 
     if (currentSound.playing()) {
-        updateProgress();
+        updateProgress(currentSound);  // ✅ صحيح: تمرير currentSound كمعامل
         if (analyser) {
             analyser.getByteFrequencyData(dataArray);
             drawVisualizer();
@@ -333,6 +337,10 @@ export const getCurrentRate = () => {
 
 function setupEqualizer() {
     const audioCtx = Howler.ctx;
+    // تأكد من تفعيل AudioContext قبل الاستخدام
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
     const frequencies = [320, 1000, 3200];
     
     eqBands = frequencies.map((freq, i) => {

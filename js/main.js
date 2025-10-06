@@ -1,4 +1,4 @@
-import { DOM, debounce, showToast, showLoader, withSlash } from './utils.js';
+import { DOM, debounce, showToast, showLoader, withSlash, padSurahNumber } from './utils.js';
 import * as api from './api.js';
 import * as ui from './ui.js';
 import * as player from './player.js';
@@ -7,8 +7,8 @@ import { initI18n, setLanguage, translateUI } from './i18n.js';
 
 const state = {
     allSurahs: [],
-    masterReciterList: [], // ✨ متغير جديد للقائمة الكاملة
-    displayedReciters: [], // ✨ متغير جديد للقائمة المعروضة
+    masterReciterList: [], // متغير للقائمة الكاملة
+    displayedReciters: [], // متغير للقائمة المعروضة
     favorites: [],
     queue: [],
     currentQueueIndex: -1,
@@ -67,7 +67,6 @@ function removeFromQueue(index) {
     player.removeFromQueue(index);
 }
 
-// ✨ تم إعادة كتابة هذه الدالة بالكامل
 const loadReciters = async () => {
     state.currentFetchCtrl?.abort();
     state.currentFetchCtrl = new AbortController();
@@ -78,16 +77,10 @@ const loadReciters = async () => {
     const lang = DOM.languageSelect.value || 'ar';
     const riwaya = DOM.riwayaSelect.value;
     const sura = DOM.surahSelect.value;
+    
+    // عند تغيير اللغة، يجب إعادة تحميل القائمة الرئيسية
+    const shouldReloadMasterList = !riwaya && !sura;
 
-    // إذا لم يتم تحديد أي فلتر، اعرض القائمة الرئيسية الكاملة
-    if (!riwaya && !sura) {
-        state.displayedReciters = [...state.masterReciterList];
-        ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
-        showLoader(false);
-        return;
-    }
-
-    // إذا تم تحديد فلتر، اطلب البيانات من الـ API
     let query = `reciters?language=${lang}${riwaya ? `&rewaya=${riwaya}` : ''}${sura ? `&sura=${sura}` : ''}`;
     
     try {
@@ -95,6 +88,9 @@ const loadReciters = async () => {
         if (signal.aborted) return;
 
         if (data && data.reciters) {
+            if (shouldReloadMasterList) {
+                state.masterReciterList = data.reciters;
+            }
             state.displayedReciters = data.reciters;
             ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
         }
@@ -102,6 +98,8 @@ const loadReciters = async () => {
         if (!signal.aborted) {
             console.error("Failed to load reciters:", error);
             showToast('فشل تحميل قائمة القراء.', 'error');
+            state.displayedReciters = [];
+            ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
         }
     } finally {
         if (!signal.aborted) {
@@ -110,7 +108,6 @@ const loadReciters = async () => {
     }
 };
 
-// ✨ تم تعديل هذه الدالة
 const loadInitialData = async () => {
     showLoader(true);
     const langCode = localStorage.getItem('quranLang') || 'ar';
@@ -131,9 +128,7 @@ const loadInitialData = async () => {
         if (riwayat) ui.renderRiwayat(riwayat);
         if (suwar) state.allSurahs = ui.renderSurahs(suwar);
         if (recitersData && recitersData.reciters) {
-            // تخزين القائمة الكاملة في المتغير الرئيسي
             state.masterReciterList = recitersData.reciters;
-            // عرض القائمة الكاملة عند التحميل لأول مرة
             state.displayedReciters = [...state.masterReciterList];
             ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
         }
@@ -147,7 +142,6 @@ const loadInitialData = async () => {
         setTimeout(player.applyDeepLink, 500);
     }
 };
-
 
 function restoreSessionState() {
     const savedState = storage.loadState();
@@ -194,20 +188,10 @@ function handleResponsiveLayout() {
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-
         switch (e.code) {
-            case 'Space':
-                e.preventDefault();
-                DOM.playPauseBtn.click();
-                break;
-            case 'ArrowRight':
-                e.preventDefault();
-                DOM.nextBtn.click();
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                DOM.prevBtn.click();
-                break;
+            case 'Space': e.preventDefault(); DOM.playPauseBtn.click(); break;
+            case 'ArrowRight': e.preventDefault(); DOM.nextBtn.click(); break;
+            case 'ArrowLeft': e.preventDefault(); DOM.prevBtn.click(); break;
         }
     });
 }
@@ -221,18 +205,16 @@ function setupEventListeners() {
     DOM.languageSelect.addEventListener('change', () => {
         const selectedLang = DOM.languageSelect.value;
         setLanguage(selectedLang);
-        // إعادة تحميل كل شيء باللغة الجديدة
         DOM.riwayaSelect.value = '';
         DOM.surahSelect.value = '';
-        loadInitialData(); 
+        loadReciters();
     });
 
     DOM.riwayaSelect.addEventListener('change', filterChangeHandler);
     DOM.surahSelect.addEventListener('change', filterChangeHandler);
     
     DOM.searchReciterInput.addEventListener('input', debounce(() => {
-        // البحث الآن يتم على القائمة المعروضة حاليًا فقط
-        ui.renderReciters(state.displayedReciters, state.favorites, state.eventHandlers);
+        ui.renderReciters(state.masterReciterList, state.favorites, state.eventHandlers);
     }, 250));
 
     player.setupPlayerEventListeners();
@@ -247,26 +229,21 @@ function setupEventListeners() {
     DOM.queueHandle.addEventListener('click', () => DOM.playerContainer.classList.toggle('queue-open'));
     DOM.queueList.addEventListener('drop', () => {
         const currentTrack = state.queue[state.currentQueueIndex];
-        const newOrder = [...DOM.queueList.querySelectorAll('.queue-item')].map(item => state.queue[item.dataset.index]);
+        const newOrder = [...DOM.queueList.querySelectorAll('.queue-item')].map(item => state.queue[parseInt(item.dataset.index, 10)]);
         state.queue = newOrder;
-        state.currentQueueIndex = state.queue.indexOf(currentTrack);
+        state.currentQueueIndex = state.queue.findIndex(track => track === currentTrack);
         ui.renderQueue(state.queue, state.currentQueueIndex, state.eventHandlers);
     });
 
     DOM.sleepTimerBtns.forEach(btn => btn.addEventListener('click', () => player.setSleepTimer(btn.dataset.time)));
     DOM.cancelSleepTimerBtn.addEventListener('click', player.cancelSleepTimer);
     
-    DOM.eqToggleBtn.addEventListener('click', () => {
-        DOM.eqPanel.classList.toggle('hidden');
-    });
+    DOM.eqToggleBtn.addEventListener('click', () => { DOM.eqPanel.classList.toggle('hidden'); });
     player.setupEqEventListeners();
-
     setupTheme();
     setupDownloadAndCopy();
     setupKeyboardShortcuts();
-
     window.addEventListener('resize', debounce(handleResponsiveLayout, 200));
-
     window.addEventListener('beforeunload', () => {
         const eqSettings = Array.from(DOM.eqSliders).map(s => s.value);
         storage.saveState({
@@ -285,19 +262,16 @@ function setupTheme() {
     const applyTheme = () => {
         const isDark = localStorage.getItem('color-theme') === 'dark' || 
                        (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
         document.documentElement.classList.toggle('dark', isDark);
         const key = isDark ? 'themeLight' : 'themeNight';
         DOM.themeText.setAttribute('data-i18n-key', key);
     };
-
     DOM.themeToggleBtn.addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
         applyTheme();
         translateUI();
     });
-    
     applyTheme();
 }
 
@@ -310,7 +284,6 @@ function setupDownloadAndCopy() {
         const audioSrc = `${withSlash(moshaf.server)}${surahNumber}.mp3`;
         navigator.clipboard.writeText(audioSrc).then(() => showToast('تم نسخ الرابط'));
     });
-
     DOM.downloadBtn.addEventListener('click', () => {
         const track = state.queue[state.currentQueueIndex];
         if (!track) return;
@@ -327,7 +300,6 @@ function setupDownloadAndCopy() {
     });
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     initI18n();
     state.favorites = storage.loadFavorites();
@@ -339,11 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js') 
-      .then((registration) => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch((error) => {
-        console.error('Service Worker registration failed:', error);
-      });
+      .then((registration) => { console.log('SW registered:', registration.scope); })
+      .catch((error) => { console.error('SW registration failed:', error); });
   });
 }

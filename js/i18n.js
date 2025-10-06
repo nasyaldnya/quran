@@ -360,7 +360,7 @@ let currentLanguage = 'ar';
 /*
  * دالة لتطبيق الترجمات على واجهة المستخدم
  */
-const translateUI = () => {
+export const translateUI = () => {
   const elements = document.querySelectorAll('[data-i18n-key]');
   const langTranslations = translations[currentLanguage];
 
@@ -379,7 +379,6 @@ const translateUI = () => {
   });
 
   document.documentElement.lang = currentLanguage;
-  // ✨ تحسين: دعم تلقائي للغات التي تُكتب من اليمين لليسار
   document.documentElement.dir = ['ar', 'fa', 'ur', 'kur'].includes(currentLanguage) ? 'rtl' : 'ltr';
 };
 

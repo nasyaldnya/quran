@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mp3quran.cam/sitemap.xml

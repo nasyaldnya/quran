@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل القرآن الكريم MP3</title>
+    
+    <title>مكتبة القرآن الكريم الصوتية - استمع وحمل المصحف MP3</title>
+    <meta name="description" content="استمع إلى القرآن الكريم كاملاً بأصوات أشهر القراء في العالم الإسلامي مثل عبد الباسط عبد الصمد، مشاري العفاسي، وغيرهم. تحميل مباشر بصيغة MP3 وبروايات متعددة.">
+    <meta name="keywords" content="قرآن كريم, mp3, تحميل, استماع, المصحف, عبد الباسط, العفاسي, قرآن صوتي">
+
+    <meta name="google-site-verification" content="q9LebJDuo52pR8rs2sliNBVQsvUcgfq8Nisz_T8916M" />
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d9488">
@@ -143,7 +148,7 @@
             <div class="flex justify-center md:absolute md:top-0 md:left-4 mb-2 md:mb-0">
                 <button id="theme-toggle" aria-label="تبديل الوضع" class="flex items-center gap-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                     <span class="text-xl">🌗</span>
-                    <span id="theme-text" class="text-sm font-semibold"></span>
+                    <span id="theme-text" class="text-sm font-semibold" data-i18n-key="themeNight"></span>
                 </button>
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-primary" data-i18n-key="mainTitle">مكتبة القرآن الكريم الصوتية</h1>
@@ -153,17 +158,17 @@
         <div class="bg-card p-4 rounded-xl shadow-lg mb-6 md:sticky top-2 z-10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label for="language-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectLanguageLabel">اختر اللغة:</label>
+                    <label for="language-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectLanguageLabel">اختر اللغة</label>
                     <select id="language-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10"></select>
                 </div>
                 <div>
-                    <label for="riwaya-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectRiwayaLabel">اختر الرواية:</label>
+                    <label for="riwaya-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectRiwayaLabel">اختر الرواية</label>
                     <select id="riwaya-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10">
                         <option value="" data-i18n-key="allRiwayat">كل الروايات</option>
                     </select>
                 </div>
                 <div>
-                    <label for="surah-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectSurahLabel">ابحث بالقراء الذين قرأوا سورة:</label>
+                    <label for="surah-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectSurahLabel">البحث بالقراء حسب السورة</label>
                     <select id="surah-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10">
                         <option value="" data-i18n-key="allSurahs">كل السور</option>
                     </select>
@@ -192,7 +197,7 @@
                          <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                          </svg>
-                         <p class="text-lg" data-i18n-key="detailsPlaceholder">الرجاء اختيار قارئ من القائمة لعرض تلاواته</p>
+                         <p class="text-lg" data-i18n-key="detailsPlaceholder">الرجاء اختر قارئًا من القائمة لعرض تلاواته</p>
                      </div>
                 </div>
             </div>
@@ -271,7 +276,7 @@
                              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 10l1.293-1.293z" clip-rule="evenodd" /></svg>
                          </button>
                          <button id="repeat-btn" aria-label="تكرار" title="تكرار" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom" data-i18n-key="repeat">تكرار</button>
-                         <button id="shuffle-btn-player" aria-label="تشغيل عشوائي" title="تشغيل عشوائي" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom" data-i18n-key="shuffle">عشوائي</button>
+                         <button id="shuffle-btn-player" aria-label="تشغيل عشوائي" title="تشغيل عشوائي" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom" data-i18n-key="shuffle">خَلْط</button>
                          <button id="eq-toggle-btn" aria-label="معادل الصوت" title="معادل الصوت" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path><path d="M7 4v4M12 10v4M17 16v4"></path></svg>
                         </button>
@@ -279,7 +284,7 @@
 
                     <div class="flex items-center gap-2 text-xs order-1 sm:order-2 flex-wrap justify-center">
                         <canvas id="visualizer" width="100" height="20" class="block"></canvas>
-                        <span data-i18n-key="sleepTimer">مؤقت النوم:</span>
+                        <span data-i18n-key="sleepTimer">مؤقت النوم</span>
                         <button data-time="15" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">15 د</button>
                         <button data-time="30" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">30 د</button>
                         <button data-time="45" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">45 د</button>
@@ -289,7 +294,7 @@
                     </div>
                     
                     <div class="flex items-center gap-2 order-3">
-                        <label for="playback-speed" class="text-sm" data-i18n-key="playbackSpeed">السرعة:</label>
+                        <label for="playback-speed" class="text-sm" data-i18n-key="playbackSpeed">السرعة</label>
                         <select id="playback-speed" class="bg-secondary border border-custom text-xs rounded-lg focus:ring-teal-500 focus:border-teal-500 p-1">
                             <option value="0.75">0.75x</option>
                             <option value="1" selected>1x</option>
@@ -316,3 +321,7 @@
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
+ايش فائدة هذا الكود ؟ هههههههههههههه
+
+<meta name="google-site-verification" content="q9LebJDuo52pR8rs2sliNBVQsvUcgfq8Nisz_T8916M" />

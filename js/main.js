@@ -32,7 +32,8 @@ window.__handlers = handlers;
 function toggleFavorite(id) {
   const updated = storage.toggleFavorite(id);
   setState({ favorites: updated });
-  ui.renderReciters(state.reciters, handlers.selectReciter, toggleFavorite);
+  // Re-render with the full master list so the favorites tab can find all favorited reciters
+  ui.renderReciters(state.masterReciters, handlers.selectReciter, toggleFavorite);
 }
 
 handlers.selectReciter = (reciter) => {
@@ -59,6 +60,10 @@ async function loadReciters() {
 
   const reciters = data?.reciters ?? [];
   setState({ reciters });
+  // Only refresh masterReciters when there are no active filters
+  if (!state.activeRiwaya && !state.activeSurah) {
+    setState({ masterReciters: reciters });
+  }
   ui.renderReciters(reciters, handlers.selectReciter, toggleFavorite);
 }
 

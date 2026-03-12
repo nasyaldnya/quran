@@ -53,7 +53,9 @@ function skeletonCard() {
 }
 
 export function showSkeletons(count = 8) {
-  const list = $('reciters-list');
+  // If tabs are already built, show skeletons inside the inner list only
+  const inner = $('reciters-inner');
+  const list  = inner || $('reciters-list');
   if (!list) return;
   list.innerHTML = Array(count).fill(skeletonCard()).join('');
 }
@@ -61,36 +63,100 @@ export function showSkeletons(count = 8) {
 // ── Reciters List ────────────────────────────────────────────
 
 /**
- * Render the reciters grid.
- * Filters by searchQuery from state.
+ * Render the reciters list with All / Favorites tabs.
+ * Filters by state.searchQuery within the active tab.
  */
 export function renderReciters(reciters, onSelect, onFavorite) {
-  const list = $('reciters-list');
-  if (!list) return;
+  renderReciterTabs(reciters, onSelect, onFavorite);
+}
 
-  const query = normalizeArabic(state.searchQuery);
+function renderReciterTabs(reciters, onSelect, onFavorite) {
+  const wrapper = $('reciters-list');
+  if (!wrapper) return;
 
-  const filtered = query
-    ? reciters.filter((r) => normalizeArabic(r.name).includes(query))
-    : reciters;
+  // ── Build tabs + list structure (only on first call) ────
+  if (!wrapper.querySelector('.reciters-tab-bar')) {
+    wrapper.innerHTML = `
+      <!-- Tab bar -->
+      <div class="reciters-tab-bar flex gap-1 p-1 bg-surface-3 rounded-xl mb-3 sticky top-0 z-10">
+        <button class="reciter-tab flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all
+          bg-surface-2 text-text shadow-sm"
+          data-tab="all">
+          <span data-i18n="reciters">${t('reciters')}</span>
+        </button>
+        <button class="reciter-tab flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all
+          text-muted hover:text-text transition-colors"
+          data-tab="favorites">
+          <span class="flex items-center justify-center gap-1">
+            <span class="w-3 h-3 inline-block">${Icons.heart}</span>
+            <span data-i18n="favorites">${t('favorites')}</span>
+          </span>
+        </button>
+      </div>
+      <!-- List container -->
+      <div id="reciters-inner" class="flex flex-col gap-2"></div>
+    `;
 
-  if (!filtered.length) {
-    list.innerHTML = `
-      <div class="col-span-full flex flex-col items-center justify-center py-16 text-muted gap-3">
-        <svg class="w-16 h-16 opacity-30" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-        <p class="text-sm font-medium" data-i18n="noReciters">${t('noReciters')}</p>
+    // Tab click handlers
+    wrapper.querySelectorAll('.reciter-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        wrapper.querySelectorAll('.reciter-tab').forEach((b) => {
+          b.classList.remove('bg-surface-2', 'text-text', 'shadow-sm');
+          b.classList.add('text-muted');
+        });
+        btn.classList.add('bg-surface-2', 'text-text', 'shadow-sm');
+        btn.classList.remove('text-muted');
+        // Store active tab on the wrapper so we can read it on re-render
+        wrapper.dataset.activeTab = btn.dataset.tab;
+        renderReciterList(reciters, onSelect, onFavorite);
+      });
+    });
+  }
+
+  // Keep reciters reference fresh for tab switching
+  wrapper._reciters = reciters;
+  wrapper._onSelect  = onSelect;
+  wrapper._onFavorite = onFavorite;
+
+  renderReciterList(reciters, onSelect, onFavorite);
+}
+
+function renderReciterList(reciters, onSelect, onFavorite) {
+  const wrapper   = $('reciters-list');
+  const inner     = $('reciters-inner');
+  if (!inner) return;
+
+  const activeTab = wrapper?.dataset.activeTab || 'all';
+  const query     = normalizeArabic(state.searchQuery);
+
+  // Decide which base list to show
+  let list = activeTab === 'favorites'
+    ? (reciters || []).filter((r) => state.favorites.includes(r.id))
+    : (reciters || []);
+
+  // Apply search on top
+  if (query) {
+    list = list.filter((r) => normalizeArabic(r.name).includes(query));
+  }
+
+  if (!list.length) {
+    const emptyMsg = activeTab === 'favorites'
+      ? (getLang() === 'ar' ? 'لا توجد قراء في المفضلة بعد' : 'No favorites yet')
+      : t('noReciters');
+
+    inner.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-12 text-muted gap-3">
+        <span class="w-12 h-12 opacity-30">${activeTab === 'favorites' ? Icons.heart : Icons.search}</span>
+        <p class="text-sm font-medium text-center">${emptyMsg}</p>
       </div>`;
     return;
   }
 
-  list.innerHTML = filtered.map((r) => reciterCard(r, onFavorite)).join('');
+  inner.innerHTML = list.map((r) => reciterCard(r)).join('');
 
-  // Attach click handlers
-  list.querySelectorAll('.reciter-card').forEach((card) => {
-    const id = parseInt(card.dataset.id, 10);
-    const reciter = filtered.find((r) => r.id === id);
+  inner.querySelectorAll('.reciter-card').forEach((card) => {
+    const id      = parseInt(card.dataset.id, 10);
+    const reciter = list.find((r) => r.id === id);
     if (!reciter) return;
 
     card.addEventListener('click', (e) => {
@@ -106,25 +172,21 @@ export function renderReciters(reciters, onSelect, onFavorite) {
   });
 }
 
-function reciterCard(reciter, _onFavorite) {
-  const isFav = state.favorites.includes(reciter.id);
-  const initial = reciter.name.charAt(0);
+function reciterCard(reciter) {
+  const isFav      = state.favorites.includes(reciter.id);
+  const initial    = reciter.name.charAt(0);
   const moshafCount = reciter.moshaf?.length ?? 0;
-  const isActive = state.queue[state.currentIndex]?.reciter?.id === reciter.id;
+  const isActive   = state.queue[state.currentIndex]?.reciter?.id === reciter.id;
 
   return `
-    <div class="reciter-card group relative cursor-pointer rounded-2xl bg-surface-2 hover:bg-surface-3
-      border border-border hover:border-primary/30 transition-all duration-200 p-4
+    <div class="reciter-card group relative cursor-pointer rounded-2xl bg-surface-2
+      border border-border hover:border-primary/30 transition-all duration-200 p-3
       flex items-center gap-3 ${isActive ? 'ring-2 ring-primary' : ''}"
-      data-id="${reciter.id}"
-      role="button"
-      tabindex="0"
-      aria-label="${reciter.name}">
+      data-id="${reciter.id}" role="button" tabindex="0" aria-label="${reciter.name}">
 
       <!-- Avatar -->
-      <div class="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center
-        text-lg font-bold text-white bg-gradient-to-br from-teal-500 to-teal-700
-        select-none shadow-sm">
+      <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center
+        text-base font-bold text-white bg-gradient-to-br from-teal-500 to-teal-700 select-none shadow-sm">
         ${initial}
       </div>
 
@@ -132,19 +194,20 @@ function reciterCard(reciter, _onFavorite) {
       <div class="flex-1 min-w-0">
         <p class="font-semibold text-text truncate text-sm leading-tight">${reciter.name}</p>
         <p class="text-xs text-muted mt-0.5">
-          ${moshafCount} ${getLang() === 'ar' ? 'رواية' : moshafCount === 1 ? 'riwaya' : 'riwayat'}
+          ${moshafCount} ${getLang() === 'ar' ? (moshafCount === 1 ? 'رواية' : 'روايات') : (moshafCount === 1 ? 'riwaya' : 'riwayat')}
         </p>
       </div>
 
       <!-- Playing indicator -->
-      ${isActive ? `<span class="text-primary w-4 h-4 flex-shrink-0">${Icons.playing}</span>` : ''}
+      ${isActive ? `<span class="w-4 h-4 text-primary flex-shrink-0">${Icons.playing}</span>` : ''}
 
       <!-- Favorite button -->
       <button class="fav-btn flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
         transition-colors duration-150
-        ${isFav ? 'text-rose-500 bg-rose-50 dark:bg-rose-500/10' : 'text-muted hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10'}"
-        aria-label="${isFav ? t('removeFavorite') : t('addFavorite')}"
-        title="${isFav ? t('removeFavorite') : t('addFavorite')}">
+        ${isFav
+          ? 'text-rose-500 bg-rose-50 dark:bg-rose-500/10'
+          : 'text-muted hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10'}"
+        aria-label="${isFav ? t('removeFavorite') : t('addFavorite')}">
         <span class="w-4 h-4">${isFav ? Icons.heart : Icons.heartOutline}</span>
       </button>
     </div>`;
@@ -152,8 +215,9 @@ function reciterCard(reciter, _onFavorite) {
 
 function highlightReciter(id) {
   document.querySelectorAll('.reciter-card').forEach((c) => {
-    c.classList.toggle('ring-2', parseInt(c.dataset.id, 10) === id);
-    c.classList.toggle('ring-primary', parseInt(c.dataset.id, 10) === id);
+    const match = parseInt(c.dataset.id, 10) === id;
+    c.classList.toggle('ring-2', match);
+    c.classList.toggle('ring-primary', match);
   });
 }
 
@@ -319,11 +383,13 @@ function surahRow(reciter, moshaf, surah) {
 export function renderLanguages(languages, currentLang) {
   const sel = $('language-select');
   if (!sel) return;
-  sel.innerHTML = languages.map((l) =>
-    `<option value="${l.language_code}" ${l.language_code === currentLang ? 'selected' : ''}>
-      ${l.native_name || l.language_name}
-    </option>`
-  ).join('');
+  // API returns: { language_code, language, native }
+  // Fall back through possible field names for resilience
+  sel.innerHTML = languages.map((l) => {
+    const code  = l.language_code || l.code || '';
+    const label = l.native || l.native_name || l.language || l.language_name || code;
+    return `<option value="${code}" ${code === currentLang ? 'selected' : ''}>${label}</option>`;
+  }).join('');
 }
 
 export function renderRiwayat(riwayat) {

@@ -1,318 +1,538 @@
-import { DOM, normalizeArabic, collator, showToast, makkiIcon, madaniIcon, playingIcon, formatTime } from './utils.js';
+// ============================================================
+// ui.js — All DOM rendering. Reads state, writes DOM. No logic.
+// ============================================================
 
-let virtualObserver;
-const VIRTUAL_ITEM_HEIGHT = 48;
-const VIRTUAL_OVERSCAN = 5;
+import { state } from './state.js';
+import { t, getLang } from './i18n.js';
+import { Icons, formatTime, normalizeArabic, $ } from './utils.js';
 
-export const showLoader = (show) => {
-    DOM.loader.style.display = 'none';
-    if (show) {
-        DOM.recitersList.innerHTML = '';
-        for (let i = 0; i < 10; i++) {
-            const skeleton = document.createElement('div');
-            skeleton.className = 'skeleton-item';
-            skeleton.innerHTML = `<div class="skeleton-text"></div>`;
-            DOM.recitersList.appendChild(skeleton);
-        }
-    }
-};
+// ── Toast Notifications ─────────────────────────────────────
 
-export const renderReciters = (reciters, favorites, eventHandlers) => {
-    if (virtualObserver) virtualObserver.disconnect();
-    DOM.recitersList.innerHTML = '';
+const toastContainer = () => $('toast-container');
 
-    const searchTerm = normalizeArabic(DOM.searchReciterInput.value.trim());
-    let filteredReciters = reciters.filter(reciter =>
-        normalizeArabic(reciter.name).includes(searchTerm)
-    );
+export function showToast(message, type = 'success') {
+  const container = toastContainer();
+  if (!container) return;
 
-    filteredReciters.sort((a, b) => {
-        const aIsFav = favorites.includes(a.id);
-        const bIsFav = favorites.includes(b.id);
-        if (aIsFav && !bIsFav) return -1;
-        if (!aIsFav && bIsFav) return 1;
-        return collator.compare(a.name, b.name);
-    });
+  const colors = {
+    success: 'bg-teal-600',
+    warning: 'bg-amber-500',
+    error:   'bg-red-500',
+  };
 
-    if (filteredReciters.length === 0) {
-        DOM.recitersList.innerHTML = `<p class="text-center text-gray-500 p-4" data-i18n-key="noReciterFound">لم يتم العثور على قراء.</p>`;
-        return;
-    }
+  const toast = document.createElement('div');
+  toast.className = `flex items-center gap-2 px-4 py-3 rounded-xl text-white text-sm shadow-xl
+    backdrop-blur-sm animate-slide-up ${colors[type] || colors.success}`;
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
 
-    const scrollContainer = document.createElement('div');
-    scrollContainer.style.height = `${filteredReciters.length * VIRTUAL_ITEM_HEIGHT}px`;
-    scrollContainer.style.position = 'relative';
-    DOM.recitersList.appendChild(scrollContainer);
+  const icon = type === 'success' ? Icons.check : type === 'error' ? Icons.close : '⚠';
+  toast.innerHTML = `<span class="w-4 h-4 flex-shrink-0">${icon}</span><span>${message}</span>`;
 
-    virtualObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            const element = entry.target;
-            if (entry.isIntersecting) {
-                const index = parseInt(element.dataset.index, 10);
-                const reciter = filteredReciters[index];
-                renderSingleReciter(element, reciter, favorites.includes(reciter.id), eventHandlers);
-                virtualObserver.unobserve(element);
-            }
-        });
-    }, { root: DOM.recitersList, rootMargin: `${VIRTUAL_OVERSCAN * VIRTUAL_ITEM_HEIGHT}px` });
+  container.appendChild(toast);
 
-    for (let i = 0; i < filteredReciters.length; i++) {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'virtual-placeholder';
-        placeholder.style.position = 'absolute';
-        placeholder.style.top = `${i * VIRTUAL_ITEM_HEIGHT}px`;
-        placeholder.style.height = `${VIRTUAL_ITEM_HEIGHT}px`;
-        placeholder.style.width = '100%';
-        placeholder.dataset.index = i;
-        scrollContainer.appendChild(placeholder);
-        virtualObserver.observe(placeholder);
-    }
-};
-
-function renderSingleReciter(element, reciter, isFav, eventHandlers) {
-    element.className = 'flex items-center justify-between w-full text-right p-3 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors duration-200';
-    element.innerHTML = `
-        <span>${reciter.name}</span>
-        <button aria-label="${isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}" class="favorite-star text-2xl text-gray-300 hover:text-amber-400 ${isFav ? 'favorited' : ''}">
-            ${isFav ? '★' : '☆'}
-        </button>
-    `;
-    element.querySelector('.favorite-star').onclick = (e) => eventHandlers.toggleFavorite(e, reciter.id);
-    element.onclick = () => {
-        eventHandlers.selectReciter(reciter);
-    };
+  // Auto-dismiss
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(8px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
-export const renderLanguages = (data, currentLang) => {
-    if (!data || !data.language) return;
-    DOM.languageSelect.innerHTML = '';
-    data.language.forEach(lang => {
-        const val = getLanguageCode(lang.surah) || 'ar';
-        const opt = document.createElement('option');
-        opt.value = val;
-        opt.textContent = lang.native;
-        if (val === currentLang) opt.selected = true;
-        DOM.languageSelect.appendChild(opt);
-    });
-};
+// ── Skeleton Loaders ────────────────────────────────────────
 
-const getLanguageCode = (url) => {
-    try {
-        return new URL(url).searchParams.get('language');
-    } catch (e) {
-        console.error("Could not parse URL for language code:", url, e);
-        return 'ar';
-    }
-};
+function skeletonCard() {
+  return `<div class="skeleton-card animate-pulse rounded-2xl bg-surface-2 p-4 flex items-center gap-3">
+    <div class="w-12 h-12 rounded-full bg-skeleton flex-shrink-0"></div>
+    <div class="flex-1 space-y-2">
+      <div class="h-3 bg-skeleton rounded w-3/4"></div>
+      <div class="h-2 bg-skeleton rounded w-1/2"></div>
+    </div>
+  </div>`;
+}
 
-export const renderRiwayat = (data) => {
-    if (!data || !data.riwayat) return;
-    // ✨ تم التعديل هنا
-    DOM.riwayaSelect.innerHTML = '<option value="" data-i18n-key="allRiwayat">كل الروايات</option>';
-    data.riwayat.forEach(riwaya => {
-        const option = document.createElement('option');
-        option.value = riwaya.id;
-        option.textContent = riwaya.name;
-        DOM.riwayaSelect.appendChild(option);
-    });
-};
+export function showSkeletons(count = 8) {
+  const list = $('reciters-list');
+  if (!list) return;
+  list.innerHTML = Array(count).fill(skeletonCard()).join('');
+}
 
-export const renderSurahs = (data) => {
-    if (!data || !data.suwar) return [];
-    // ✨ تم التعديل هنا
-    DOM.surahSelect.innerHTML = '<option value="" data-i18n-key="allSurahs">كل السور</option>';
-    data.suwar.forEach(surah => {
-        const option = document.createElement('option');
-        option.value = surah.id;
-        option.textContent = `${surah.id}. ${surah.name}`;
-        DOM.surahSelect.appendChild(option);
-    });
-    return data.suwar;
-};
+// ── Reciters List ────────────────────────────────────────────
 
-export const renderReciterDetails = (reciter, allSurahs, eventHandlers) => {
-    if (DOM.detailsPlaceholder) DOM.detailsPlaceholder.style.display = 'none';
-    DOM.reciterDetails.innerHTML = `
-        <h3 class="text-2xl font-bold mb-4 text-primary">${reciter.name}</h3>
-        <div class="space-y-4">
-            ${reciter.moshaf.map((moshaf, index) => `
-                <div class="bg-secondary p-3 rounded-lg">
-                    <div class="flex flex-wrap gap-2 justify-between items-center mb-3">
-                        <h4 class="font-semibold">${moshaf.name}</h4>
-                        <div class="flex items-center gap-2">
-                             <button aria-label="إضافة كل سور المصحف إلى قائمة التشغيل" data-moshaf-index-add="${index}" class="add-all-btn text-xs bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600">إضافة الكل</button>
-                             <button aria-label="تشغيل كل سور المصحف" data-moshaf-index-play="${index}" class="play-all-btn text-xs bg-primary text-white px-3 py-1 rounded-full hover:bg-primary-hover">تشغيل الكل</button>
-                        </div>
-                    </div>
-                     <div class="mb-3">
-                         <input type="search" id="search-surah-input-${index}" placeholder="ابحث عن سورة..." class="bg-card border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5">
-                     </div>
-                     <div class="text-xs text-gray-500 dark:text-gray-300 flex items-center gap-4 mb-3 px-1">
-                        <span>مفتاح الرموز:</span>
-                        <span class="flex items-center gap-1">🕋 سورة مكية</span>
-                        <span class="flex items-center gap-1">🕌 سورة مدنية</span>
-                     </div>
-                    <div id="surah-list-${index}" class="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-96 overflow-y-auto p-1"></div>
-                </div>
-            `).join('')}
-        </div>`;
+/**
+ * Render the reciters grid.
+ * Filters by searchQuery from state.
+ */
+export function renderReciters(reciters, onSelect, onFavorite) {
+  const list = $('reciters-list');
+  if (!list) return;
 
-    reciter.moshaf.forEach((moshaf, index) => {
-        const surahListContainer = document.getElementById(`surah-list-${index}`);
-        const availableIds = new Set(moshaf.surah_list.split(','));
-        const surahsToRender = allSurahs.filter(s => s && availableIds.has(String(s.id)));
+  const query = normalizeArabic(state.searchQuery);
 
-        const fragment = document.createDocumentFragment();
+  const filtered = query
+    ? reciters.filter((r) => normalizeArabic(r.name).includes(query))
+    : reciters;
 
-        surahsToRender.forEach(surah => {
-            const surahItem = document.createElement('div');
-            const icon = surah.makkia === 1 ? makkiIcon : madaniIcon;
+  if (!filtered.length) {
+    list.innerHTML = `
+      <div class="col-span-full flex flex-col items-center justify-center py-16 text-muted gap-3">
+        <svg class="w-16 h-16 opacity-30" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <p class="text-sm font-medium" data-i18n="noReciters">${t('noReciters')}</p>
+      </div>`;
+    return;
+  }
 
-            surahItem.id = `surah-item-${moshaf.id}-${surah.id}`;
-            surahItem.className = `p-2 text-sm rounded-md transition-all duration-200 flex items-center justify-between gap-2 bg-card shadow-sm border border-custom`;
+  list.innerHTML = filtered.map((r) => reciterCard(r, onFavorite)).join('');
 
-            surahItem.innerHTML = `
-                <button aria-label="تشغيل سورة ${surah.name}" class="play-surah-btn flex-grow text-right flex items-center gap-2 overflow-hidden cursor-pointer">
-                    ${icon}
-                    <span class="truncate">${surah.name}</span>
-                </button>
-                <button aria-label="إضافة سورة ${surah.name} للقائمة" class="add-to-queue-btn p-1 rounded-full hover:bg-teal-100 dark:hover:bg-teal-900 cursor-pointer">
-                    <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                </button>
-            `;
+  // Attach click handlers
+  list.querySelectorAll('.reciter-card').forEach((card) => {
+    const id = parseInt(card.dataset.id, 10);
+    const reciter = filtered.find((r) => r.id === id);
+    if (!reciter) return;
 
-            surahItem.querySelector('.play-surah-btn').onclick = () => eventHandlers.playSurah({ reciter, moshaf, surah });
-            surahItem.querySelector('.add-to-queue-btn').onclick = () => eventHandlers.addSurahToQueue({ reciter, moshaf, surah });
-            
-            fragment.appendChild(surahItem);
-        });
-
-        surahListContainer.innerHTML = ''; 
-        surahListContainer.appendChild(fragment);
-
-        DOM.reciterDetails.querySelector(`[data-moshaf-index-play="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, true);
-        DOM.reciterDetails.querySelector(`[data-moshaf-index-add="${index}"]`).onclick = () => eventHandlers.handlePlayAll(reciter, moshaf, false);
-        DOM.reciterDetails.querySelector(`#search-surah-input-${index}`).addEventListener('input', (e) => {
-            const searchTerm = normalizeArabic(e.target.value.trim().replace('سورة', '').trim());
-            const items = surahListContainer.querySelectorAll('div[id^="surah-item-"]');
-            items.forEach(item => {
-                const surahName = normalizeArabic(item.querySelector('span.truncate').textContent);
-                item.style.display = surahName.includes(searchTerm) ? '' : 'none';
-            });
-        });
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.fav-btn')) return;
+      onSelect(reciter);
+      highlightReciter(id);
     });
 
-    if (window.innerWidth < 1024) DOM.reciterDetails.scrollIntoView({ behavior: 'smooth' });
-};
-
-export const renderQueue = (queue, currentQueueIndex, eventHandlers) => {
-    DOM.queueList.innerHTML = '';
-    DOM.queuePlaceholder.style.display = queue.length === 0 ? 'block' : 'none';
-
-    if (queue.length === 0) return;
-
-    let draggedItem = null;
-
-    queue.forEach((track, index) => {
-        const item = document.createElement('div');
-        item.className = `queue-item flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-700/50`;
-        item.draggable = true;
-        item.dataset.index = index;
-        item.setAttribute('role', 'button');
-        item.setAttribute('tabindex', '0');
-
-        const isPlaying = index === currentQueueIndex;
-        if (isPlaying) {
-            item.classList.add('queue-item-playing');
-        }
-
-        item.innerHTML = `
-            <div class="flex items-center gap-2 overflow-hidden">
-                <span class="drag-handle text-gray-400 cursor-grab flex-shrink-0">${isPlaying ? playingIcon : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>`}</span>
-                <div class="flex-grow overflow-hidden">
-                    <p class="font-semibold truncate text-sm">${track.surah.name}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-300 truncate">${track.reciter.name}</p>
-                </div>
-            </div>
-            <button aria-label="إزالة سورة ${track.surah.name} من القائمة" class="remove-from-queue-btn p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50 flex-shrink-0">
-                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        `;
-
-        item.addEventListener('click', (e) => {
-            if (!e.target.closest('.remove-from-queue-btn') && !e.target.closest('.drag-handle')) {
-                eventHandlers.playTrackAtIndex(index);
-            }
-        });
-        
-        item.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                eventHandlers.playTrackAtIndex(index);
-            }
-        });
-
-        item.querySelector('.remove-from-queue-btn').addEventListener('click', () => eventHandlers.removeFromQueue(index));
-
-        item.addEventListener('dragstart', (e) => {
-            draggedItem = item;
-            setTimeout(() => item.classList.add('dragging'), 0);
-        });
-        item.addEventListener('dragend', () => {
-            item.classList.remove('dragging');
-            draggedItem = null;
-        });
-        item.addEventListener('dragover', e => {
-            e.preventDefault();
-            const target = e.target.closest('.queue-item');
-            if (target && draggedItem && target !== draggedItem) {
-                const rect = target.getBoundingClientRect();
-                const offset = e.clientY - rect.top - rect.height / 2;
-                DOM.queueList.insertBefore(draggedItem, offset < 0 ? target : target.nextSibling);
-            }
-        });
-
-        DOM.queueList.appendChild(item);
+    card.querySelector('.fav-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onFavorite(id);
     });
-};
+  });
+}
 
-export const updatePlayerUI = (isPlaying, state) => {
-    DOM.playPauseBtn.setAttribute('aria-label', isPlaying ? 'إيقاف' : 'تشغيل');
-    DOM.playIcon.style.display = isPlaying ? 'none' : 'block';
-    DOM.pauseIcon.style.display = isPlaying ? 'block' : 'none';
+function reciterCard(reciter, _onFavorite) {
+  const isFav = state.favorites.includes(reciter.id);
+  const initial = reciter.name.charAt(0);
+  const moshafCount = reciter.moshaf?.length ?? 0;
+  const isActive = state.queue[state.currentIndex]?.reciter?.id === reciter.id;
 
-    const { currentQueueIndex, queue, repeatMode } = state;
-    const canNavigate = queue.length > 1;
-    DOM.nextBtn.disabled = !canNavigate && repeatMode !== 'all';
-    DOM.prevBtn.disabled = !canNavigate;
-    DOM.copyLinkBtn.disabled = queue.length === 0;
-    DOM.downloadBtn.disabled = queue.length === 0;
-};
+  return `
+    <div class="reciter-card group relative cursor-pointer rounded-2xl bg-surface-2 hover:bg-surface-3
+      border border-border hover:border-primary/30 transition-all duration-200 p-4
+      flex items-center gap-3 ${isActive ? 'ring-2 ring-primary' : ''}"
+      data-id="${reciter.id}"
+      role="button"
+      tabindex="0"
+      aria-label="${reciter.name}">
 
-export const updateProgress = (currentSound) => {
-    if (!currentSound) return;
-    const seek = currentSound.seek() || 0;
-    const duration = currentSound.duration() || 0;
-    
-    const progressPercent = duration ? (seek / duration) * 100 : 0;
-    DOM.progressBar.style.width = `${progressPercent}%`;
-    DOM.currentTimeEl.textContent = formatTime(seek);
-    if (!isNaN(duration)) DOM.totalDurationEl.textContent = formatTime(duration);
-    DOM.progressBarContainer.setAttribute('aria-valuenow', String(progressPercent.toFixed(0)));
-};
+      <!-- Avatar -->
+      <div class="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center
+        text-lg font-bold text-white bg-gradient-to-br from-teal-500 to-teal-700
+        select-none shadow-sm">
+        ${initial}
+      </div>
 
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-text truncate text-sm leading-tight">${reciter.name}</p>
+        <p class="text-xs text-muted mt-0.5">
+          ${moshafCount} ${getLang() === 'ar' ? 'رواية' : moshafCount === 1 ? 'riwaya' : 'riwayat'}
+        </p>
+      </div>
 
-export const updateNowPlaying = (track) => {
-    if (track) {
-         DOM.nowPlaying.innerHTML = `
-            <p class="font-bold text-primary truncate" title="${track.surah.name}">${track.surah.name}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-300 truncate" title="${track.reciter.name} - ${track.moshaf.name}">${track.reciter.name} - ${track.moshaf.name}</p>
-        `;
-        DOM.playerContainer.style.transform = 'translateY(0)';
-    } else {
-        DOM.nowPlaying.innerHTML = `
-            <p class="font-bold text-primary truncate" data-i18n-key="nowPlayingDefault">لم يتم تحديد أي مقطع</p>
-            <p class="text-sm text-gray-600 dark:text-gray-300 truncate">-</p>
-        `;
-    }
+      <!-- Playing indicator -->
+      ${isActive ? `<span class="text-primary w-4 h-4 flex-shrink-0">${Icons.playing}</span>` : ''}
+
+      <!-- Favorite button -->
+      <button class="fav-btn flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
+        transition-colors duration-150
+        ${isFav ? 'text-rose-500 bg-rose-50 dark:bg-rose-500/10' : 'text-muted hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10'}"
+        aria-label="${isFav ? t('removeFavorite') : t('addFavorite')}"
+        title="${isFav ? t('removeFavorite') : t('addFavorite')}">
+        <span class="w-4 h-4">${isFav ? Icons.heart : Icons.heartOutline}</span>
+      </button>
+    </div>`;
+}
+
+function highlightReciter(id) {
+  document.querySelectorAll('.reciter-card').forEach((c) => {
+    c.classList.toggle('ring-2', parseInt(c.dataset.id, 10) === id);
+    c.classList.toggle('ring-primary', parseInt(c.dataset.id, 10) === id);
+  });
+}
+
+// ── Reciter Details Panel ────────────────────────────────────
+
+export function renderReciterDetails(reciter, handlers) {
+  const panel = $('reciter-details');
+  if (!panel) return;
+
+  $('details-placeholder')?.classList.add('hidden');
+  panel.classList.remove('hidden');
+
+  panel.innerHTML = `
+    <!-- Header -->
+    <div class="flex items-start gap-4 mb-6">
+      <div class="w-16 h-16 rounded-2xl flex-shrink-0 flex items-center justify-center
+        text-2xl font-bold text-white bg-gradient-to-br from-teal-500 to-teal-700 shadow-md">
+        ${reciter.name.charAt(0)}
+      </div>
+      <div class="flex-1 min-w-0">
+        <h2 class="text-xl font-bold text-text leading-tight">${reciter.name}</h2>
+        <p class="text-sm text-muted mt-1">
+          ${reciter.moshaf?.length ?? 0} ${getLang() === 'ar' ? 'رواية متاحة' : 'riwayat available'}
+        </p>
+      </div>
+    </div>
+
+    <!-- Moshaf Tabs -->
+    <div id="moshaf-tabs" class="flex flex-wrap gap-2 mb-4">
+      ${(reciter.moshaf || []).map((m, i) => `
+        <button class="moshaf-tab px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
+          ${i === 0 ? 'bg-primary text-white border-primary' : 'bg-transparent text-muted border-border hover:border-primary hover:text-primary'}"
+          data-moshaf-index="${i}">
+          ${m.name}
+        </button>
+      `).join('')}
+    </div>
+
+    <!-- Surah List -->
+    <div id="surah-list-container"></div>
+  `;
+
+  // Render first moshaf by default
+  if (reciter.moshaf?.length) {
+    renderSurahList(reciter, reciter.moshaf[0], handlers);
+  }
+
+  // Tab switching
+  panel.querySelectorAll('.moshaf-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      panel.querySelectorAll('.moshaf-tab').forEach((t) => {
+        t.classList.remove('bg-primary', 'text-white', 'border-primary');
+        t.classList.add('bg-transparent', 'text-muted', 'border-border');
+      });
+      tab.classList.add('bg-primary', 'text-white', 'border-primary');
+      tab.classList.remove('bg-transparent', 'text-muted', 'border-border');
+      const idx = parseInt(tab.dataset.moshafIndex, 10);
+      renderSurahList(reciter, reciter.moshaf[idx], handlers);
+    });
+  });
+}
+
+function renderSurahList(reciter, moshaf, handlers) {
+  const container = $('surah-list-container');
+  if (!container) return;
+
+  const availableIds = new Set(moshaf.surah_list.split(',').map(Number));
+  const availableSurahs = state.allSurahs.filter((s) => s && availableIds.has(s.id));
+
+  container.innerHTML = `
+    <!-- Play All / Add All -->
+    <div class="flex gap-2 mb-4">
+      <button id="play-all-btn"
+        class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+          bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors">
+        <span class="w-4 h-4">${Icons.play}</span>
+        <span data-i18n="playAll">${t('playAll')}</span>
+      </button>
+      <button id="add-all-btn"
+        class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+          bg-surface-3 text-text text-sm font-medium border border-border hover:border-primary/50 transition-colors">
+        <span class="w-4 h-4">${Icons.queue}</span>
+        <span data-i18n="addAll">${t('addAll')}</span>
+      </button>
+    </div>
+
+    <!-- Surah Grid -->
+    <div class="grid grid-cols-1 gap-1.5 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar">
+      ${availableSurahs.map((surah) => surahRow(reciter, moshaf, surah)).join('')}
+    </div>
+  `;
+
+  // Play All
+  container.querySelector('#play-all-btn')?.addEventListener('click', () => {
+    handlers.handlePlayAll(reciter, moshaf, true);
+  });
+
+  // Add All
+  container.querySelector('#add-all-btn')?.addEventListener('click', () => {
+    handlers.handlePlayAll(reciter, moshaf, false);
+  });
+
+  // Individual surah buttons
+  container.querySelectorAll('.surah-row').forEach((row) => {
+    const surahId = parseInt(row.dataset.surahId, 10);
+    const surah   = availableSurahs.find((s) => s.id === surahId);
+    if (!surah) return;
+
+    row.querySelector('.play-btn')?.addEventListener('click', () => {
+      handlers.playSurah({ reciter, moshaf, surah });
+    });
+    row.querySelector('.queue-btn')?.addEventListener('click', () => {
+      handlers.addToQueue({ reciter, moshaf, surah });
+    });
+  });
+}
+
+function surahRow(reciter, moshaf, surah) {
+  const isPlaying =
+    state.queue[state.currentIndex]?.surah?.id === surah.id &&
+    state.queue[state.currentIndex]?.reciter?.id === reciter.id;
+
+  const typeIcon = surah.type === 'مكية' || surah.type === 'Meccan'
+    ? Icons.makkah : Icons.madinah;
+
+  return `
+    <div class="surah-row group flex items-center gap-3 px-3 py-2.5 rounded-xl
+      hover:bg-surface-3 transition-colors cursor-default" data-surah-id="${surah.id}">
+
+      <!-- Number -->
+      <span class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg
+        bg-surface-3 text-xs font-bold text-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+        ${surah.id}
+      </span>
+
+      <!-- Name + type -->
+      <div class="flex-1 min-w-0">
+        <span class="text-sm font-medium text-text">${surah.name}</span>
+        <span class="text-xs text-muted mx-1.5">${typeIcon}</span>
+      </div>
+
+      <!-- Playing indicator -->
+      ${isPlaying ? `<span class="text-primary w-4 h-4">${Icons.playing}</span>` : ''}
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button class="play-btn w-7 h-7 rounded-lg flex items-center justify-center
+          bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
+          aria-label="${t('playNow')} ${surah.name}">
+          <span class="w-3.5 h-3.5">${Icons.play}</span>
+        </button>
+        <button class="queue-btn w-7 h-7 rounded-lg flex items-center justify-center
+          bg-surface-3 text-muted hover:bg-primary/10 hover:text-primary transition-colors"
+          aria-label="${t('addToQueue')} ${surah.name}">
+          <span class="w-3.5 h-3.5">${Icons.queue}</span>
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── Filter Dropdowns ─────────────────────────────────────────
+
+export function renderLanguages(languages, currentLang) {
+  const sel = $('language-select');
+  if (!sel) return;
+  sel.innerHTML = languages.map((l) =>
+    `<option value="${l.language_code}" ${l.language_code === currentLang ? 'selected' : ''}>
+      ${l.native_name || l.language_name}
+    </option>`
+  ).join('');
+}
+
+export function renderRiwayat(riwayat) {
+  const sel = $('riwaya-select');
+  if (!sel) return;
+  sel.innerHTML = `<option value="" data-i18n="allRiwayat">${t('allRiwayat')}</option>` +
+    riwayat.map((r) => `<option value="${r.rewaya_id}">${r.name}</option>`).join('');
+}
+
+export function renderSurahFilter(surahs) {
+  const sel = $('surah-select');
+  if (!sel) return;
+  sel.innerHTML = `<option value="" data-i18n="allSurahs">${t('allSurahs')}</option>` +
+    surahs.map((s) => `<option value="${s.id}">${s.id}. ${s.name}</option>`).join('');
+}
+
+// ── Queue Panel ──────────────────────────────────────────────
+
+export function renderQueue(handlers) {
+  const list        = $('queue-list');
+  const placeholder = $('queue-placeholder');
+  const badge       = $('queue-badge');
+
+  if (!list) return;
+
+  if (badge) badge.textContent = state.queue.length || '';
+
+  if (!state.queue.length) {
+    list.innerHTML = '';
+    placeholder?.classList.remove('hidden');
+    return;
+  }
+
+  placeholder?.classList.add('hidden');
+
+  list.innerHTML = state.queue.map((track, i) => {
+    const isCurrent = i === state.currentIndex;
+    return `
+      <div class="queue-item group flex items-center gap-3 px-3 py-2.5 rounded-xl
+        transition-colors cursor-pointer
+        ${isCurrent ? 'bg-primary/10 text-primary' : 'hover:bg-surface-3 text-text'}"
+        data-index="${i}" role="listitem">
+
+        <!-- Index / playing icon -->
+        <span class="w-5 h-5 flex-shrink-0 flex items-center justify-center text-xs font-bold">
+          ${isCurrent ? `<span class="w-4 h-4">${Icons.playing}</span>` : i + 1}
+        </span>
+
+        <!-- Track info -->
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">${track.surah?.name ?? ''}</p>
+          <p class="text-xs text-muted truncate">${track.reciter?.name ?? ''}</p>
+        </div>
+
+        <!-- Remove button -->
+        <button class="remove-btn w-6 h-6 rounded-md flex items-center justify-center
+          opacity-0 group-hover:opacity-100 text-muted hover:text-red-500 transition-all"
+          aria-label="${t('removeFromQueue')}">
+          <span class="w-3.5 h-3.5">${Icons.close}</span>
+        </button>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.queue-item').forEach((item) => {
+    const idx = parseInt(item.dataset.index, 10);
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.remove-btn')) return;
+      handlers.playTrackAtIndex(idx);
+    });
+    item.querySelector('.remove-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handlers.removeFromQueue(idx);
+    });
+  });
+}
+
+// ── Now Playing Bar ──────────────────────────────────────────
+
+export function updateNowPlaying(track) {
+  const titleEl    = $('now-playing-title');
+  const reciterEl  = $('now-playing-reciter');
+  const surahNumEl = $('now-playing-surah-num');
+
+  if (!track) {
+    if (titleEl)    titleEl.textContent   = t('nowPlaying');
+    if (reciterEl)  reciterEl.textContent = '';
+    if (surahNumEl) surahNumEl.textContent = '';
+    return;
+  }
+
+  if (titleEl)    titleEl.textContent   = track.surah?.name ?? '';
+  if (reciterEl)  reciterEl.textContent = track.reciter?.name ?? '';
+  if (surahNumEl) surahNumEl.textContent = track.surah?.id ?? '';
+}
+
+export function updateProgress(currentTime, duration) {
+  const bar      = $('progress-bar');
+  const current  = $('current-time');
+  const total    = $('total-duration');
+
+  const pct = duration ? (currentTime / duration) * 100 : 0;
+
+  if (bar)     bar.style.width = `${pct}%`;
+  if (current) current.textContent = formatTime(currentTime);
+  if (total)   total.textContent   = formatTime(duration);
+}
+
+export function updatePlayerControls(isPlaying) {
+  const playIcon  = $('play-icon');
+  const pauseIcon = $('pause-icon');
+
+  if (playIcon)  playIcon.classList.toggle('hidden', isPlaying);
+  if (pauseIcon) pauseIcon.classList.toggle('hidden', !isPlaying);
+}
+
+export function updateRepeatBtn() {
+  const btn = $('repeat-btn');
+  if (!btn) return;
+
+  const modes = {
+    off: { icon: Icons.repeat,    cls: 'text-muted',   title: t('repeat') },
+    one: { icon: Icons.repeatOne, cls: 'text-primary', title: t('repeatOne') },
+    all: { icon: Icons.repeat,    cls: 'text-primary', title: t('repeatAll') },
+  };
+
+  const m = modes[state.repeatMode] || modes.off;
+  btn.innerHTML = `<span class="w-5 h-5">${m.icon}</span>`;
+  btn.className = btn.className.replace(/text-\w+/g, '') + ` ${m.cls}`;
+  btn.title = m.title;
+}
+
+export function updateShuffleBtn() {
+  const btn = $('shuffle-btn');
+  if (!btn) return;
+  btn.classList.toggle('text-primary', state.isShuffled);
+  btn.classList.toggle('text-muted', !state.isShuffled);
+}
+
+// ── Sleep Timer Display ──────────────────────────────────────
+
+export function updateSleepTimerDisplay(secondsRemaining) {
+  const display = $('sleep-timer-display');
+  const cancel  = $('cancel-sleep-btn');
+
+  if (!display) return;
+
+  if (secondsRemaining <= 0) {
+    display.textContent = '';
+    cancel?.classList.add('hidden');
+    return;
+  }
+
+  display.textContent = formatTime(secondsRemaining);
+  cancel?.classList.remove('hidden');
+}
+
+// ── Recently Played ──────────────────────────────────────────
+
+export function renderRecentlyPlayed(handlers) {
+  const container = $('recently-played');
+  if (!container) return;
+
+  if (!state.recentlyPlayed.length) {
+    container.classList.add('hidden');
+    return;
+  }
+
+  container.classList.remove('hidden');
+  const list = container.querySelector('.recent-list');
+  if (!list) return;
+
+  list.innerHTML = state.recentlyPlayed.map((track) => `
+    <div class="recent-track flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-3
+      cursor-pointer transition-colors" data-key="${track.reciter?.id}-${track.moshaf?.id}-${track.surah?.id}">
+      <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center
+        text-sm font-bold text-white bg-gradient-to-br from-teal-500 to-teal-700">
+        ${track.reciter?.name?.charAt(0) ?? '?'}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-text truncate">${track.surah?.name ?? ''}</p>
+        <p class="text-xs text-muted truncate">${track.reciter?.name ?? ''}</p>
+      </div>
+      <span class="w-4 h-4 text-primary flex-shrink-0">${Icons.history}</span>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.recent-track').forEach((item) => {
+    item.addEventListener('click', () => {
+      const [rid, mid, sid] = item.dataset.key.split('-');
+      const track = state.recentlyPlayed.find(
+        (t) => String(t.reciter?.id) === rid &&
+               String(t.moshaf?.id) === mid &&
+               String(t.surah?.id) === sid
+      );
+      if (track) handlers.playSurah(track);
+    });
+  });
+}
+
+// ── Home Placeholder (shown when no reciter selected) ────────
+
+export function showDetailsPlaceholder() {
+  $('reciter-details')?.classList.add('hidden');
+  $('details-placeholder')?.classList.remove('hidden');
+}
+
+// ── Speed display ────────────────────────────────────────────
+
+export function updateSpeedDisplay(rate) {
+  const el = $('speed-display');
+  if (el) el.textContent = `${rate}×`;
 }

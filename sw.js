@@ -1,76 +1,107 @@
-// The version of the cache.
-const CACHE_VERSION = 'v1';
-const CACHE_NAME = `quran-player-${CACHE_VERSION}`;
+// ============================================================
+// sw.js — Service Worker
+// Cache strategies: App Shell = Cache First, Fonts = SWR, API = Network Only
+// ============================================================
 
-// The core files of the application that should always be cached.
-// These paths are relative to the root of your site.
-const URLS_TO_CACHE = [
-  '.',
-  'index.html',
-  'manifest.json',
-  'js/main.js',
-  'js/api.js',
-  'js/ui.js',
-  'js/player.js',
-  'js/storage.js',
-  'js/utils.js',
-  // تم حذف سطر cdn.tailwindcss.com من هنا لأنه يسبب خطأ CORS
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap'
+const VERSION    = 'v2';
+const CACHE_NAME = `quran-player-${VERSION}`;
+
+const APP_SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/js/state.js',
+  '/js/utils.js',
+  '/js/storage.js',
+  '/js/api.js',
+  '/js/i18n.js',
+  '/js/ui.js',
+  '/js/player.js',
+  '/js/main.js',
 ];
 
-// 1. Installation: Cache the core files of the app.
+// ── Install: Cache app shell ─────────────────────────────────
+
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Install');
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching app shell');
-      return cache.addAll(URLS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
   );
+  self.skipWaiting();
 });
 
-// 2. Activation: Clean up old caches.
+// ── Activate: Clean old caches ───────────────────────────────
+
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activate');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
+      )
+    )
   );
-  return self.clients.claim();
+  self.clients.claim();
 });
 
-// 3. Fetch: Serve from cache first, then network.
+// ── Fetch: Strategy router ───────────────────────────────────
+
 self.addEventListener('fetch', (event) => {
-  // We only want to cache GET requests.
-  if (event.request.method !== 'GET') {
-    return;
-  }
-  
-  // For API requests to mp3quran.net, always go to the network.
-  if (event.request.url.includes('mp3quran.net')) {
+  if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // ── Network Only: API calls and audio files ──────────────
+  if (
+    url.hostname === 'mp3quran.net' ||
+    url.pathname.endsWith('.mp3')
+  ) {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // If the request is in the cache, return it.
-      if (response) {
-        // console.log('[Service Worker] Returning from cache:', event.request.url);
-        return response;
-      }
+  // ── Stale While Revalidate: Google Fonts ────────────────
+  if (
+    url.hostname === 'fonts.googleapis.com' ||
+    url.hostname === 'fonts.gstatic.com'
+  ) {
+    event.respondWith(staleWhileRevalidate(event.request));
+    return;
+  }
 
-      // If the request is not in the cache, fetch it from the network.
-      // console.log('[Service Worker] Fetching from network:', event.request.url);
-      return fetch(event.request);
-    })
-  );
+  // ── Cache First: App shell and static assets ────────────
+  event.respondWith(cacheFirst(event.request));
 });
+
+// ── Strategy implementations ─────────────────────────────────
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    // Offline fallback: return index.html for navigation requests
+    if (request.mode === 'navigate') {
+      return caches.match('/index.html');
+    }
+    return new Response('Offline', { status: 503 });
+  }
+}
+
+async function staleWhileRevalidate(request) {
+  const cache  = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+
+  const fetchPromise = fetch(request).then((response) => {
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+
+  return cached || (await fetchPromise) || new Response('Offline', { status: 503 });
+}

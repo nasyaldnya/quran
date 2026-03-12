@@ -1,326 +1,745 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>مكتبة القرآن الكريم الصوتية - استمع وحمل المصحف MP3</title>
-    <meta name="description" content="استمع إلى القرآن الكريم كاملاً بأصوات أشهر القراء في العالم الإسلامي مثل عبد الباسط عبد الصمد، مشاري العفاسي، وغيرهم. تحميل مباشر بصيغة MP3 وبروايات متعددة.">
-    <meta name="keywords" content="قرآن كريم, mp3, تحميل, استماع, المصحف, عبد الباسط, العفاسي, قرآن صوتي">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="استمع إلى القرآن الكريم بأصوات نخبة من القراء" />
+  <meta name="theme-color" content="#0d9488" />
+  <meta property="og:title" content="مكتبة القرآن الكريم الصوتية" />
+  <meta property="og:description" content="استمع إلى القرآن الكريم بأصوات نخبة من القراء" />
 
-    <meta name="google-site-verification" content="q9LebJDuo52pR8rs2sliNBVQsvUcgfq8Nisz_T8916M" />
+  <title>مكتبة القرآن الكريم الصوتية</title>
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0d9488">
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192x192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f3f4f6;
-            --text-color: #1f2937;
-            --card-bg: #ffffff;
-            --primary-color: #0d9488;
-            --primary-color-hover: #0f766e;
-            --secondary-bg: #f9fafb;
-            --border-color: #e5e7eb;
-            --player-bg: rgba(249, 250, 251, 0.95);
-            --icon-color: #4b5563;
-        }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-        html.dark {
-            --bg-color: #000000;
-            --text-color: #f3f4f6;
-            --card-bg: #111827;
-            --primary-color: #2dd4bf;
-            --primary-color-hover: #5eead4;
-            --secondary-bg: #1f2937;
-            --border-color: #374151;
-            --player-bg: rgba(17, 24, 39, 0.95);
-            --icon-color: #d1d5db;
-        }
-        
-        body {
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+  <!-- Tailwind (CDN for GitHub Pages — no build step needed) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        .bg-card { background-color: var(--card-bg); }
-        .bg-secondary { background-color: var(--secondary-bg); }
-        .border-custom { border-color: var(--border-color); }
-        .text-primary { color: var(--primary-color); }
-        .bg-primary { background-color: var(--primary-color); }
-        .hover\:bg-primary-hover:hover { background-color: var(--primary-color-hover); }
-        .text-icon { color: var(--icon-color); }
-        
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--secondary-bg); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #a0aec0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #718096; }
+  <!-- Howler.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: var(--primary-color);
-            animation: spin 1s ease infinite;
-        }
-        
-        .playing { background-color: var(--primary-color) !important; color: white !important; font-weight: 700; }
-        .queue-item-playing { background-color: rgba(13, 148, 136, 0.1); border-right: 4px solid var(--primary-color); }
-        
-        .favorite-star.favorited { color: #f59e0b; }
-        .dragging { opacity: 0.5; background: #e0f2fe; }
-        
-        #player-container {
-            transition: max-height 0.5s ease-in-out, transform 0.3s ease-in-out;
-            max-height: 220px;
-            background-color: var(--player-bg);
-        }
-        #player-container.queue-open { max-height: 85vh; }
+  <script>
+    // Tailwind config — must run before body renders
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            arabic: ['Cairo', 'Amiri', 'sans-serif'],
+            display: ['Amiri', 'serif'],
+          },
+          colors: {
+            primary:  { DEFAULT: '#0d9488', dark: '#0f766e', light: '#14b8a6' },
+            surface:  {
+              1: 'var(--surface-1)',
+              2: 'var(--surface-2)',
+              3: 'var(--surface-3)',
+            },
+          },
+          animation: {
+            'slide-up':   'slideUp 0.3s ease-out',
+            'fade-in':    'fadeIn 0.4s ease-out',
+            'scale-in':   'scaleIn 0.25s ease-out',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+          },
+          keyframes: {
+            slideUp:  { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+            fadeIn:   { from: { opacity: 0 }, to: { opacity: 1 } },
+            scaleIn:  { from: { opacity: 0, transform: 'scale(0.95)' }, to: { opacity: 1, transform: 'scale(1)' } },
+          },
+        },
+      },
+    };
+  </script>
 
-        @keyframes fade-in-out {
-            0% { opacity: 0; transform: translateX(100%); }
-            10%, 90% { opacity: 1; transform: translateX(0); }
-            100% { opacity: 0; transform: translateX(100%); }
-        }
-        .animate-toast { animation: fade-in-out 3s ease-in-out forwards; }
-        
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
+  <style>
+    /* ── CSS Variables ─────────────────────────────────────── */
+    :root {
+      --surface-1: #f8faf9;
+      --surface-2: #ffffff;
+      --surface-3: #f1f5f4;
+      --border:    #e2e8e7;
+      --text:      #0f2927;
+      --muted:     #6b8a87;
+      --skeleton:  #e5ecea;
+      --primary:   #0d9488;
+    }
+    .dark {
+      --surface-1: #090f0e;
+      --surface-2: #111a19;
+      --surface-3: #1a2726;
+      --border:    #1f3130;
+      --text:      #e8f4f3;
+      --muted:     #5a8280;
+      --skeleton:  #1a2726;
+      --primary:   #14b8a6;
+    }
 
-        @keyframes skeleton-loading {
-            0% { background-position: 100% 50%; }
-            100% { background-position: -100% 50%; }
-        }
-        .skeleton-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            background-color: var(--card-bg);
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem;
-        }
-        .skeleton-text {
-            height: 1.25rem;
-            width: 80%;
-            border-radius: 0.375rem;
-            background: linear-gradient(90deg, 
-                var(--secondary-bg) 25%, 
-                var(--border-color) 50%, 
-                var(--secondary-bg) 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-        }
-    </style>
-	
-	<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "tm2leg0s1b");
-</script>
-	
+    /* ── Base ──────────────────────────────────────────────── */
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--surface-1);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Custom Scrollbar ──────────────────────────────────── */
+    .custom-scrollbar::-webkit-scrollbar        { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 99px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ── Glassmorphism player bar ──────────────────────────── */
+    .glass {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(13, 148, 136, 0.15);
+    }
+    .dark .glass {
+      background: rgba(17, 26, 25, 0.92);
+      border-top: 1px solid rgba(20, 184, 166, 0.12);
+    }
+
+    /* ── Queue panel ──────────────────────────────────────── */
+    #queue-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #queue-panel.queue-open {
+      max-height: 480px;
+    }
+
+    /* ── Progress bar ─────────────────────────────────────── */
+    #progress-container {
+      cursor: pointer;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--border);
+      position: relative;
+      overflow: visible;
+    }
+    #progress-container:hover { height: 6px; }
+    #progress-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(to left, #0d9488, #14b8a6);
+      transition: width 0.1s linear;
+      position: relative;
+    }
+    #progress-bar::after {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13,148,136,0.2);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #progress-container:hover #progress-bar::after { opacity: 1; }
+
+    /* ── Active states ────────────────────────────────────── */
+    .reciter-card:focus-visible  { outline: 2px solid var(--primary); outline-offset: 2px; }
+    button:focus-visible          { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* ── Typography ───────────────────────────────────────── */
+    .font-display { font-family: 'Amiri', serif; }
+
+    /* ── Loader overlay ───────────────────────────────────── */
+    #global-loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--surface-1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+    #global-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loader-ring {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Accessibility ────────────────────────────────────── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+
+    /* ── Responsive layout adjustments ───────────────────── */
+    @media (max-width: 768px) {
+      .three-col { grid-template-columns: 1fr; }
+    }
+
+    /* ── Inline color tokens as Tailwind-compatible classes ─ */
+    .bg-surface-1  { background-color: var(--surface-1); }
+    .bg-surface-2  { background-color: var(--surface-2); }
+    .bg-surface-3  { background-color: var(--surface-3); }
+    .border-border { border-color: var(--border); }
+    .text-text     { color: var(--text); }
+    .text-muted    { color: var(--muted); }
+    .bg-skeleton   { background-color: var(--skeleton); }
+    .text-primary  { color: var(--primary); }
+    .bg-primary    { background-color: var(--primary); }
+    .border-primary { border-color: var(--primary); }
+    .ring-primary  { --tw-ring-color: var(--primary); }
+    .hover\:bg-primary-dark:hover { background-color: #0f766e; }
+    .hover\:bg-surface-3:hover { background-color: var(--surface-3); }
+    .hover\:border-primary\/30:hover { border-color: rgba(13,148,136,0.3); }
+    .hover\:border-primary\/50:hover { border-color: rgba(13,148,136,0.5); }
+    .bg-primary\/10 { background-color: rgba(13,148,136,0.1); }
+    .hover\:bg-primary\/10:hover { background-color: rgba(13,148,136,0.1); }
+    .ring-2 { box-shadow: 0 0 0 2px var(--primary); }
+  </style>
 </head>
-<body>
 
-    <div class="container mx-auto p-4 md:p-6 mb-48">
-        <header class="text-center mb-8 md:relative">
-            <div class="flex justify-center md:absolute md:top-0 md:left-4 mb-2 md:mb-0">
-                <button id="theme-toggle" aria-label="تبديل الوضع" class="flex items-center gap-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    <span class="text-xl">🌗</span>
-                    <span id="theme-text" class="text-sm font-semibold" data-i18n-key="themeNight"></span>
-                </button>
-            </div>
-            <h1 class="text-3xl md:text-4xl font-bold text-primary" data-i18n-key="mainTitle">مكتبة القرآن الكريم الصوتية</h1>
-            <p class="text-gray-600 dark:text-gray-300 mt-2" data-i18n-key="mainSubtitle">استمع إلى القرآن الكريم بأصوات نخبة من القراء من جميع أنحاء العالم</p>
-        </header>
+<body class="font-arabic min-h-screen bg-surface-1 text-text">
 
-        <div class="bg-card p-4 rounded-xl shadow-lg mb-6 md:sticky top-2 z-10">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label for="language-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectLanguageLabel">اختر اللغة</label>
-                    <select id="language-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10"></select>
-                </div>
-                <div>
-                    <label for="riwaya-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectRiwayaLabel">اختر الرواية</label>
-                    <select id="riwaya-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10">
-                        <option value="" data-i18n-key="allRiwayat">كل الروايات</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="surah-select" class="block mb-2 text-sm font-medium" data-i18n-key="selectSurahLabel">البحث بالقراء حسب السورة</label>
-                    <select id="surah-select" class="form-select-custom bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full py-2.5 pr-2.5 pl-10">
-                        <option value="" data-i18n-key="allSurahs">كل السور</option>
-                    </select>
-                </div>
-            </div>
+  <!-- ── Global Loader ──────────────────────────────────────── -->
+  <div id="global-loader" aria-label="جارٍ التحميل" role="status">
+    <div class="loader-ring"></div>
+    <p class="text-muted text-sm font-medium" data-i18n="loading">جارٍ التحميل…</p>
+  </div>
+
+  <!-- ── Toast Container ────────────────────────────────────── -->
+  <div id="toast-container" class="fixed bottom-40 left-1/2 -translate-x-1/2 z-50
+    flex flex-col items-center gap-2 pointer-events-none w-max max-w-xs"
+    aria-live="polite" role="status"></div>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header class="sticky top-0 z-30 bg-surface-2 border-b border-border">
+    <div class="max-w-screen-xl mx-auto px-4 py-3 flex items-center gap-3">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-2.5 flex-shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700
+          flex items-center justify-center shadow-sm">
+          <span class="text-white text-xs font-bold font-display">ق</span>
+        </div>
+        <span class="font-display text-lg font-bold text-text hidden sm:block"
+          data-i18n="appName">مكتبة القرآن</span>
+      </div>
+
+      <!-- Spacer -->
+      <div class="flex-1"></div>
+
+      <!-- Controls row -->
+      <div class="flex items-center gap-2">
+
+        <!-- Language select -->
+        <select id="language-select"
+          class="text-xs bg-surface-3 border border-border rounded-lg px-2 py-1.5
+            text-text focus:border-primary focus:outline-none transition-colors cursor-pointer"
+          aria-label="اختر اللغة">
+        </select>
+
+        <!-- Theme toggle -->
+        <button id="theme-toggle"
+          class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-3
+            text-muted hover:text-primary hover:bg-primary/10 transition-colors border border-border"
+          aria-label="تغيير المظهر">
+          <span id="theme-icon" class="w-4 h-4">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+          </span>
+        </button>
+
+        <!-- Keyboard shortcuts -->
+        <button id="shortcuts-toggle"
+          class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-3
+            text-muted hover:text-primary hover:bg-primary/10 transition-colors border border-border"
+          aria-label="اختصارات لوحة المفاتيح" title="?">
+          <span class="text-xs font-bold">?</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Layout ─────────────────────────────────────────── -->
+  <main class="max-w-screen-xl mx-auto px-4 py-5 pb-52
+    grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[260px_1fr_340px] gap-5">
+
+    <!-- ═══════════════════════════════════════════════════════
+         COLUMN 1 — Filters + Reciters List
+    ═══════════════════════════════════════════════════════ -->
+    <aside class="flex flex-col gap-4">
+
+      <!-- Filter bar -->
+      <div class="bg-surface-2 rounded-2xl border border-border p-4 flex flex-col gap-3 shadow-sm">
+        <h2 class="text-xs font-semibold text-muted uppercase tracking-wider">الفلاتر</h2>
+
+        <!-- Riwaya -->
+        <div>
+          <label class="text-xs text-muted mb-1 block" data-i18n="riwaya">الرواية</label>
+          <select id="riwaya-select"
+            class="w-full text-sm bg-surface-3 border border-border rounded-xl px-3 py-2
+              text-text focus:border-primary focus:outline-none transition-colors">
+          </select>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
-            
-            <div class="lg:col-span-3">
-                <h2 class="text-xl font-semibold mb-4" data-i18n-key="recitersListTitle">قائمة القراء</h2>
-                <div class="mb-4">
-                    <input type="search" id="search-reciter-input" placeholder="ابحث عن قارئ..." data-i18n-key="searchReciterPlaceholder" class="bg-secondary border border-custom text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5">
-                </div>
-                <div id="loader" class="flex justify-center items-center h-64">
-                    <div class="spinner"></div>
-                </div>
-                <div id="reciters-list" class="bg-card rounded-xl shadow-lg p-3 space-y-1 h-[75vh] overflow-y-auto relative">
-                </div>
-            </div>
+        <!-- Surah filter -->
+        <div>
+          <label class="text-xs text-muted mb-1 block" data-i18n="surah">السورة</label>
+          <select id="surah-select"
+            class="w-full text-sm bg-surface-3 border border-border rounded-xl px-3 py-2
+              text-text focus:border-primary focus:outline-none transition-colors">
+          </select>
+        </div>
+      </div>
 
-            <div class="lg:col-span-4">
-                 <h2 class="text-xl font-semibold mb-4" data-i18n-key="availableRecitationsTitle">التلاوات المتاحة</h2>
-                <div id="reciter-details" class="bg-card rounded-xl shadow-lg p-4 min-h-[75vh]">
-                     <div id="details-placeholder" class="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-300">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                         </svg>
-                         <p class="text-lg" data-i18n-key="detailsPlaceholder">الرجاء اختر قارئًا من القائمة لعرض تلاواته</p>
-                     </div>
-                </div>
-            </div>
+      <!-- Search -->
+      <div class="relative">
+        <span class="absolute top-1/2 -translate-y-1/2 right-3 text-muted w-4 h-4 pointer-events-none">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="m15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input id="search-input" type="search"
+          class="w-full bg-surface-2 border border-border rounded-2xl pr-9 pl-4 py-2.5
+            text-sm text-text placeholder-muted focus:border-primary focus:outline-none
+            transition-colors shadow-sm"
+          data-i18n-placeholder="searchPlaceholder"
+          placeholder="ابحث عن قارئ…"
+          aria-label="البحث عن قارئ" />
+      </div>
 
-            <div id="desktop-queue-container" class="lg:col-span-3 hidden lg:block">
-                <h2 class="text-xl font-semibold mb-4" data-i18n-key="queueTitle">قائمة التشغيل</h2>
+      <!-- Reciters list -->
+      <div id="reciters-list"
+        class="flex flex-col gap-2 max-h-[60vh] md:max-h-[calc(100vh-340px)] overflow-y-auto custom-scrollbar"
+        role="list" aria-label="قائمة القراء">
+      </div>
+
+    </aside>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COLUMN 2 — Reciter Details
+    ═══════════════════════════════════════════════════════ -->
+    <section class="min-h-[400px]">
+
+      <!-- Placeholder (shown before a reciter is selected) -->
+      <div id="details-placeholder"
+        class="h-full flex flex-col items-center justify-center text-muted py-20 gap-4">
+        <div class="w-20 h-20 rounded-2xl bg-surface-2 border border-border
+          flex items-center justify-center shadow-inner">
+          <span class="font-display text-4xl text-primary opacity-50">ق</span>
+        </div>
+        <div class="text-center">
+          <p class="font-medium text-sm" data-i18n="appTagline">استمع إلى كلام الله بأصوات نخبة من القراء</p>
+          <p class="text-xs mt-1 opacity-60">اختر قارئًا من القائمة</p>
+        </div>
+      </div>
+
+      <!-- Reciter details (hidden until selected) -->
+      <div id="reciter-details" class="hidden bg-surface-2 rounded-2xl border border-border p-5 shadow-sm">
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         COLUMN 3 — Queue Panel (desktop sidebar)
+    ═══════════════════════════════════════════════════════ -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-20">
+        <div class="bg-surface-2 rounded-2xl border border-border shadow-sm overflow-hidden">
+
+          <!-- Queue header -->
+          <div class="flex items-center justify-between px-4 py-3 border-b border-border">
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-4 text-primary">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9h14V7H3v2zm0 4h14v-2H3v2zm0 4h14v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm0 6h2v-2h-2v2z"/></svg>
+              </span>
+              <h3 class="text-sm font-semibold text-text" data-i18n="queue">قائمة التشغيل</h3>
+              <span id="queue-badge"
+                class="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5 font-medium min-w-[20px] text-center">
+              </span>
             </div>
+          </div>
+
+          <!-- Queue list -->
+          <div id="queue-list"
+            class="overflow-y-auto custom-scrollbar max-h-[calc(100vh-400px)] p-2"
+            role="list" aria-label="قائمة التشغيل">
+          </div>
+
+          <!-- Queue placeholder -->
+          <div id="queue-placeholder" class="py-10 flex flex-col items-center text-muted gap-2">
+            <svg class="w-10 h-10 opacity-30" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 9h14V7H3v2zm0 4h14v-2H3v2zm0 4h14v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm0 6h2v-2h-2v2z"/>
+            </svg>
+            <p class="text-xs" data-i18n="emptyQueue">قائمة التشغيل فارغة</p>
+          </div>
 
         </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ════════════════════════════════════════════════════════════
+       PLAYER BAR — Fixed bottom
+  ════════════════════════════════════════════════════════════ -->
+  <div id="player-bar"
+    class="glass fixed bottom-0 left-0 right-0 z-40">
+
+    <!-- Mobile Queue Toggle (above player bar) -->
+    <div class="lg:hidden border-b border-border/50">
+      <button id="queue-toggle-btn"
+        class="w-full flex items-center justify-between px-4 py-2 text-xs text-muted
+          hover:text-primary transition-colors"
+        aria-expanded="false" aria-controls="queue-panel">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 9h14V7H3v2zm0 4h14v-2H3v2zm0 4h14v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm0 6h2v-2h-2v2z"/>
+          </svg>
+          <span data-i18n="queue">قائمة التشغيل</span>
+          <span id="queue-badge-mobile"
+            class="bg-primary/10 text-primary rounded-full px-1.5 py-0 font-medium text-xs">
+          </span>
+        </span>
+        <svg class="w-3.5 h-3.5 transition-transform" id="queue-chevron" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+        </svg>
+      </button>
+
+      <!-- Mobile queue panel -->
+      <div id="queue-panel" class="px-3 pb-1 bg-surface-2/80">
+        <div id="queue-list-mobile"
+          class="overflow-y-auto custom-scrollbar max-h-48"
+          role="list"></div>
+        <div id="queue-placeholder-mobile"
+          class="py-4 text-center text-xs text-muted" data-i18n="emptyQueue">
+          قائمة التشغيل فارغة
+        </div>
+      </div>
     </div>
 
-    <footer id="player-container" class="fixed bottom-0 left-0 right-0 z-20 backdrop-blur-sm shadow-[0_-2px_15px_rgba(0,0,0,0.1)] transition-transform translate-y-full overflow-hidden rounded-t-xl">
-        <div class="container mx-auto h-full flex flex-col">
-            <div id="player-controls" class="p-4 flex-shrink-0">
-                 <div id="queue-handle" class="w-full flex justify-center pb-2 cursor-pointer lg:hidden">
-                     <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
-                 </div>
-                <div class="flex justify-between items-center mb-2">
-                    <div id="now-playing" class="text-right w-full overflow-hidden">
-                        <p class="font-bold text-primary truncate" data-i18n-key="nowPlayingDefault">لم يتم تحديد أي مقطع</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 truncate">-</p>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0 mr-4">
-                          <button id="toggle-queue-btn" aria-label="عرض قائمة التشغيل" title="قائمة التشغيل" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 lg:hidden">
-                               <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                          </button>
-                          <button id="copy-link-btn" aria-label="نسخ رابط السورة" title="نسخ رابط السورة" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" disabled>
-                            <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                          </button>
-                        <button id="download-btn" aria-label="تنزيل السورة" title="تنزيل السورة" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" disabled>
-                            <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        </button>
-                    </div>
-                </div>
+    <!-- ── Progress bar ────────────────────────────────────── -->
+    <div id="progress-container" class="mx-4 mt-3 mb-0" role="slider"
+      aria-label="مؤشر التقدم" aria-valuemin="0" aria-valuemax="100">
+      <div id="progress-bar" style="width:0%"></div>
+    </div>
 
-                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-300">
-                    <span id="current-time" class="font-mono">00:00</span>
-                    <div id="progress-bar-container" role="slider" aria-valuemin="0" aria-valuemax="100" class="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-full cursor-pointer group relative">
-                        <div id="progress-bar" class="h-full bg-primary rounded-full absolute top-0 right-0">
-                             <div class="absolute right-0 top-1/2 -mt-2 w-4 h-4 bg-primary rounded-full transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
-                    </div>
-                    <span id="total-duration" class="font-mono">00:00</span>
-                </div>
+    <!-- ── Main player controls ────────────────────────────── -->
+    <div class="px-4 pt-2 pb-3 flex flex-col gap-2">
 
-                <div id="eq-panel" class="hidden bg-secondary p-3 rounded-lg mt-3">
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                            <label for="eq-band-0" class="text-xs">Bass</label>
-                            <input type="range" id="eq-band-0" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
-                            <span class="text-xs font-mono" id="eq-val-0">0 dB</span>
-                        </div>
-                        <div>
-                            <label for="eq-band-1" class="text-xs">Mid</label>
-                            <input type="range" id="eq-band-1" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
-                            <span class="text-xs font-mono" id="eq-val-1">0 dB</span>
-                        </div>
-                        <div>
-                            <label for="eq-band-2" class="text-xs">Treble</label>
-                            <input type="range" id="eq-band-2" class="eq-slider w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" min="-10" max="10" value="0" step="1">
-                            <span class="text-xs font-mono" id="eq-val-2">0 dB</span>
-                        </div>
-                    </div>
-                </div>
+      <!-- Row 1: Now playing info -->
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Surah number badge -->
+        <div class="w-9 h-9 flex-shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
+          <span id="now-playing-surah-num" class="text-xs font-bold text-primary font-display"></span>
+        </div>
+        <!-- Track info -->
+        <div class="flex-1 min-w-0">
+          <p id="now-playing-title"
+            class="text-sm font-semibold text-text truncate leading-tight"
+            data-i18n="nowPlaying">يُشغَّل الآن</p>
+          <p id="now-playing-reciter"
+            class="text-xs text-muted truncate"></p>
+        </div>
+        <!-- Time -->
+        <div class="flex-shrink-0 text-xs text-muted tabular-nums flex items-center gap-1">
+          <span id="current-time">00:00</span>
+          <span class="opacity-40">/</span>
+          <span id="total-duration">00:00</span>
+        </div>
+      </div>
 
-                <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mt-2">
-                     <div class="flex items-center gap-3 order-2 sm:order-1">
-                         <button id="prev-btn" aria-label="السابق" title="السابق" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden" disabled>
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 10l1.293-1.293z" clip-rule="evenodd" transform="scale(-1, 1) translate(-20, 0)" /></svg>
-                         </button>
-                         <button id="play-pause-btn" aria-label="تشغيل" class="w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full hover:bg-primary-hover shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 relative overflow-hidden">
-                             <svg id="play-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                             <svg id="pause-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                         </button>
-                         <button id="next-btn" aria-label="التالي" title="التالي" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden" disabled>
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 10l1.293-1.293z" clip-rule="evenodd" /></svg>
-                         </button>
-                         <button id="repeat-btn" aria-label="تكرار" title="تكرار" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom" data-i18n-key="repeat">تكرار</button>
-                         <button id="shuffle-btn-player" aria-label="تشغيل عشوائي" title="تشغيل عشوائي" aria-pressed="false" class="px-3 py-1 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative overflow-hidden border border-custom" data-i18n-key="shuffle">خَلْط</button>
-                         <button id="eq-toggle-btn" aria-label="معادل الصوت" title="معادل الصوت" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                            <svg class="w-5 h-5 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path><path d="M7 4v4M12 10v4M17 16v4"></path></svg>
-                        </button>
-                     </div>
+      <!-- Row 2: Transport buttons -->
+      <div class="flex items-center justify-between">
 
-                    <div class="flex items-center gap-2 text-xs order-1 sm:order-2 flex-wrap justify-center">
-                        <canvas id="visualizer" width="100" height="20" class="block"></canvas>
-                        <span data-i18n-key="sleepTimer">مؤقت النوم</span>
-                        <button data-time="15" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">15 د</button>
-                        <button data-time="30" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">30 د</button>
-                        <button data-time="45" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">45 د</button>
-                        <button data-time="60" class="sleep-timer-btn px-2 py-1 rounded-md border border-custom hover:bg-gray-200 dark:hover:bg-gray-700">60 د</button>
-                        <span id="sleep-timer-display" class="font-mono w-12 text-center text-primary"></span>
-                        <button id="cancel-sleep-timer-btn" class="hidden text-red-500 hover:underline" data-i18n-key="cancelSleepTimer">إلغاء</button>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 order-3">
-                        <label for="playback-speed" class="text-sm" data-i18n-key="playbackSpeed">السرعة</label>
-                        <select id="playback-speed" class="bg-secondary border border-custom text-xs rounded-lg focus:ring-teal-500 focus:border-teal-500 p-1">
-                            <option value="0.75">0.75x</option>
-                            <option value="1" selected>1x</option>
-                            <option value="1.25">1.25x</option>
-                            <option value="1.5">1.5x</option>
-                            <option value="2">2x</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="queue-panel" class="flex-grow overflow-y-auto p-4 pt-0">
-                 <div id="queue-list" class="space-y-2">
-                     <p id="queue-placeholder" class="text-center text-gray-500 dark:text-gray-300 p-8" data-i18n-key="queuePlaceholder">قائمة التشغيل فارغة.</p>
-                 </div>
-            </div>
+        <!-- Left group: shuffle + repeat -->
+        <div class="flex items-center gap-1">
+          <button id="shuffle-btn"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="shuffle" aria-label="تشغيل عشوائي">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17zm4.76-.18 3.65 3.65-3.65 3.65V14h-.34c-.96 0-1.86-.48-2.56-1.24l-1.4-1.57-1.42 1.42 1.37 1.53C11.68 15.38 13.09 16 14.65 16H16v2l4-4-4-4v2h-.65zm-4.76 7.01L8.08 17.6 9.5 19l5.17-5.17-1.41-1.42z"/>
+            </svg>
+          </button>
+          <button id="repeat-btn"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="repeat" aria-label="تكرار">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Center: prev / play / next -->
+        <div class="flex items-center gap-2">
+          <button id="prev-btn"
+            class="w-9 h-9 rounded-xl flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="previous" aria-label="السابق">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+            </svg>
+          </button>
+
+          <button id="play-pause-btn"
+            class="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center
+              hover:bg-primary-dark active:scale-95 transition-all shadow-lg shadow-primary/25"
+            data-i18n-aria="play" aria-label="تشغيل / إيقاف">
+            <span id="play-icon" class="w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            <span id="pause-icon" class="w-6 h-6 hidden">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </span>
+          </button>
+
+          <button id="next-btn"
+            class="w-9 h-9 rounded-xl flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="next" aria-label="التالي">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Right group: speed + bookmark + more -->
+        <div class="flex items-center gap-1">
+
+          <!-- Speed -->
+          <div class="relative group">
+            <button class="w-8 h-8 rounded-lg flex items-center justify-center
+              text-muted hover:text-primary hover:bg-primary/10 transition-colors"
+              aria-label="سرعة التشغيل">
+              <span id="speed-display" class="text-xs font-bold tabular-nums">1×</span>
+            </button>
+            <select id="playback-speed"
+              class="absolute inset-0 opacity-0 cursor-pointer w-full"
+              aria-label="سرعة التشغيل">
+              <option value="0.5">0.5×</option>
+              <option value="0.75">0.75×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.25">1.25×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2×</option>
+            </select>
+          </div>
+
+          <!-- Bookmark -->
+          <button id="bookmark-btn"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="bookmark" aria-label="إشارة مرجعية">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </button>
+
+          <!-- Sleep timer toggle -->
+          <button id="sleep-timer-toggle"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors relative"
+            data-i18n-aria="sleepTimer" aria-label="مؤقت النوم">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+            </svg>
+            <span id="sleep-timer-display"
+              class="absolute -top-1 -left-1 text-[9px] font-bold text-primary bg-surface-2
+                border border-primary/30 rounded-full px-1 hidden tabular-nums min-w-[28px] text-center">
+            </span>
+          </button>
+
+          <!-- Download -->
+          <button id="download-btn"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="download" aria-label="تحميل">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z"/>
+            </svg>
+          </button>
+
+          <!-- Copy link -->
+          <button id="copy-link-btn"
+            class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+              hover:text-primary hover:bg-primary/10 transition-colors"
+            data-i18n-aria="share" aria-label="مشاركة الرابط">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+            </svg>
+          </button>
 
         </div>
-        <audio id="audio-player" class="hidden" crossOrigin="anonymous"></audio>
-    </footer>
+      </div>
+    </div>
+  </div>
 
-    <div id="toast-container" class="fixed bottom-24 md:bottom-52 right-4 z-50 space-y-2" aria-live="polite"></div>
-    
-    <script type="module" src="js/main.js"></script>
+  <!-- ════════════════════════════════════════════════════════
+       SLEEP TIMER PANEL (floating popup)
+  ════════════════════════════════════════════════════════ -->
+  <div id="sleep-timer-panel"
+    class="hidden fixed bottom-36 right-4 z-50 bg-surface-2 border border-border
+      rounded-2xl shadow-xl p-4 w-64 animate-scale-in">
+
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-text" data-i18n="sleepTimer">مؤقت النوم</h3>
+      <button id="cancel-sleep-btn"
+        class="hidden text-xs text-red-500 hover:text-red-600 font-medium transition-colors"
+        data-i18n="cancelTimer">إلغاء المؤقت</button>
+    </div>
+
+    <!-- Preset buttons -->
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <button class="sleep-btn px-3 py-2 rounded-xl bg-surface-3 text-text text-xs font-medium
+        hover:bg-primary/10 hover:text-primary border border-border hover:border-primary/30 transition-colors"
+        data-min="15" data-i18n="min15">١٥ دقيقة</button>
+      <button class="sleep-btn px-3 py-2 rounded-xl bg-surface-3 text-text text-xs font-medium
+        hover:bg-primary/10 hover:text-primary border border-border hover:border-primary/30 transition-colors"
+        data-min="30" data-i18n="min30">٣٠ دقيقة</button>
+      <button class="sleep-btn px-3 py-2 rounded-xl bg-surface-3 text-text text-xs font-medium
+        hover:bg-primary/10 hover:text-primary border border-border hover:border-primary/30 transition-colors"
+        data-min="60" data-i18n="min60">ساعة</button>
+      <button class="sleep-btn px-3 py-2 rounded-xl bg-surface-3 text-text text-xs font-medium
+        hover:bg-primary/10 hover:text-primary border border-border hover:border-primary/30 transition-colors"
+        data-min="90" data-i18n="min90">ساعة ونصف</button>
+    </div>
+
+    <!-- Custom duration -->
+    <div class="flex gap-2">
+      <input id="custom-sleep-input" type="number" min="1" max="300"
+        placeholder="دقائق"
+        class="flex-1 bg-surface-3 border border-border rounded-xl px-3 py-2 text-sm text-text
+          placeholder-muted focus:border-primary focus:outline-none transition-colors" />
+      <button id="custom-sleep-btn"
+        class="px-3 py-2 rounded-xl bg-primary text-white text-xs font-medium
+          hover:bg-primary-dark transition-colors">
+        ضبط
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       KEYBOARD SHORTCUTS MODAL
+  ════════════════════════════════════════════════════════ -->
+  <div id="shortcuts-modal"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4
+      bg-black/40 backdrop-blur-sm animate-fade-in"
+    role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+
+    <div class="bg-surface-2 rounded-2xl border border-border shadow-2xl w-full max-w-sm p-5 animate-scale-in">
+
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="shortcuts-title" class="font-semibold text-text" data-i18n="shortcuts">اختصارات لوحة المفاتيح</h2>
+        <button id="shortcuts-close"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-muted
+            hover:text-text hover:bg-surface-3 transition-colors">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutPlay">تشغيل / إيقاف</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">Space</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutNext">التالي</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">→</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutPrev">السابق</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">←</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutVolUp">رفع الصوت</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">↑</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutVolDown">خفض الصوت</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">↓</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutFav">تفضيل القارئ الحالي</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">F</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-border">
+          <span class="text-text" data-i18n="shortcutSleep">مؤقت النوم</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">S</kbd>
+        </div>
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-text" data-i18n="shortcutHelp">هذه النافذة</span>
+          <kbd class="px-2 py-0.5 rounded-md bg-surface-3 border border-border text-xs font-mono text-muted">?</kbd>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Accessibility announcer ─────────────────────────────── -->
+  <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ── Module scripts ──────────────────────────────────────── -->
+  <script>
+    // Hide loader once DOM is interactive
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small delay so fonts load before hiding
+      setTimeout(() => {
+        const loader = document.getElementById('global-loader');
+        if (loader) loader.classList.add('hidden');
+      }, 800);
+    });
+
+    // Close sleep panel + shortcuts on outside click
+    document.addEventListener('click', (e) => {
+      const panel = document.getElementById('sleep-timer-panel');
+      const toggle = document.getElementById('sleep-timer-toggle');
+      if (panel && !panel.classList.contains('hidden') &&
+          !panel.contains(e.target) && !toggle.contains(e.target)) {
+        panel.classList.add('hidden');
+      }
+      const modal = document.getElementById('shortcuts-modal');
+      if (modal && !modal.classList.contains('hidden') && e.target === modal) {
+        modal.classList.add('hidden');
+      }
+    });
+
+    // Mobile queue toggle chevron animation
+    document.getElementById('queue-toggle-btn')?.addEventListener('click', function() {
+      const panel = document.getElementById('queue-panel');
+      const chevron = document.getElementById('queue-chevron');
+      const isOpen = panel.classList.toggle('queue-open');
+      chevron.style.transform = isOpen ? 'rotate(180deg)' : '';
+      this.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Sleep timer display management
+    const sleepDisplay = document.getElementById('sleep-timer-display');
+    const sleepObserver = new MutationObserver(() => {
+      if (sleepDisplay) {
+        sleepDisplay.classList.toggle('hidden', !sleepDisplay.textContent.trim());
+      }
+    });
+    if (sleepDisplay) sleepObserver.observe(sleepDisplay, { childList: true, characterData: true, subtree: true });
+  </script>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
-
-<meta name="google-site-verification" content="q9LebJDuo52pR8rs2sliNBVQsvUcgfq8Nisz_T8916M" />

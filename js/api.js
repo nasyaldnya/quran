@@ -54,10 +54,14 @@ export const getLanguages = (signal) =>
   fetchData('languages', signal);
 
 /**
- * Fetch riwayat (recitation styles) in a given language
+ * Fetch riwayat (recitation styles) in a given language.
+ * Returns the array directly (not the wrapper object).
  */
-export const getRiwayat = (lang = 'ar', signal) =>
-  fetchData(`riwayat?language=${lang}`, signal);
+export const getRiwayat = async (lang = 'ar', signal) => {
+  const data = await fetchData(`riwayat?language=${lang}`, signal);
+  // API returns { riwayat: [...] } — guard against key name variants
+  return { riwayat: data?.riwayat ?? data?.rewayat ?? [] };
+};
 
 /**
  * Fetch all surahs with metadata in a given language
@@ -83,17 +87,23 @@ export const getReciters = ({ lang = 'ar', riwaya = '', surah = '' } = {}, signa
  * @returns {{ languages, riwayat, surahs, reciters }}
  */
 export async function loadInitialData(lang = 'ar', signal) {
-  const [languages, riwayat, surahs, recitersData] = await Promise.all([
+  const [languages, riwayatResp, surahsResp, recitersData] = await Promise.all([
     getLanguages(signal),
     getRiwayat(lang, signal),
     getSurahs(lang, signal),
     getReciters({ lang }, signal),
   ]);
 
+  // Log raw response in dev to catch field name mismatches early
+  if (riwayatResp) console.log('[api] riwayat sample:', Object.keys(riwayatResp));
+
+  // API may return { riwayat: [...] } — handle both casing
+  const riwayat = riwayatResp?.riwayat ?? riwayatResp?.rewayat ?? [];
+
   return {
     languages:  languages?.languages  ?? [],
-    riwayat:    riwayat?.riwayat      ?? [],
-    surahs:     surahs?.suwar         ?? [],
+    riwayat,
+    surahs:     surahsResp?.suwar      ?? [],
     reciters:   recitersData?.reciters ?? [],
   };
 }

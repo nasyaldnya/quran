@@ -395,8 +395,12 @@ export function renderLanguages(languages, currentLang) {
 export function renderRiwayat(riwayat) {
   const sel = $('riwaya-select');
   if (!sel) return;
-  sel.innerHTML = `<option value="" data-i18n="allRiwayat">${t('allRiwayat')}</option>` +
-    riwayat.map((r) => `<option value="${r.rewaya_id}">${r.name}</option>`).join('');
+  // API returns: { id, name } — NOT rewaya_id
+  sel.innerHTML = `<option value="">${t('allRiwayat')}</option>` +
+    riwayat.map((r) => {
+      const id = r.id ?? r.rewaya_id ?? '';   // fallback for safety
+      return `<option value="${id}">${r.name}</option>`;
+    }).join('');
 }
 
 export function renderSurahFilter(surahs) {

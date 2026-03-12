@@ -148,16 +148,37 @@ function updateThemeBtn(isDark) {
   translateDOM();
 }
 
+// ── Filter Data Loading ───────────────────────────────────────
+
+async function loadFilters(lang) {
+  // Reload riwayat and surahs for the selected language
+  const ctrl = new AbortController();
+  const [riwayatData, suwarData] = await Promise.all([
+    api.getRiwayat(lang, ctrl.signal),
+    api.getSurahs(lang, ctrl.signal),
+  ]);
+
+  const riwayat = riwayatData?.riwayat ?? [];
+  const surahs  = suwarData?.suwar     ?? [];
+
+  if (surahs.length) setState({ allSurahs: surahs });
+
+  ui.renderRiwayat(riwayat);
+  ui.renderSurahFilter(surahs.length ? surahs : state.allSurahs);
+}
+
 // ── Event Listeners ───────────────────────────────────────────
 
 function setupEventListeners() {
   // ── Filters
-  $('language-select')?.addEventListener('change', (e) => {
+  $('language-select')?.addEventListener('change', async (e) => {
     const lang = e.target.value;
     setLanguage(lang);
     setState({ activeLanguage: lang, activeRiwaya: '', activeSurah: '' });
     $('riwaya-select').value = '';
     $('surah-select').value  = '';
+    // Reload riwayat + surahs dropdowns for new language, then reload reciters
+    await loadFilters(lang);
     loadReciters();
   });
 

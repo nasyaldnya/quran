@@ -382,11 +382,15 @@ function surahRow(reciter, moshaf, surah) {
 
 export function renderLanguages(languages, currentLang) {
   const sel = $('language-select');
-  if (!sel) return;
-  // API returns: { language_code, language, native }
-  // Fall back through possible field names for resilience
+  if (!sel || !languages?.length) return;
+
+  // Log raw keys once so any mismatch is immediately visible in DevTools
+  console.log('[ui] language fields:', Object.keys(languages[0]));
+
   sel.innerHTML = languages.map((l) => {
+    // mp3quran v3 API returns: { language_code, language, native }
     const code  = l.language_code || l.code || '';
+    // 'native' is the script in its own language e.g. "عربي", "English"
     const label = l.native || l.native_name || l.language || l.language_name || code;
     return `<option value="${code}" ${code === currentLang ? 'selected' : ''}>${label}</option>`;
   }).join('');

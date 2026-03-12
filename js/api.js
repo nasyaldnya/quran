@@ -94,14 +94,16 @@ export async function loadInitialData(lang = 'ar', signal) {
     getReciters({ lang }, signal),
   ]);
 
-  // Log raw response in dev to catch field name mismatches early
-  if (riwayatResp) console.log('[api] riwayat sample:', Object.keys(riwayatResp));
+  // Log raw response keys to catch field name mismatches in DevTools
+  if (riwayatResp)  console.log('[api] riwayat keys:',  Object.keys(riwayatResp));
+  if (languages)    console.log('[api] languages keys:', Object.keys(languages));
 
   // API may return { riwayat: [...] } — handle both casing
   const riwayat = riwayatResp?.riwayat ?? riwayatResp?.rewayat ?? [];
 
   return {
-    languages:  languages?.languages  ?? [],
+    // API returns { languages: [...] } — guard against key variants
+    languages:  languages?.languages  ?? languages?.data ?? [],
     riwayat,
     surahs:     surahsResp?.suwar      ?? [],
     reciters:   recitersData?.reciters ?? [],

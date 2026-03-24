@@ -6,7 +6,7 @@ import path from 'path'
 // e.g., if your repo is 'https://github.com/username/my-quran', set base: '/my-quran/'
 export default defineConfig({
   plugins: [react()],
-  base: '/quran/',
+  base: '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

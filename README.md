@@ -60,7 +60,7 @@ quran/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/quran.git
+git clone https://github.com/nasyaldnya/quran.git
 cd quran
 
 # 2. Install dependencies
@@ -102,18 +102,7 @@ Repository Settings → Pages
   → Save
 ```
 
-Live URL: `https://YOUR_USERNAME.github.io/quran/`
-
----
-
-## ⚠️ Important: Rename for Your Repo
-
-If your GitHub repository is named something other than `quran`, update:
-
-```ts
-// vite.config.ts  — line 8
-base: '/YOUR_REPO_NAME/',
-```
+Live URL: `https://nasyaldnya.github.io/quran/`
 
 ---
 

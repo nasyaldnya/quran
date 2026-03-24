@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// ⚠️ IMPORTANT: Set this to your GitHub repository name — currently set to 'quran'.
-// e.g., if your repo is 'https://github.com/username/my-quran', set base: '/my-quran/'
+// Custom domain (mp3quran.cam) — base must be '/'
+// Only use '/quran/' if serving from https://nasyaldnya.github.io/quran/
 export default defineConfig({
   plugins: [react()],
   base: '/',

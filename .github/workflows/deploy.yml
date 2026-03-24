@@ -30,10 +30,13 @@ jobs:
         run: npx tsc --noEmit
 
       - name: 🏗️ Build Static Site
-        run: npm run build
+        run: npx vite build
         env:
           VITE_API_BASE_URL: https://www.mp3quran.net/api/v3
           VITE_API_LANGUAGE: ar
+
+      - name: 📄 Create 404.html for SPA routing
+        run: cp dist/index.html dist/404.html
 
       - name: 🌐 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

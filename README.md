@@ -106,17 +106,6 @@ Live URL: `https://nasyaldnya.github.io/quran/`
 
 ---
 
-## ⚠️ Important: Rename for Your Repo
-
-If your GitHub repository is named something other than `quran`, update:
-
-```ts
-// vite.config.ts  — line 8
-base: '/YOUR_REPO_NAME/',
-```
-
----
-
 ## 📖 API
 
 Audio data is fetched from the [Mp3Quran API v3](https://www.mp3quran.net/ar/api) — a free, public API. No authentication required.

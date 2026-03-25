@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { Howl } from 'howler'
 import { useAudioStore } from '@/store/audioStore'
+import { useSleepTimerStore } from '@/store/sleepTimerStore'
 
 // Singleton Howl instance — survives React re-renders and route changes
 let howl: Howl | null = null
@@ -76,6 +77,15 @@ export function useAudioPlayer() {
       onstop:   () => { setIsPlaying(false); clearSeekInterval() },
       onend:    () => {
         clearSeekInterval()
+
+        // Check sleep timer — if "end of surah" mode, pause and cancel
+        const sleepTimer = useSleepTimerStore.getState()
+        if (sleepTimer.mode === 'end-of-surah' && sleepTimer.isActive) {
+          sleepTimer.cancelTimer()
+          useAudioStore.getState().setIsPlaying(false)
+          return
+        }
+
         // Read fresh state via getState() — avoids stale closure over destructured values
         const { repeatMode: rm, playNext: pn, setIsPlaying: sip } = useAudioStore.getState()
         if (rm === 'one') {

@@ -8,6 +8,8 @@ import { useAudioStore } from '@/store/audioStore'
 import { useAudioPlayer } from '@/hooks/useAudioPlayer'
 import { formatTime } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import SleepTimerButton from './SleepTimerButton'
+import QuranTextToggle from './QuranTextToggle'
 
 // Waveform bars — classes written statically so Tailwind scanner never purges them
 const WAVEFORM_CLASSES = [
@@ -200,6 +202,12 @@ export default function AudioPlayer() {
                     aria-label="Volume"
                   />
                 </div>
+
+                {/* Quran Text */}
+                <QuranTextToggle />
+
+                {/* Sleep Timer */}
+                <SleepTimerButton />
 
                 {/* Close */}
                 <Button

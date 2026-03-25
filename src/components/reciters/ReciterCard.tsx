@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Headphones, PlayCircle } from 'lucide-react'
+import { Headphones, PlayCircle, Heart } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { useFavoritesStore } from '@/store/favoritesStore'
 import type { Reciter } from '@/types/api'
 
 interface ReciterCardProps {
@@ -12,6 +14,8 @@ interface ReciterCardProps {
 export default function ReciterCard({ reciter, index }: ReciterCardProps) {
   const totalSurahs = reciter.moshaf.reduce((acc, m) => acc + m.surah_total, 0)
   const moshafCount = reciter.moshaf.length
+  const { isReciterFav, toggleReciter } = useFavoritesStore()
+  const isFav = isReciterFav(reciter.id)
 
   return (
     <motion.div
@@ -40,10 +44,34 @@ export default function ReciterCard({ reciter, index }: ReciterCardProps) {
                   <PlayCircle className="w-3 h-3 text-primary" />
                 </div>
               </div>
-              <Badge variant="outline" className="text-xs">
-                <Headphones className="w-2.5 h-2.5 mr-1" />
-                {moshafCount} {moshafCount === 1 ? 'Riwaya' : 'Riwayat'}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">
+                  <Headphones className="w-2.5 h-2.5 mr-1" />
+                  {moshafCount} {moshafCount === 1 ? 'Riwaya' : 'Riwayat'}
+                </Badge>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    toggleReciter({
+                      id: reciter.id,
+                      name: reciter.name,
+                      letter: reciter.letter,
+                    })
+                  }}
+                  className="p-1.5 rounded-lg hover:bg-accent transition-colors"
+                  aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  <Heart
+                    className={cn(
+                      'w-4 h-4 transition-colors duration-200',
+                      isFav
+                        ? 'text-red-500 fill-red-500'
+                        : 'text-muted-foreground group-hover:text-foreground'
+                    )}
+                  />
+                </button>
+              </div>
             </div>
 
             {/* Name */}

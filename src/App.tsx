@@ -4,10 +4,13 @@ import { ThemeProvider } from '@/components/common/ThemeProvider'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import AudioPlayer from '@/components/layout/AudioPlayer'
+import QuranTextPanel from '@/components/layout/QuranTextPanel'
 import HomePage from '@/pages/HomePage'
 import RecitersPage from '@/pages/RecitersPage'
 import ReciterDetailPage from '@/pages/ReciterDetailPage'
 import SurahsPage from '@/pages/SurahsPage'
+import FavoritesPage from '@/pages/FavoritesPage'
+import HistoryPage from '@/pages/HistoryPage'
 
 export default function App() {
   const location = useLocation()
@@ -23,11 +26,14 @@ export default function App() {
               <Route path="/reciters"        element={<RecitersPage />} />
               <Route path="/reciters/:id"    element={<ReciterDetailPage />} />
               <Route path="/surahs"          element={<SurahsPage />} />
+              <Route path="/favorites"       element={<FavoritesPage />} />
+              <Route path="/history"         element={<HistoryPage />} />
             </Routes>
           </AnimatePresence>
         </main>
         <Footer />
         <AudioPlayer />
+        <QuranTextPanel />
       </div>
     </ThemeProvider>
   )

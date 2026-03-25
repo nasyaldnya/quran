@@ -6,9 +6,11 @@ import ThemeToggle from '@/components/common/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { to: '/',         label: 'Home'    },
-  { to: '/reciters', label: 'Reciters'},
-  { to: '/surahs',   label: 'Surahs'  },
+  { to: '/',          label: 'Home'      },
+  { to: '/reciters',  label: 'Reciters'  },
+  { to: '/surahs',    label: 'Surahs'    },
+  { to: '/favorites', label: 'Favorites' },
+  { to: '/history',   label: 'History'   },
 ]
 
 export default function Navbar() {

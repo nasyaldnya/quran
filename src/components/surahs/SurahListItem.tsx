@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
-import { Play, Pause, Loader2 } from 'lucide-react'
+import { Play, Pause, Loader2, Heart } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn, SURAH_NAMES_AR, SURAH_NAMES, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
 import { useAudioStore } from '@/store/audioStore'
+import { useFavoritesStore } from '@/store/favoritesStore'
 import type { Track } from '@/types/api'
 
 interface SurahListItemProps {
@@ -13,6 +14,8 @@ interface SurahListItemProps {
 
 export default function SurahListItem({ track, index, allTracks }: SurahListItemProps) {
   const { currentTrack, isPlaying, isLoading, setCurrentTrack, setIsPlaying } = useAudioStore()
+  const { isSurahFav, toggleSurah } = useFavoritesStore()
+  const isFav = isSurahFav(track.surahNumber)
 
   const isActive  = currentTrack?.audioUrl === track.audioUrl
   const isThisLoading = isActive && isLoading
@@ -97,6 +100,41 @@ export default function SurahListItem({ track, index, allTracks }: SurahListItem
         >
           {revealType}
         </Badge>
+
+        {/* Favorite heart */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleSurah({
+              surahNumber: track.surahNumber,
+              surahNameEn: track.surahNameEn,
+              surahNameAr: track.surahNameAr,
+            })
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation()
+              toggleSurah({
+                surahNumber: track.surahNumber,
+                surahNameEn: track.surahNameEn,
+                surahNameAr: track.surahNameAr,
+              })
+            }
+          }}
+          className="flex-shrink-0 p-1.5 rounded-lg hover:bg-accent transition-colors"
+          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Heart
+            className={cn(
+              'w-3.5 h-3.5 transition-colors duration-200',
+              isFav
+                ? 'text-red-500 fill-red-500'
+                : 'text-muted-foreground opacity-0 group-hover:opacity-100'
+            )}
+          />
+        </div>
       </button>
     </motion.div>
   )

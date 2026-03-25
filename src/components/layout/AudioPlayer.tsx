@@ -1,8 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play, Pause, SkipBack, SkipForward,
   Volume2, VolumeX, Repeat, Repeat1, Shuffle, X,
+  ChevronUp, ChevronDown,
 } from 'lucide-react'
 import { useAudioStore } from '@/store/audioStore'
 import { useAudioPlayer } from '@/hooks/useAudioPlayer'
@@ -55,10 +56,7 @@ export default function AudioPlayer() {
   } = useAudioStore()
 
   const { seek } = useAudioPlayer()
-
-  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    seek(Number(e.target.value))
-  }, [seek])
+  const [mobileExpanded, setMobileExpanded] = useState(false)
 
   const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value))
@@ -76,7 +74,7 @@ export default function AudioPlayer() {
           transition={{ type: 'spring', stiffness: 280, damping: 30 }}
           className="fixed bottom-0 left-0 right-0 z-50 glass-strong shadow-player border-t border-white/5"
         >
-          {/* Progress bar — full width, sits above the controls */}
+          {/* Progress bar */}
           <div className="relative w-full h-1 bg-border group cursor-pointer"
             onClick={(e) => {
               if (!duration) return
@@ -95,24 +93,23 @@ export default function AudioPlayer() {
             />
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-            <div className="flex items-center gap-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5">
+            {/* ── Row 1: Track info + main controls + extras (desktop) ── */}
+            <div className="flex items-center gap-3">
 
-              {/* ── Track Info ── */}
-              <div className="flex items-center gap-3 w-0 flex-1 min-w-0">
-                {/* Album art / waveform */}
-                <div className="relative flex-shrink-0 w-11 h-11 rounded-lg bg-gradient-to-br from-gold-500/30 to-gold-700/20 border border-gold-500/20 flex items-center justify-center overflow-hidden">
+              {/* Track Info */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-gold-500/30 to-gold-700/20 border border-gold-500/20 flex items-center justify-center overflow-hidden">
                   {isPlaying ? (
                     <Waveform />
                   ) : (
-                    <span className="text-xl font-arabic text-primary">
+                    <span className="text-lg sm:text-xl font-arabic text-primary">
                       {currentTrack.surahNumber}
                     </span>
                   )}
                 </div>
-
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">
+                  <p className="text-sm font-semibold truncate text-foreground">
                     {currentTrack.surahNameAr}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -121,9 +118,8 @@ export default function AudioPlayer() {
                 </div>
               </div>
 
-              {/* ── Controls ── */}
+              {/* Center controls */}
               <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                {/* Shuffle */}
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={toggleShuffle}
@@ -133,18 +129,16 @@ export default function AudioPlayer() {
                   <Shuffle className="h-3.5 w-3.5" />
                 </Button>
 
-                {/* Prev */}
                 <Button variant="ghost" size="icon" onClick={playPrev} aria-label="Previous">
                   <SkipBack className="h-5 w-5" />
                 </Button>
 
-                {/* Play / Pause */}
                 <Button
                   variant="gold"
                   size="icon"
                   onClick={() => setIsPlaying(!isPlaying)}
                   disabled={isLoading}
-                  className="w-12 h-12 rounded-full shadow-gold animate-pulse-gold"
+                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-gold animate-pulse-gold"
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isLoading ? (
@@ -156,12 +150,10 @@ export default function AudioPlayer() {
                   )}
                 </Button>
 
-                {/* Next */}
                 <Button variant="ghost" size="icon" onClick={playNext} aria-label="Next">
                   <SkipForward className="h-5 w-5" />
                 </Button>
 
-                {/* Repeat */}
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={toggleRepeat}
@@ -174,15 +166,13 @@ export default function AudioPlayer() {
                 </Button>
               </div>
 
-              {/* ── Time & Volume (desktop) ── */}
-              <div className="hidden md:flex items-center gap-3 w-0 flex-1 min-w-0 justify-end">
-                {/* Time */}
+              {/* Desktop right section */}
+              <div className="hidden md:flex items-center gap-2.5 flex-1 min-w-0 justify-end">
                 <span className="text-xs text-muted-foreground tabular-nums flex-shrink-0">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
 
-                {/* Volume */}
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <Button
                     variant="ghost" size="icon-sm"
                     onClick={toggleMute}
@@ -203,13 +193,9 @@ export default function AudioPlayer() {
                   />
                 </div>
 
-                {/* Quran Text */}
                 <QuranTextToggle />
-
-                {/* Sleep Timer */}
                 <SleepTimerButton />
 
-                {/* Close */}
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={clearPlayer}
@@ -219,7 +205,65 @@ export default function AudioPlayer() {
                   <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
+
+              {/* Mobile expand toggle */}
+              <Button
+                variant="ghost" size="icon-sm"
+                onClick={() => setMobileExpanded((v) => !v)}
+                className="md:hidden text-muted-foreground hover:text-foreground flex-shrink-0"
+                aria-label="More controls"
+              >
+                {mobileExpanded
+                  ? <ChevronDown className="h-4 w-4" />
+                  : <ChevronUp className="h-4 w-4" />}
+              </Button>
             </div>
+
+            {/* ── Row 2: Mobile expanded controls ── */}
+            <AnimatePresence>
+              {mobileExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="md:hidden overflow-hidden"
+                >
+                  <div className="flex items-center justify-between pt-2.5 pb-1 border-t border-white/5 mt-2.5">
+                    {/* Time */}
+                    <span className="text-[11px] text-muted-foreground tabular-nums">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+
+                    {/* Feature buttons */}
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost" size="icon-sm"
+                        onClick={toggleMute}
+                        aria-label={isMuted ? 'Unmute' : 'Mute'}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        {isMuted || volume === 0
+                          ? <VolumeX className="h-3.5 w-3.5" />
+                          : <Volume2 className="h-3.5 w-3.5" />}
+                      </Button>
+
+                      <QuranTextToggle />
+                      <SleepTimerButton />
+
+                      <Button
+                        variant="ghost" size="icon-sm"
+                        onClick={clearPlayer}
+                        className="text-muted-foreground hover:text-foreground"
+                        aria-label="Close player"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       )}

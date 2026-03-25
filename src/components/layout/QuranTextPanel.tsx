@@ -93,8 +93,9 @@ export default function QuranTextPanel() {
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             className={cn(
-              'fixed top-0 right-0 z-50 h-full flex flex-col',
+              'fixed top-0 right-0 z-40 flex flex-col',
               'w-full sm:w-[420px] lg:w-[480px]',
+              'h-[calc(100vh-5rem)]',
               'bg-background border-l border-border/60 shadow-2xl'
             )}
           >
@@ -210,8 +211,8 @@ export default function QuranTextPanel() {
                       )
                     })}
 
-                    {/* Bottom spacer for audio player */}
-                    <div className="h-24" />
+                    {/* Bottom spacer */}
+                    <div className="h-4" />
                   </div>
                 )}
               </ScrollArea.Viewport>

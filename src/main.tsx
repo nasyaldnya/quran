@@ -6,6 +6,7 @@ import App from './App'
 import { queryClient } from './lib/queryClient'
 import { useAudioStore } from '@/store/audioStore'
 import { useHistoryStore } from '@/store/historyStore'
+import { useUiStore } from '@/store/uiStore'
 import './index.css'
 
 // Auto-log to listening history whenever a new track starts
@@ -15,6 +16,16 @@ useAudioStore.subscribe((state, prevState) => {
     state.currentTrack.audioUrl !== prevState.currentTrack?.audioUrl
   ) {
     useHistoryStore.getState().addEntry(state.currentTrack)
+  }
+})
+
+// Auto-open Quran text panel when a new track starts playing
+useAudioStore.subscribe((state, prevState) => {
+  if (
+    state.currentTrack &&
+    state.currentTrack.audioUrl !== prevState.currentTrack?.audioUrl
+  ) {
+    useUiStore.getState().setTextPanelOpen(true)
   }
 })
 

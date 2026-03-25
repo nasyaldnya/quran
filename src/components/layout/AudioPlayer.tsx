@@ -123,13 +123,14 @@ export default function AudioPlayer() {
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={toggleShuffle}
-                  className={isShuffled ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
+                  className={isShuffled ? 'text-primary' : 'text-foreground/60 hover:text-foreground'}
                   aria-label="Shuffle"
                 >
                   <Shuffle className="h-3.5 w-3.5" />
                 </Button>
 
-                <Button variant="ghost" size="icon" onClick={playPrev} aria-label="Previous">
+                <Button variant="ghost" size="icon" onClick={playPrev} aria-label="Previous"
+                  className="text-foreground/80 hover:text-foreground">
                   <SkipBack className="h-5 w-5" />
                 </Button>
 
@@ -150,14 +151,15 @@ export default function AudioPlayer() {
                   )}
                 </Button>
 
-                <Button variant="ghost" size="icon" onClick={playNext} aria-label="Next">
+                <Button variant="ghost" size="icon" onClick={playNext} aria-label="Next"
+                  className="text-foreground/80 hover:text-foreground">
                   <SkipForward className="h-5 w-5" />
                 </Button>
 
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={toggleRepeat}
-                  className={repeatMode !== 'none' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
+                  className={repeatMode !== 'none' ? 'text-primary' : 'text-foreground/60 hover:text-foreground'}
                   aria-label="Repeat"
                 >
                   {repeatMode === 'one'
@@ -168,30 +170,36 @@ export default function AudioPlayer() {
 
               {/* Desktop right section */}
               <div className="hidden md:flex items-center gap-2.5 flex-1 min-w-0 justify-end">
-                <span className="text-xs text-muted-foreground tabular-nums flex-shrink-0">
+                <span className="text-xs text-foreground/50 tabular-nums flex-shrink-0">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
+
+                {/* Divider */}
+                <div className="w-px h-5 bg-foreground/10 flex-shrink-0" />
 
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <Button
                     variant="ghost" size="icon-sm"
                     onClick={toggleMute}
                     aria-label={isMuted ? 'Unmute' : 'Mute'}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-foreground/70 hover:text-foreground"
                   >
                     {isMuted || volume === 0
-                      ? <VolumeX className="h-3.5 w-3.5" />
-                      : <Volume2 className="h-3.5 w-3.5" />}
+                      ? <VolumeX className="h-4 w-4" />
+                      : <Volume2 className="h-4 w-4" />}
                   </Button>
                   <input
                     type="range"
                     min={0} max={1} step={0.01}
                     value={isMuted ? 0 : volume}
                     onChange={handleVolumeChange}
-                    className="w-20"
+                    className="w-20 accent-primary"
                     aria-label="Volume"
                   />
                 </div>
+
+                {/* Divider */}
+                <div className="w-px h-5 bg-foreground/10 flex-shrink-0" />
 
                 <QuranTextToggle />
                 <SleepTimerButton />
@@ -199,7 +207,7 @@ export default function AudioPlayer() {
                 <Button
                   variant="ghost" size="icon-sm"
                   onClick={clearPlayer}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-foreground/60 hover:text-foreground"
                   aria-label="Close player"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -210,7 +218,7 @@ export default function AudioPlayer() {
               <Button
                 variant="ghost" size="icon-sm"
                 onClick={() => setMobileExpanded((v) => !v)}
-                className="md:hidden text-muted-foreground hover:text-foreground flex-shrink-0"
+                className="md:hidden text-foreground/60 hover:text-foreground flex-shrink-0"
                 aria-label="More controls"
               >
                 {mobileExpanded
@@ -229,9 +237,9 @@ export default function AudioPlayer() {
                   transition={{ duration: 0.2 }}
                   className="md:hidden overflow-hidden"
                 >
-                  <div className="flex items-center justify-between pt-2.5 pb-1 border-t border-white/5 mt-2.5">
+                  <div className="flex items-center justify-between pt-2.5 pb-1 border-t border-foreground/10 mt-2.5">
                     {/* Time */}
-                    <span className="text-[11px] text-muted-foreground tabular-nums">
+                    <span className="text-[11px] text-foreground/50 tabular-nums">
                       {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
 
@@ -241,11 +249,11 @@ export default function AudioPlayer() {
                         variant="ghost" size="icon-sm"
                         onClick={toggleMute}
                         aria-label={isMuted ? 'Unmute' : 'Mute'}
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-foreground/70 hover:text-foreground"
                       >
                         {isMuted || volume === 0
-                          ? <VolumeX className="h-3.5 w-3.5" />
-                          : <Volume2 className="h-3.5 w-3.5" />}
+                          ? <VolumeX className="h-4 w-4" />
+                          : <Volume2 className="h-4 w-4" />}
                       </Button>
 
                       <QuranTextToggle />
@@ -254,7 +262,7 @@ export default function AudioPlayer() {
                       <Button
                         variant="ghost" size="icon-sm"
                         onClick={clearPlayer}
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-foreground/60 hover:text-foreground"
                         aria-label="Close player"
                       >
                         <X className="h-3.5 w-3.5" />

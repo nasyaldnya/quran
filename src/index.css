@@ -253,8 +253,8 @@
   }
 
   input[type='range']::-webkit-slider-track {
-    height: 3px;
-    background: hsl(var(--border));
+    height: 4px;
+    background: hsl(var(--foreground) / 0.15);
     border-radius: 2px;
   }
 
@@ -265,7 +265,7 @@
     height: 14px;
     background: hsl(var(--primary));
     border-radius: 50%;
-    margin-top: -5.5px;
+    margin-top: -5px;
     box-shadow: 0 0 8px rgba(201, 160, 40, 0.5);
     transition: transform 0.15s;
   }
@@ -275,8 +275,8 @@
   }
 
   input[type='range']::-moz-range-track {
-    height: 3px;
-    background: hsl(var(--border));
+    height: 4px;
+    background: hsl(var(--foreground) / 0.15);
     border-radius: 2px;
   }
 

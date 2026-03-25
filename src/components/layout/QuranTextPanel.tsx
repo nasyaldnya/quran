@@ -93,9 +93,9 @@ export default function QuranTextPanel() {
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             className={cn(
-              'fixed top-0 right-0 z-40 flex flex-col',
+              'fixed right-0 z-40 flex flex-col',
+              'top-[72px] h-[calc(100vh-72px-5rem)]',
               'w-full sm:w-[420px] lg:w-[480px]',
-              'h-[calc(100vh-5rem)]',
               'bg-background border-l border-border/60 shadow-2xl'
             )}
           >

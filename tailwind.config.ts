@@ -19,17 +19,17 @@ const config: Config = {
         border: 'hsl(var(--border))',
         input:  'hsl(var(--input))',
         ring:   'hsl(var(--ring))',
-        gold: {
-          50:  '#FEFAED',
-          100: '#FDF4D0',
-          200: '#FAE59E',
-          300: '#F6D060',
-          400: '#F2BC2E',
-          500: '#C9A028',   // primary gold
-          600: '#A07D1E',
-          700: '#7A5C14',
-          800: '#543D0D',
-          900: '#2E2006',
+        sage: {
+          50:  '#F5F8F4',
+          100: '#E8EDE6',
+          200: '#D0D9CD',
+          300: '#B4C4AF',
+          400: '#94A684',
+          500: '#7A8E72',   // primary sage
+          600: '#5E6F58',
+          700: '#4D5B50',
+          800: '#354038',
+          900: '#1D231E',
         },
       },
       fontFamily: {
@@ -45,7 +45,7 @@ const config: Config = {
         '2xl':'calc(var(--radius) + 8px)',
       },
       backgroundImage: {
-        'gold-gradient':  'linear-gradient(135deg, #C9A028 0%, #E8C060 50%, #F6D060 100%)',
+        'sage-gradient':  'linear-gradient(135deg, #5E6F58 0%, #7A8E72 50%, #94A684 100%)',
         'hero-gradient':  'radial-gradient(ellipse 80% 60% at 50% -10%, hsl(240,30%,15%) 0%, transparent 70%)',
         'card-gradient':  'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
         'shimmer':        'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)',
@@ -57,7 +57,7 @@ const config: Config = {
         'scale-in':      'scale-in 0.3s ease-out',
         'float':         'float 4s ease-in-out infinite',
         'spin-slow':     'spin 12s linear infinite',
-        'pulse-gold':    'pulse-gold 2.5s ease-in-out infinite',
+        'pulse-sage':    'pulse-sage 2.5s ease-in-out infinite',
         'waveform-1':    'waveform 1.0s ease-in-out infinite',
         'waveform-2':    'waveform 1.2s ease-in-out infinite 0.15s',
         'waveform-3':    'waveform 0.9s ease-in-out infinite 0.3s',
@@ -87,9 +87,9 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%':      { transform: 'translateY(-12px)' },
         },
-        'pulse-gold': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(201, 160, 40, 0.2), 0 0 40px rgba(201, 160, 40, 0.1)' },
-          '50%':      { boxShadow: '0 0 30px rgba(201, 160, 40, 0.5), 0 0 60px rgba(201, 160, 40, 0.25)' },
+        'pulse-sage': {
+          '0%, 100%': { boxShadow: '0 0 20px rgba(122, 142, 114, 0.2), 0 0 40px rgba(122, 142, 114, 0.1)' },
+          '50%':      { boxShadow: '0 0 30px rgba(122, 142, 114, 0.5), 0 0 60px rgba(122, 142, 114, 0.25)' },
         },
         'waveform': {
           '0%, 100%': { transform: 'scaleY(0.4)' },
@@ -100,14 +100,14 @@ const config: Config = {
           to:   { backgroundPosition: '-200% center' },
         },
         'glow': {
-          from: { textShadow: '0 0 10px rgba(201,160,40,0.3)' },
-          to:   { textShadow: '0 0 20px rgba(201,160,40,0.7), 0 0 40px rgba(201,160,40,0.3)' },
+          from: { textShadow: '0 0 10px rgba(122,142,114,0.3)' },
+          to:   { textShadow: '0 0 20px rgba(122,142,114,0.7), 0 0 40px rgba(122,142,114,0.3)' },
         },
       },
       boxShadow: {
-        'gold':        '0 0 30px rgba(201, 160, 40, 0.3)',
-        'gold-sm':     '0 0 15px rgba(201, 160, 40, 0.2)',
-        'gold-lg':     '0 0 60px rgba(201, 160, 40, 0.4)',
+        'sage':        '0 0 30px rgba(122, 142, 114, 0.3)',
+        'sage-sm':     '0 0 15px rgba(122, 142, 114, 0.2)',
+        'sage-lg':     '0 0 60px rgba(122, 142, 114, 0.4)',
         'card':        '0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 6px rgba(0,0,0,0.2)',
         'card-hover':  '0 12px 48px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0,0,0,0.3)',
         'glass':       'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 24px rgba(0,0,0,0.3)',

@@ -39,8 +39,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group" aria-label="Home">
-            <div className="relative w-9 h-9 rounded-lg bg-gold-gradient flex items-center justify-center shadow-gold-sm group-hover:shadow-gold transition-shadow duration-300">
-              <BookOpen className="w-5 h-5 text-amber-950" />
+            <div className="relative w-9 h-9 rounded-lg bg-sage-gradient flex items-center justify-center shadow-sage-sm group-hover:shadow-sage transition-shadow duration-300">
+              <BookOpen className="w-5 h-5 text-sage-900" />
             </div>
             <span className="font-display font-semibold text-lg tracking-wide hidden sm:block">
               <span className="gold-text">Quran</span>

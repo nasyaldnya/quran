@@ -162,7 +162,7 @@ export default function ReciterDetailPage() {
             className="flex flex-col sm:flex-row items-start sm:items-center gap-5"
           >
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold-500/25 to-gold-700/10 border border-gold-500/25 flex items-center justify-center flex-shrink-0 shadow-gold-sm">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-sage-500/25 to-sage-700/10 border border-sage-500/25 flex items-center justify-center flex-shrink-0 shadow-sage-sm">
               <span className="arabic text-3xl font-bold text-primary">
                 {reciter.letter || reciter.name.charAt(0)}
               </span>

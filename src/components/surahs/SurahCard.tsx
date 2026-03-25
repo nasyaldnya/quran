@@ -20,10 +20,10 @@ export default function SurahCard({ surahNumber, index }: SurahCardProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1   }}
       transition={{ delay: Math.min(index * 0.012, 1.2), duration: 0.3 }}
-      className="group relative rounded-xl border border-border/60 bg-card p-4 hover:border-primary/40 hover:shadow-gold-sm transition-all duration-300 hover:-translate-y-0.5 cursor-default"
+      className="group relative rounded-xl border border-border/60 bg-card p-4 hover:border-primary/40 hover:shadow-sage-sm transition-all duration-300 hover:-translate-y-0.5 cursor-default"
     >
       {/* Top accent */}
-      <div className="absolute inset-x-0 top-0 h-0.5 bg-gold-gradient scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-t-xl" />
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-sage-gradient scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-t-xl" />
 
       <div className="flex items-center gap-3">
         {/* Number badge */}

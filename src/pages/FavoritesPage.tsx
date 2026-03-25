@@ -132,7 +132,7 @@ export default function FavoritesPage() {
                     >
                       <div className="group flex items-center gap-4 px-4 py-3 rounded-xl border border-transparent hover:border-border/60 hover:bg-accent transition-all duration-200">
                         {/* Avatar */}
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 border border-gold-500/20 flex items-center justify-center flex-shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sage-500/20 to-sage-700/10 border border-sage-500/20 flex items-center justify-center flex-shrink-0">
                           <span className="font-arabic text-xl font-bold text-primary">
                             {r.letter || r.name.charAt(0)}
                           </span>

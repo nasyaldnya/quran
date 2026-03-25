@@ -27,8 +27,8 @@ function Hero() {
 
       {/* Ambient radial glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] rounded-full bg-gold-500/4 blur-[80px] pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] rounded-full bg-gold-700/4 blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] rounded-full bg-sage-500/4 blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] rounded-full bg-sage-700/4 blur-[80px] pointer-events-none" />
 
       {/* Large geometric pattern — bg decoration */}
       <GeometricPattern
@@ -36,7 +36,7 @@ function Hero() {
         opacity={0.04}
       />
       <GeometricPattern
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] text-gold-500 animate-float"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] text-sage-500 animate-float"
         opacity={0.05}
       />
 
@@ -211,9 +211,9 @@ function QuranBanner() {
       transition={{ duration: 0.8 }}
       className="relative overflow-hidden py-20 my-8"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-gold-900/10 via-gold-700/5 to-gold-900/10" />
-      <div className="absolute inset-y-0 left-0 w-px bg-gold-gradient opacity-40" />
-      <div className="absolute inset-y-0 right-0 w-px bg-gold-gradient opacity-40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-sage-900/10 via-sage-700/5 to-sage-900/10" />
+      <div className="absolute inset-y-0 left-0 w-px bg-sage-gradient opacity-40" />
+      <div className="absolute inset-y-0 right-0 w-px bg-sage-gradient opacity-40" />
       <GeometricPattern className="absolute left-8 top-1/2 -translate-y-1/2 w-40 h-40 text-primary" opacity={0.08} />
       <GeometricPattern className="absolute right-8 top-1/2 -translate-y-1/2 w-40 h-40 text-primary" opacity={0.08} />
 

@@ -29,15 +29,15 @@ export default function ReciterCard({ reciter, index }: ReciterCardProps) {
         to={`/reciters/${reciter.id}`}
         className="group block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
       >
-        <div className="relative h-full rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-card-hover hover:-translate-y-1 hover:shadow-gold-sm">
+        <div className="relative h-full rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-card-hover hover:-translate-y-1 hover:shadow-sage-sm">
           {/* Top accent gradient */}
-          <div className="absolute inset-x-0 top-0 h-0.5 bg-gold-gradient scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          <div className="absolute inset-x-0 top-0 h-0.5 bg-sage-gradient scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
           <div className="p-6 flex flex-col h-full">
             {/* Avatar */}
             <div className="mb-4 flex items-start justify-between">
               <div className="relative">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gold-500/20 to-gold-700/10 border border-gold-500/20 flex items-center justify-center group-hover:shadow-gold-sm transition-shadow duration-300">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-sage-500/20 to-sage-700/10 border border-sage-500/20 flex items-center justify-center group-hover:shadow-sage-sm transition-shadow duration-300">
                   <span className="font-arabic text-2xl font-bold text-primary">
                     {reciter.letter || reciter.name.charAt(0)}
                   </span>

@@ -43,6 +43,13 @@ export default function AudioPlayer() {
     setVolume(Number(e.target.value))
   }, [setVolume])
 
+  const handleSeekClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!duration) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = (e.clientX - rect.left) / rect.width
+    seek(Math.max(0, Math.min(1, ratio)) * duration)
+  }, [duration, seek])
+
   const pct = duration > 0 ? (currentTime / duration) * 100 : 0
 
   if (!currentTrack) return null
@@ -53,43 +60,61 @@ export default function AudioPlayer() {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 80, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      // Force LTR for entire player — audio controls must always be LTR
+      dir="ltr"
       className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/60"
     >
       {/* ── Progress bar with time ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center gap-3 pt-2.5">
-          <span className="text-[11px] text-muted-foreground tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
-          <div className="relative flex-1 h-1.5 bg-border/80 rounded-full group cursor-pointer"
-            onClick={(e) => {
-              if (!duration) return
-              const rect = e.currentTarget.getBoundingClientRect()
-              seek(((e.clientX - rect.left) / rect.width) * duration)
-            }}
+        <div className="flex items-center gap-3 pt-2.5" style={{ direction: 'ltr' }}>
+          <span className="text-[11px] text-muted-foreground tabular-nums w-10 text-right select-none">
+            {formatTime(currentTime)}
+          </span>
+
+          {/* Seek bar — always LTR */}
+          <div
+            className="relative flex-1 h-1.5 bg-border/80 rounded-full group cursor-pointer"
+            style={{ direction: 'ltr' }}
+            onClick={handleSeekClick}
           >
-            <div className="h-full bg-primary rounded-full transition-[width] duration-300" style={{ width: `${pct}%` }} />
+            {/* Filled portion */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-primary ring-2 ring-background opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-0 left-0 h-full bg-primary rounded-full transition-[width] duration-300"
+              style={{ width: `${pct}%` }}
+            />
+            {/* Thumb */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-primary ring-2 ring-background opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
               style={{ left: `calc(${pct}% - 7px)` }}
             />
           </div>
-          <span className="text-[11px] text-muted-foreground tabular-nums w-10">{formatTime(duration)}</span>
+
+          <span className="text-[11px] text-muted-foreground tabular-nums w-10 select-none">
+            {formatTime(duration)}
+          </span>
         </div>
       </div>
 
       {/* ── Main controls row ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" style={{ direction: 'ltr' }}>
 
-          {/* Track Info */}
+          {/* Track Info — text can be RTL inside LTR shell */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center">
               {isPlaying ? <Waveform /> : (
-                <span className="text-base font-arabic text-primary font-semibold">{currentTrack.surahNumber}</span>
+                <span className="text-base font-arabic text-primary font-semibold">
+                  {currentTrack.surahNumber}
+                </span>
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold truncate text-foreground">{currentTrack.surahNameAr}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{currentTrack.surahNameEn} · {currentTrack.reciterName}</p>
+              <p className="text-sm font-semibold truncate text-foreground" dir="rtl">
+                {currentTrack.surahNameAr}
+              </p>
+              <p className="text-[11px] text-muted-foreground truncate">
+                {currentTrack.surahNameEn} · {currentTrack.reciterName}
+              </p>
             </div>
           </div>
 
@@ -102,7 +127,7 @@ export default function AudioPlayer() {
 
             <Button variant="ghost" size="icon-sm" onClick={playPrev} aria-label="Previous"
               className="text-foreground/70 hover:text-foreground">
-              <SkipBack className="h-4.5 w-4.5" />
+              <SkipBack className="h-[18px] w-[18px]" />
             </Button>
 
             <button
@@ -114,32 +139,44 @@ export default function AudioPlayer() {
               {isLoading ? (
                 <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
               ) : isPlaying ? (
-                <Pause className="h-4.5 w-4.5 fill-current" />
+                <Pause className="h-[18px] w-[18px] fill-current" />
               ) : (
-                <Play className="h-4.5 w-4.5 fill-current ml-0.5" />
+                <Play className="h-[18px] w-[18px] fill-current ml-0.5" />
               )}
             </button>
 
             <Button variant="ghost" size="icon-sm" onClick={playNext} aria-label="Next"
               className="text-foreground/70 hover:text-foreground">
-              <SkipForward className="h-4.5 w-4.5" />
+              <SkipForward className="h-[18px] w-[18px]" />
             </Button>
 
             <Button variant="ghost" size="icon-sm" onClick={toggleRepeat} aria-label="Repeat"
               className={repeatMode !== 'none' ? 'text-primary' : 'text-foreground/50 hover:text-foreground'}>
-              {repeatMode === 'one' ? <Repeat1 className="h-3.5 w-3.5" /> : <Repeat className="h-3.5 w-3.5" />}
+              {repeatMode === 'one'
+                ? <Repeat1 className="h-3.5 w-3.5" />
+                : <Repeat className="h-3.5 w-3.5" />}
             </Button>
           </div>
 
           {/* Desktop: Volume + features */}
           <div className="hidden md:flex items-center gap-1.5 flex-1 min-w-0 justify-end">
-            <Button variant="ghost" size="icon-sm" onClick={toggleMute} aria-label={isMuted ? 'Unmute' : 'Mute'}
+            <Button variant="ghost" size="icon-sm" onClick={toggleMute}
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
               className="text-foreground/60 hover:text-foreground">
-              {isMuted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              {isMuted || volume === 0
+                ? <VolumeX className="h-4 w-4" />
+                : <Volume2 className="h-4 w-4" />}
             </Button>
-            <input type="range" min={0} max={1} step={0.01}
-              value={isMuted ? 0 : volume} onChange={handleVolumeChange}
-              className="w-20" aria-label="Volume" />
+
+            {/* Volume slider — forced LTR */}
+            <input
+              type="range" min={0} max={1} step={0.01}
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 volume-slider"
+              style={{ direction: 'ltr' }}
+              aria-label="Volume"
+            />
 
             <div className="w-px h-4 bg-border mx-1" />
 
@@ -155,26 +192,44 @@ export default function AudioPlayer() {
           </div>
 
           {/* Mobile expand */}
-          <Button variant="ghost" size="icon-sm" onClick={() => setMobileExpanded(v => !v)}
-            className="md:hidden text-foreground/50 hover:text-foreground flex-shrink-0" aria-label="More">
-            {mobileExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          <Button variant="ghost" size="icon-sm"
+            onClick={() => setMobileExpanded(v => !v)}
+            className="md:hidden text-foreground/50 hover:text-foreground flex-shrink-0"
+            aria-label="More">
+            {mobileExpanded
+              ? <ChevronDown className="h-4 w-4" />
+              : <ChevronUp className="h-4 w-4" />}
           </Button>
         </div>
 
         {/* ── Mobile expanded row ── */}
         <AnimatePresence>
           {mobileExpanded && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="md:hidden overflow-hidden">
-              <div className="flex items-center justify-between pt-2 pb-1 border-t border-border/40 mt-2">
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden"
+            >
+              <div className="flex items-center justify-between pt-2 pb-1 border-t border-border/40 mt-2"
+                style={{ direction: 'ltr' }}>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon-sm" onClick={toggleMute} aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  <Button variant="ghost" size="icon-sm" onClick={toggleMute}
+                    aria-label={isMuted ? 'Unmute' : 'Mute'}
                     className="text-foreground/60 hover:text-foreground">
-                    {isMuted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    {isMuted || volume === 0
+                      ? <VolumeX className="h-4 w-4" />
+                      : <Volume2 className="h-4 w-4" />}
                   </Button>
-                  <input type="range" min={0} max={1} step={0.01}
-                    value={isMuted ? 0 : volume} onChange={handleVolumeChange}
-                    className="w-24" aria-label="Volume" />
+                  <input
+                    type="range" min={0} max={1} step={0.01}
+                    value={isMuted ? 0 : volume}
+                    onChange={handleVolumeChange}
+                    className="w-24 volume-slider"
+                    style={{ direction: 'ltr' }}
+                    aria-label="Volume"
+                  />
                 </div>
                 <div className="flex items-center gap-0.5">
                   <QuranTextToggle />

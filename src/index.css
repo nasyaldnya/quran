@@ -93,10 +93,58 @@
 }
 
 @layer components {
-  input[type='range'] { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
-  input[type='range']::-webkit-slider-track { height: 4px; background: hsl(var(--foreground) / 0.15); border-radius: 2px; }
-  input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: hsl(var(--primary)); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 8px rgba(122,142,114,0.5); transition: transform 0.15s; }
-  input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.3); }
-  input[type='range']::-moz-range-track { height: 4px; background: hsl(var(--foreground) / 0.15); border-radius: 2px; }
-  input[type='range']::-moz-range-thumb { width: 14px; height: 14px; background: hsl(var(--primary)); border: none; border-radius: 50%; box-shadow: 0 0 8px rgba(122,142,114,0.5); }
+  /* All range inputs forced LTR — essential for RTL pages */
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    direction: ltr !important;
+  }
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 4px;
+    background: hsl(var(--foreground) / 0.15);
+    border-radius: 9999px;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: hsl(var(--primary));
+    border-radius: 50%;
+    margin-top: -5px;
+    box-shadow: 0 0 8px rgba(122,142,114,0.5);
+    transition: transform 0.15s;
+  }
+  input[type='range']::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+  }
+  input[type='range']::-moz-range-track {
+    height: 4px;
+    background: hsl(var(--foreground) / 0.15);
+    border-radius: 9999px;
+  }
+  input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(122,142,114,0.5);
+  }
+  /* Volume slider — wider track for better visibility */
+  .volume-slider::-webkit-slider-runnable-track {
+    height: 5px;
+    background: hsl(var(--foreground) / 0.2);
+  }
+  .volume-slider::-moz-range-track {
+    height: 5px;
+    background: hsl(var(--foreground) / 0.2);
+  }
+  .volume-slider::-moz-range-progress {
+    height: 5px;
+    background: hsl(var(--primary));
+    border-radius: 9999px;
+  }
 }

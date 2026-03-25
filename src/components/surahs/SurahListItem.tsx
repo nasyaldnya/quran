@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn, SURAH_NAMES_AR, SURAH_NAMES, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
 import { useAudioStore } from '@/store/audioStore'
 import { useFavoritesStore } from '@/store/favoritesStore'
+import { useT } from '@/lib/i18n'
 import type { Track } from '@/types/api'
 
 interface SurahListItemProps {
@@ -15,6 +16,7 @@ interface SurahListItemProps {
 export default function SurahListItem({ track, index, allTracks }: SurahListItemProps) {
   const { currentTrack, isPlaying, isLoading, setCurrentTrack, setIsPlaying } = useAudioStore()
   const { isSurahFav, toggleSurah } = useFavoritesStore()
+  const t = useT()
   const isFav = isSurahFav(track.surahNumber)
 
   const isActive  = currentTrack?.audioUrl === track.audioUrl
@@ -82,7 +84,7 @@ export default function SurahListItem({ track, index, allTracks }: SurahListItem
               {SURAH_NAMES[track.surahNumber] ?? track.surahNameEn}
             </span>
           </div>
-          <span className="text-xs text-muted-foreground">{verseCount} verses</span>
+          <span className="text-xs text-muted-foreground">{verseCount} {t.verses}</span>
         </div>
 
         {/* Arabic name */}
@@ -124,7 +126,7 @@ export default function SurahListItem({ track, index, allTracks }: SurahListItem
             }
           }}
           className="flex-shrink-0 p-1.5 rounded-lg hover:bg-accent transition-colors"
-          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isFav ? t.remove_favorite : t.add_favorite}
         >
           <Heart
             className={cn(

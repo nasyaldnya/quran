@@ -6,6 +6,7 @@ import PageTransition from '@/components/common/PageTransition'
 import SearchBar from '@/components/common/SearchBar'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useT } from '@/lib/i18n'
 import { SURAH_NAMES, SURAH_NAMES_AR, REVELATION_TYPE, cn } from '@/lib/utils'
 
 type RevealFilter = 'All' | 'Makki' | 'Madani'
@@ -15,6 +16,7 @@ const REVEAL_OPTIONS: RevealFilter[] = ['All', 'Makki', 'Madani']
 const ALL_SURAH_NUMBERS = Array.from({ length: 114 }, (_, i) => i + 1)
 
 export default function SurahsPage() {
+  const t = useT()
   const [search,      setSearch]      = useState('')
   const [revealFilter, setRevealFilter] = useState<RevealFilter>('All')
   const debouncedSearch = useDebounce(search, 280)
@@ -59,14 +61,14 @@ export default function SurahsPage() {
               <div className="w-8 h-8 rounded-lg bg-primary/15 border border-primary/20 flex items-center justify-center">
                 <BookOpen className="w-4 h-4 text-primary" />
               </div>
-              <span className="text-xs font-semibold text-primary uppercase tracking-widest">Surahs</span>
+              <span className="text-xs font-semibold text-primary uppercase tracking-widest">{t.nav_surahs}</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-3">
-              All 114 Surahs
+              {t.surahs_title}
               <span className="ml-3 text-2xl font-normal text-muted-foreground arabic">السور</span>
             </h1>
             <p className="text-muted-foreground max-w-lg mb-6">
-              Browse every chapter of the Holy Quran, from Al-Fatihah to An-Nas.
+              {t.surahs_subtitle}
             </p>
 
             {/* Stat chips */}
@@ -90,7 +92,7 @@ export default function SurahsPage() {
           <SearchBar
             value={search}
             onChange={setSearch}
-            placeholder="Search by name or number…"
+            placeholder={t.search_surahs}
             className="w-full sm:w-80"
           />
 

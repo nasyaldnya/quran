@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { cn, SURAH_NAMES, SURAH_NAMES_AR, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 
 interface SurahCardProps {
   surahNumber: number
@@ -8,6 +9,7 @@ interface SurahCardProps {
 }
 
 export default function SurahCard({ surahNumber, index }: SurahCardProps) {
+  const t = useT()
   const nameEn      = SURAH_NAMES[surahNumber]  ?? `Surah ${surahNumber}`
   const nameAr      = SURAH_NAMES_AR[surahNumber] ?? ''
   const revealType  = REVELATION_TYPE[surahNumber]
@@ -34,7 +36,7 @@ export default function SurahCard({ surahNumber, index }: SurahCardProps) {
           <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-200">
             {nameEn}
           </p>
-          <p className="text-xs text-muted-foreground">{verseCount} verses</p>
+          <p className="text-xs text-muted-foreground">{verseCount} {t.verses}</p>
         </div>
 
         {/* Arabic + badge */}

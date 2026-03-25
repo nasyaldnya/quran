@@ -10,6 +10,7 @@ import PageTransition from '@/components/common/PageTransition'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import { useHistoryStore, type HistoryEntry } from '@/store/historyStore'
 import { useAudioStore } from '@/store/audioStore'
+import { useT } from '@/lib/i18n'
 import { cn, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
 
 // Group entries by date label
@@ -57,6 +58,7 @@ function formatTimeAgo(timestamp: number): string {
 }
 
 export default function HistoryPage() {
+  const t = useT()
   const { entries, removeEntry, clearHistory } = useHistoryStore()
   const { currentTrack, isPlaying, isLoading, setCurrentTrack, setIsPlaying } = useAudioStore()
 
@@ -83,12 +85,12 @@ export default function HistoryPage() {
               <Clock className="w-7 h-7 text-primary" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-2">
-              Listening History
+              {t.history_title}
             </h1>
             <p className="text-muted-foreground text-sm">
               {entries.length === 0
-                ? 'Nothing played yet — start listening!'
-                : `${entries.length} recently played ${entries.length === 1 ? 'track' : 'tracks'}`}
+                ? t.history_empty
+                : `${entries.length} ${t.recently_played}`}
             </p>
           </motion.div>
         </div>
@@ -105,7 +107,7 @@ export default function HistoryPage() {
               className="text-muted-foreground hover:text-destructive text-xs"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-              Clear History
+              {t.clear_history}
             </Button>
           </div>
         )}
@@ -116,12 +118,12 @@ export default function HistoryPage() {
             <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mb-4">
               <Clock className="w-6 h-6 text-muted-foreground" />
             </div>
-            <p className="text-lg font-semibold text-foreground mb-1">No history yet</p>
+            <p className="text-lg font-semibold text-foreground mb-1">{t.history_empty}</p>
             <p className="text-sm text-muted-foreground mb-6">
-              Your recently played surahs will appear here.
+              {t.history_empty_desc}
             </p>
             <Button variant="outline" asChild>
-              <Link to="/reciters">Browse Reciters</Link>
+              <Link to="/reciters">{t.browse_reciters}</Link>
             </Button>
           </div>
         )}

@@ -8,16 +8,17 @@ import ReciterCard from '@/components/reciters/ReciterCard'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import PageTransition from '@/components/common/PageTransition'
 import { useReciters } from '@/hooks/useReciters'
-
-// ── Stats bar ─────────────────────────────────────
-const STATS = [
-  { icon: BookOpen,    value: '114',   label: 'Surahs'    },
-  { icon: Headphones,  value: '6,000+', label: 'Verses'    },
-  { icon: Music2,      value: '100+',  label: 'Reciters'  },
-]
+import { useT } from '@/lib/i18n'
 
 // ── Hero section ──────────────────────────────────
 function Hero() {
+  const t = useT()
+
+  const STATS = [
+    { icon: BookOpen,    value: '114',    label: t.stat_surahs   },
+    { icon: Headphones,  value: '6,000+', label: t.stat_verses   },
+    { icon: Music2,      value: '100+',   label: t.stat_reciters },
+  ]
   return (
     <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
       {/* Background layers */}
@@ -49,7 +50,7 @@ function Hero() {
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-primary/20 text-xs font-medium text-primary mb-8"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          Powered by Mp3Quran · 100+ World-Renowned Reciters
+          {t.hero_badge}
         </motion.div>
 
         {/* Arabic Bismillah */}
@@ -69,7 +70,7 @@ function Hero() {
           transition={{ delay: 0.3, duration: 0.7 }}
           className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight mb-6"
         >
-          <span className="gold-shimmer-text">The Holy Quran</span>
+          <span className="gold-shimmer-text">{t.hero_title}</span>
           <br />
           <span className="text-foreground/90 text-4xl sm:text-5xl lg:text-6xl">
             القرآن الكريم
@@ -83,8 +84,7 @@ function Hero() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 text-balance"
         >
-          Experience the divine words in the voices of the world's finest reciters.
-          A premium, immersive listening journey through all 114 Surahs.
+          {t.hero_subtitle}
         </motion.p>
 
         {/* CTA buttons */}
@@ -97,14 +97,14 @@ function Hero() {
           <Button variant="gold" size="xl" asChild>
             <Link to="/reciters">
               <Headphones className="w-5 h-5 mr-2" />
-              Browse Reciters
+              {t.hero_browse_reciters}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Link>
           </Button>
           <Button variant="glass" size="xl" asChild>
             <Link to="/surahs">
               <BookOpen className="w-5 h-5 mr-2" />
-              View All Surahs
+              {t.hero_view_surahs}
             </Link>
           </Button>
         </motion.div>
@@ -136,6 +136,7 @@ function Hero() {
 
 // ── Featured Reciters ─────────────────────────────
 function FeaturedReciters() {
+  const t = useT()
   const { data: reciters, isLoading } = useReciters()
   const featured = reciters?.slice(0, 8) ?? []
 
@@ -151,15 +152,15 @@ function FeaturedReciters() {
       >
         <div>
           <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">
-            Featured Reciters
+            {t.featured_label}
           </p>
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
-            Master Voices of the Quran
+            {t.featured_title}
           </h2>
         </div>
         <Button variant="outline" asChild className="hidden sm:flex">
           <Link to="/reciters">
-            View All <ArrowRight className="w-4 h-4 ml-1.5" />
+            {t.view_all} <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </Button>
       </motion.div>
@@ -192,7 +193,7 @@ function FeaturedReciters() {
 
       <div className="mt-8 flex justify-center sm:hidden">
         <Button variant="outline" asChild>
-          <Link to="/reciters">View All Reciters <ArrowRight className="w-4 h-4 ml-1.5" /></Link>
+          <Link to="/reciters">{t.view_all} <ArrowRight className="w-4 h-4 ml-1.5" /></Link>
         </Button>
       </div>
     </section>
@@ -201,6 +202,7 @@ function FeaturedReciters() {
 
 // ── Quran Quote Banner ────────────────────────────
 function QuranBanner() {
+  const t = useT()
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -220,9 +222,9 @@ function QuranBanner() {
           ﴿ إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴾
         </p>
         <p className="text-sm text-muted-foreground italic">
-          "Indeed, it is We who sent down the Quran, and indeed, We will be its guardian."
+          {t.banner_translation}
         </p>
-        <p className="text-xs text-muted-foreground/60 mt-2">— Surah Al-Hijr 15:9</p>
+        <p className="text-xs text-muted-foreground/60 mt-2">— {t.banner_ref}</p>
       </div>
     </motion.section>
   )

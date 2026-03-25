@@ -1,7 +1,9 @@
 import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useT } from '@/lib/i18n'
 
 export default function Footer() {
+  const t = useT()
   return (
     <footer className="border-t border-border/40 py-10 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -13,14 +15,14 @@ export default function Footer() {
 
           {/* Nav links */}
           <nav className="flex items-center gap-4">
-            <Link to="/"         className="hover:text-primary transition-colors">Home</Link>
-            <Link to="/reciters" className="hover:text-primary transition-colors">Reciters</Link>
-            <Link to="/surahs"   className="hover:text-primary transition-colors">Surahs</Link>
+            <Link to="/"         className="hover:text-primary transition-colors">{t.nav_home}</Link>
+            <Link to="/reciters" className="hover:text-primary transition-colors">{t.nav_reciters}</Link>
+            <Link to="/surahs"   className="hover:text-primary transition-colors">{t.nav_surahs}</Link>
           </nav>
 
           {/* Credit */}
           <p className="flex items-center gap-1.5">
-            Audio provided by{' '}
+            {t.footer_credit}{' '}
             <a
               href="https://www.mp3quran.net"
               target="_blank"
@@ -34,7 +36,7 @@ export default function Footer() {
 
         <div className="mt-6 pt-6 border-t border-border/30 flex justify-center">
           <p className="text-xs text-muted-foreground/50 flex items-center gap-1">
-            Built with <Heart className="w-3 h-3 text-primary fill-current" /> for the love of the Holy Quran
+            {t.footer_love} <Heart className="w-3 h-3 text-primary fill-current" />
           </p>
         </div>
       </div>

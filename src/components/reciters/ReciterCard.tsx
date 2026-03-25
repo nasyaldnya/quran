@@ -4,6 +4,7 @@ import { Headphones, PlayCircle, Heart } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { useFavoritesStore } from '@/store/favoritesStore'
+import { useT } from '@/lib/i18n'
 import type { Reciter } from '@/types/api'
 
 interface ReciterCardProps {
@@ -12,6 +13,7 @@ interface ReciterCardProps {
 }
 
 export default function ReciterCard({ reciter, index }: ReciterCardProps) {
+  const t = useT()
   const totalSurahs = reciter.moshaf.reduce((acc, m) => acc + m.surah_total, 0)
   const moshafCount = reciter.moshaf.length
   const { isReciterFav, toggleReciter } = useFavoritesStore()
@@ -47,7 +49,7 @@ export default function ReciterCard({ reciter, index }: ReciterCardProps) {
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
                   <Headphones className="w-2.5 h-2.5 mr-1" />
-                  {moshafCount} {moshafCount === 1 ? 'Riwaya' : 'Riwayat'}
+                  {moshafCount} {moshafCount === 1 ? t.riwaya : t.riwayat}
                 </Badge>
                 <button
                   onClick={(e) => {
@@ -60,7 +62,7 @@ export default function ReciterCard({ reciter, index }: ReciterCardProps) {
                     })
                   }}
                   className="p-1.5 rounded-lg hover:bg-accent transition-colors"
-                  aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+                  aria-label={isFav ? t.remove_favorite : t.add_favorite}
                 >
                   <Heart
                     className={cn(
@@ -80,7 +82,7 @@ export default function ReciterCard({ reciter, index }: ReciterCardProps) {
                 {reciter.name}
               </h3>
               <p className="text-xs text-muted-foreground">
-                {totalSurahs} {totalSurahs === 1 ? 'Surah' : 'Surahs'} available
+                {totalSurahs} {totalSurahs === 1 ? t.surah : t.surahs_word} 
               </p>
             </div>
 

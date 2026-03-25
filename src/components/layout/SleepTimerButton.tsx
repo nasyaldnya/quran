@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Timer, TimerOff, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useSleepTimerStore } from '@/store/sleepTimerStore'
+import { useT } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 const TIMER_OPTIONS = [
@@ -24,6 +25,7 @@ export default function SleepTimerButton() {
 
   const { mode, isActive, remainingSeconds, totalSeconds, startTimer, startEndOfSurah, cancelTimer } =
     useSleepTimerStore()
+  const t = useT()
 
   // Close menu on outside click
   useEffect(() => {
@@ -130,7 +132,7 @@ export default function SleepTimerButton() {
                     : 'text-foreground hover:bg-accent'
                 )}
               >
-                <span>End of Surah</span>
+                <span>{t.end_of_surah}</span>
                 {mode === 'end-of-surah' && isActive && (
                   <Check className="w-3.5 h-3.5 text-primary" />
                 )}
@@ -148,7 +150,7 @@ export default function SleepTimerButton() {
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                   >
                     <TimerOff className="w-3.5 h-3.5" />
-                    Cancel Timer
+                    {t.cancel_timer}
                   </button>
                 </>
               )}
@@ -159,8 +161,8 @@ export default function SleepTimerButton() {
               <div className="px-3 py-2 border-t border-border/40 bg-muted/30">
                 <p className="text-[10px] text-muted-foreground text-center">
                   {mode === 'minutes'
-                    ? `Pausing in ${formatCountdown(remainingSeconds)}`
-                    : 'Pausing after this surah ends'}
+                    ? `${t.pausing_in} ${formatCountdown(remainingSeconds)}`
+                    : t.pausing_after_surah}
                 </p>
               </div>
             )}

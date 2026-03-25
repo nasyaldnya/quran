@@ -7,6 +7,7 @@ import PageTransition from '@/components/common/PageTransition'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import { useReciters } from '@/hooks/useReciters'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useT } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 const FILTERS = ['All', 'A–F', 'G–M', 'N–S', 'T–Z']
@@ -19,6 +20,7 @@ const FILTER_RANGES: Record<string, [string, string]> = {
 }
 
 export default function RecitersPage() {
+  const t = useT()
   const [search,      setSearch]      = useState('')
   const [activeFilter, setActiveFilter] = useState('All')
   const debouncedSearch = useDebounce(search, 280)
@@ -63,15 +65,15 @@ export default function RecitersPage() {
                 <Users className="w-4 h-4 text-primary" />
               </div>
               <span className="text-xs font-semibold text-primary uppercase tracking-widest">
-                Reciters
+                {t.nav_reciters}
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-display font-bold text-foreground mb-3">
-              All Reciters
+              {t.reciters_title}
               <span className="ml-3 text-2xl font-normal text-muted-foreground arabic">القراء</span>
             </h1>
             <p className="text-muted-foreground max-w-lg">
-              Discover world-renowned Quran reciters and their multiple recitation styles.
+              {t.reciters_subtitle}
             </p>
           </motion.div>
         </div>
@@ -83,7 +85,7 @@ export default function RecitersPage() {
           <SearchBar
             value={search}
             onChange={setSearch}
-            placeholder="Search reciters by name…"
+            placeholder={t.search_reciters}
             className="w-full sm:w-80"
           />
 
@@ -113,7 +115,7 @@ export default function RecitersPage() {
             animate={{ opacity: 1 }}
             className="text-xs text-muted-foreground mt-3"
           >
-            {filtered.length} reciter{filtered.length !== 1 ? 's' : ''} found
+            {filtered.length} {t.reciters_found}
           </motion.p>
         )}
       </div>

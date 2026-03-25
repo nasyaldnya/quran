@@ -9,6 +9,7 @@ import LanguageSelector from '@/components/quran/LanguageSelector'
 import { useQuranArabic, useQuranTranslation, useQuranTafsir } from '@/hooks/useQuranText'
 import { useAudioStore } from '@/store/audioStore'
 import { useUiStore } from '@/store/uiStore'
+import { useT } from '@/lib/i18n'
 import {
   TRANSLATION_EDITIONS,
   TAFSIR_EDITIONS,
@@ -19,6 +20,7 @@ import { cn } from '@/lib/utils'
 const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'
 
 export default function QuranTextPanel() {
+  const t = useT()
   const { isTextPanelOpen, setTextPanelOpen, selectedTranslation, selectedTafsir, setExpandedAyah } =
     useUiStore()
   const { currentTrack } = useAudioStore()
@@ -110,7 +112,7 @@ export default function QuranTextPanel() {
                           {arabicData.englishName}
                         </h2>
                         <p className="text-[11px] text-muted-foreground">
-                          {arabicData.englishNameTranslation} · {arabicData.numberOfAyahs} Ayahs
+                          {arabicData.englishNameTranslation} · {arabicData.numberOfAyahs} {t.ayahs}
                         </p>
                       </>
                     ) : (
@@ -158,8 +160,8 @@ export default function QuranTextPanel() {
                 {!surahNumber && (
                   <EmptyState
                     icon={BookOpen}
-                    title="No surah playing"
-                    description="Start playing a surah to see its text here."
+                    title={t.no_surah_playing}
+                    description={t.no_surah_playing_desc}
                   />
                 )}
 
@@ -170,8 +172,8 @@ export default function QuranTextPanel() {
                 {surahNumber && hasError && (
                   <EmptyState
                     icon={AlertCircle}
-                    title="Failed to load"
-                    description="Could not fetch the surah text. Please check your connection."
+                    title={t.failed_to_load}
+                    description={t.failed_to_load_desc}
                   />
                 )}
 
@@ -182,7 +184,7 @@ export default function QuranTextPanel() {
                     {(isTranslationLoading || isTafsirLoading) && (
                       <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
                         <Loader2 className="w-3 h-3 animate-spin" />
-                        Loading{isTranslationLoading ? ' translation' : ''}{isTafsirLoading ? ' tafsir' : ''}…
+                        {isTranslationLoading ? t.loading_translation : ''}{isTafsirLoading ? ` ${t.loading_tafsir}` : ''}…
                       </div>
                     )}
 

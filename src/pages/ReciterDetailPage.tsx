@@ -16,6 +16,7 @@ import { useReciter } from '@/hooks/useReciters'
 import { useAudioStore } from '@/store/audioStore'
 import { buildAudioUrl } from '@/lib/api'
 import { SURAH_NAMES, SURAH_NAMES_AR, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
+import { useT } from '@/lib/i18n'
 import { useDebounce as useDB } from '@/hooks/useDebounce'
 import type { Track, Moshaf } from '@/types/api'
 
@@ -62,6 +63,7 @@ function ReciterDetailSkeleton() {
 }
 
 export default function ReciterDetailPage() {
+  const t = useT()
   const { id } = useParams<{ id: string }>()
   const reciterId = id ? parseInt(id, 10) : undefined
 
@@ -173,11 +175,11 @@ export default function ReciterDetailPage() {
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <Badge variant="outline">
                   <Headphones className="w-3 h-3 mr-1.5" />
-                  {reciter.moshaf.length} {reciter.moshaf.length === 1 ? 'Riwaya' : 'Riwayat'}
+                  {reciter.moshaf.length} {reciter.moshaf.length === 1 ? t.riwaya : t.riwayat}
                 </Badge>
                 <Badge variant="outline">
                   <List className="w-3 h-3 mr-1.5" />
-                  {allTracks.length} Surahs
+                  {allTracks.length} {t.surahs_word}
                 </Badge>
               </div>
 
@@ -214,7 +216,7 @@ export default function ReciterDetailPage() {
               ) : (
                 <Play className="w-4 h-4 mr-2 fill-current" />
               )}
-              {isQueueActive && isPlaying ? 'Pause All' : 'Play All'}
+              {isQueueActive && isPlaying ? t.pause_all : t.play_all}
             </Button>
           </motion.div>
         </div>
@@ -227,12 +229,12 @@ export default function ReciterDetailPage() {
           <SearchBar
             value={search}
             onChange={setSearch}
-            placeholder="Search surahs…"
+            placeholder={t.search_surahs_dots}
             className="w-full sm:w-72"
           />
           <p className="text-xs text-muted-foreground flex-shrink-0">
             <BookOpen className="w-3 h-3 inline mr-1.5 -mt-0.5" />
-            {filteredTracks.length} {filteredTracks.length === 1 ? 'surah' : 'surahs'}
+            {filteredTracks.length} {filteredTracks.length === 1 ? t.surah : t.surahs_word}
           </p>
         </div>
 

@@ -9,11 +9,13 @@ import { Badge } from '@/components/ui/badge'
 import PageTransition from '@/components/common/PageTransition'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import { useFavoritesStore } from '@/store/favoritesStore'
+import { useT } from '@/lib/i18n'
 import { SURAH_NAMES, SURAH_NAMES_AR, VERSE_COUNTS, REVELATION_TYPE, cn } from '@/lib/utils'
 
 type Tab = 'reciters' | 'surahs'
 
 export default function FavoritesPage() {
+  const t = useT()
   const [activeTab, setActiveTab] = useState<Tab>('reciters')
   const { reciters, surahs, removeReciter, removeSurah, clearAll } = useFavoritesStore()
 
@@ -49,12 +51,12 @@ export default function FavoritesPage() {
               <Heart className="w-7 h-7 text-primary" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-2">
-              My Favorites
+              {t.favorites_title}
             </h1>
             <p className="text-muted-foreground text-sm">
               {totalFavs === 0
-                ? 'No favorites yet — start adding some!'
-                : `${totalFavs} saved ${totalFavs === 1 ? 'item' : 'items'}`}
+                ? t.favorites_empty
+                : `${totalFavs} ${t.saved_items}`}
             </p>
           </motion.div>
         </div>
@@ -80,7 +82,7 @@ export default function FavoritesPage() {
                 ) : (
                   <BookOpen className="w-3.5 h-3.5" />
                 )}
-                {tab === 'reciters' ? 'Reciters' : 'Surahs'}
+                {tab === 'reciters' ? t.nav_reciters : t.nav_surahs}
                 <span className="text-xs opacity-60">
                   ({tab === 'reciters' ? reciters.length : surahs.length})
                 </span>
@@ -96,7 +98,7 @@ export default function FavoritesPage() {
               className="text-muted-foreground hover:text-destructive text-xs"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-              Clear All
+              {t.clear_all}
             </Button>
           )}
         </div>
@@ -114,10 +116,10 @@ export default function FavoritesPage() {
               {sortedReciters.length === 0 ? (
                 <EmptyState
                   icon={Headphones}
-                  title="No favorite reciters"
-                  description="Tap the heart icon on any reciter to save them here."
+                  title={t.no_fav_reciters}
+                  description={t.no_fav_reciters_desc}
                   linkTo="/reciters"
-                  linkLabel="Browse Reciters"
+                  linkLabel={t.browse_reciters}
                 />
               ) : (
                 <div className="space-y-2">
@@ -183,10 +185,10 @@ export default function FavoritesPage() {
               {sortedSurahs.length === 0 ? (
                 <EmptyState
                   icon={BookOpen}
-                  title="No favorite surahs"
-                  description="Tap the heart icon on any surah to save it here."
+                  title={t.no_fav_surahs}
+                  description={t.no_fav_surahs_desc}
                   linkTo="/surahs"
-                  linkLabel="Browse Surahs"
+                  linkLabel={t.browse_surahs}
                 />
               ) : (
                 <div className="space-y-2">

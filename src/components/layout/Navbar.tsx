@@ -3,19 +3,22 @@ import { NavLink, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, BookOpen } from 'lucide-react'
 import ThemeToggle from '@/components/common/ThemeToggle'
+import LanguageSelectorNav from '@/components/common/LanguageSelectorNav'
+import { useT } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
-const NAV_LINKS = [
-  { to: '/',          label: 'Home'      },
-  { to: '/reciters',  label: 'Reciters'  },
-  { to: '/surahs',    label: 'Surahs'    },
-  { to: '/favorites', label: 'Favorites' },
-  { to: '/history',   label: 'History'   },
-]
-
 export default function Navbar() {
+  const t = useT()
   const [scrolled,    setScrolled]    = useState(false)
   const [mobileOpen,  setMobileOpen]  = useState(false)
+
+  const NAV_LINKS = [
+    { to: '/',          label: t.nav_home      },
+    { to: '/reciters',  label: t.nav_reciters  },
+    { to: '/surahs',    label: t.nav_surahs    },
+    { to: '/favorites', label: t.nav_favorites },
+    { to: '/history',   label: t.nav_history   },
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -67,6 +70,7 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <LanguageSelectorNav />
             <ThemeToggle />
             {/* Mobile menu button */}
             <button

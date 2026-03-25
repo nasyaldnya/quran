@@ -1,5 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import ReciterCard from './ReciterCard'
+import { useT } from '@/lib/i18n'
 import type { Reciter } from '@/types/api'
 
 interface ReciterGridProps {
@@ -26,13 +27,15 @@ function ReciterSkeleton() {
 }
 
 export default function ReciterGrid({ reciters, isLoading, error }: ReciterGridProps) {
+  const t = useT()
+
   if (error) {
     return (
       <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
         <p className="text-4xl mb-4">⚠️</p>
-        <p className="text-lg font-semibold text-foreground mb-1">Failed to load reciters</p>
+        <p className="text-lg font-semibold text-foreground mb-1">{t.failed_load_reciters}</p>
         <p className="text-sm text-muted-foreground">
-          {error.message}. Please check your connection.
+          {error.message}
         </p>
       </div>
     )
@@ -50,7 +53,7 @@ export default function ReciterGrid({ reciters, isLoading, error }: ReciterGridP
     return (
       <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
         <p className="text-5xl mb-4">🔍</p>
-        <p className="text-lg font-semibold text-foreground mb-1">No reciters found</p>
+        <p className="text-lg font-semibold text-foreground mb-1">{t.no_reciters_found}</p>
         <p className="text-sm text-muted-foreground">Try adjusting your search query.</p>
       </div>
     )

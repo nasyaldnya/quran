@@ -1,0 +1,600 @@
+import { useLanguageStore } from '@/store/languageStore'
+
+// ── Translation keys ─────────────────────────────────
+// Every UI string is keyed here. Add new keys as needed.
+
+export interface Translations {
+  // Nav
+  nav_home: string
+  nav_reciters: string
+  nav_surahs: string
+  nav_favorites: string
+  nav_history: string
+
+  // Hero
+  hero_badge: string
+  hero_title: string
+  hero_subtitle: string
+  hero_browse_reciters: string
+  hero_view_surahs: string
+  stat_surahs: string
+  stat_verses: string
+  stat_reciters: string
+
+  // Featured
+  featured_label: string
+  featured_title: string
+  view_all: string
+
+  // Quran banner
+  banner_translation: string
+  banner_ref: string
+
+  // Reciters page
+  reciters_title: string
+  reciters_subtitle: string
+  search_reciters: string
+  reciters_found: string
+  riwaya: string
+  riwayat: string
+  surah: string
+  surahs_word: string
+  surahs_available: string
+  failed_load_reciters: string
+  no_reciters_found: string
+
+  // Surahs page
+  surahs_title: string
+  surahs_subtitle: string
+  search_surahs: string
+  verses: string
+
+  // Reciter detail
+  play_all: string
+  pause_all: string
+  search_surahs_dots: string
+
+  // Favorites
+  favorites_title: string
+  favorites_empty: string
+  no_fav_reciters: string
+  no_fav_reciters_desc: string
+  no_fav_surahs: string
+  no_fav_surahs_desc: string
+  clear_all: string
+  added: string
+  browse_reciters: string
+  browse_surahs: string
+  saved_items: string
+
+  // History
+  history_title: string
+  history_empty: string
+  history_empty_desc: string
+  clear_history: string
+  recently_played: string
+  today: string
+  yesterday: string
+  just_now: string
+
+  // Audio player
+  sleep_timer: string
+  end_of_surah: string
+  cancel_timer: string
+  pausing_in: string
+  pausing_after_surah: string
+
+  // Quran text panel
+  quran_text: string
+  translation: string
+  tafsir: string
+  no_surah_playing: string
+  no_surah_playing_desc: string
+  failed_to_load: string
+  failed_to_load_desc: string
+  ayahs: string
+  loading_translation: string
+  loading_tafsir: string
+
+  // Footer
+  footer_credit: string
+  footer_love: string
+
+  // General
+  all: string
+  off: string
+  remove_favorite: string
+  add_favorite: string
+}
+
+// ── Translations per locale ──────────────────────────
+
+const translations: Record<string, Translations> = {
+  ar: {
+    nav_home: 'الرئيسية',
+    nav_reciters: 'القراء',
+    nav_surahs: 'السور',
+    nav_favorites: 'المفضلة',
+    nav_history: 'السجل',
+    hero_badge: 'مدعوم من Mp3Quran · أكثر من 100 قارئ عالمي',
+    hero_title: 'القرآن الكريم',
+    hero_subtitle: 'استمع إلى كلام الله بأصوات أشهر القراء في العالم. رحلة استماع مميزة عبر 114 سورة.',
+    hero_browse_reciters: 'تصفح القراء',
+    hero_view_surahs: 'عرض السور',
+    stat_surahs: 'سور',
+    stat_verses: 'آيات',
+    stat_reciters: 'قراء',
+    featured_label: 'قراء مميزون',
+    featured_title: 'أصوات بارزة في تلاوة القرآن',
+    view_all: 'عرض الكل',
+    banner_translation: '"إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ"',
+    banner_ref: 'سورة الحجر ١٥:٩',
+    reciters_title: 'جميع القراء',
+    reciters_subtitle: 'اكتشف أشهر قراء القرآن الكريم وأساليب تلاوتهم المتعددة.',
+    search_reciters: 'ابحث عن قارئ...',
+    reciters_found: 'قارئ',
+    riwaya: 'رواية',
+    riwayat: 'روايات',
+    surah: 'سورة',
+    surahs_word: 'سور',
+    surahs_available: 'سورة متاحة',
+    failed_load_reciters: 'فشل تحميل القراء',
+    no_reciters_found: 'لم يتم العثور على قراء',
+    surahs_title: 'جميع السور',
+    surahs_subtitle: 'تصفح جميع سور القرآن الكريم الـ 114.',
+    search_surahs: 'ابحث عن سورة...',
+    verses: 'آيات',
+    play_all: 'تشغيل الكل',
+    pause_all: 'إيقاف الكل',
+    search_surahs_dots: 'ابحث في السور…',
+    favorites_title: 'المفضلة',
+    favorites_empty: 'لا توجد مفضلات بعد — ابدأ بإضافة بعضها!',
+    no_fav_reciters: 'لا يوجد قراء مفضلون',
+    no_fav_reciters_desc: 'اضغط على أيقونة القلب على أي قارئ لحفظه هنا.',
+    no_fav_surahs: 'لا توجد سور مفضلة',
+    no_fav_surahs_desc: 'اضغط على أيقونة القلب على أي سورة لحفظها هنا.',
+    clear_all: 'مسح الكل',
+    added: 'أُضيف',
+    browse_reciters: 'تصفح القراء',
+    browse_surahs: 'تصفح السور',
+    saved_items: 'عنصر محفوظ',
+    history_title: 'سجل الاستماع',
+    history_empty: 'لم يتم تشغيل أي شيء بعد',
+    history_empty_desc: 'ستظهر السور التي استمعت إليها مؤخراً هنا.',
+    clear_history: 'مسح السجل',
+    recently_played: 'تم تشغيلها مؤخراً',
+    today: 'اليوم',
+    yesterday: 'أمس',
+    just_now: 'الآن',
+    sleep_timer: 'مؤقت النوم',
+    end_of_surah: 'نهاية السورة',
+    cancel_timer: 'إلغاء المؤقت',
+    pausing_in: 'إيقاف مؤقت خلال',
+    pausing_after_surah: 'إيقاف مؤقت بعد انتهاء هذه السورة',
+    quran_text: 'نص القرآن',
+    translation: 'ترجمة',
+    tafsir: 'تفسير',
+    no_surah_playing: 'لا توجد سورة قيد التشغيل',
+    no_surah_playing_desc: 'ابدأ تشغيل سورة لعرض نصها هنا.',
+    failed_to_load: 'فشل التحميل',
+    failed_to_load_desc: 'تعذر جلب نص السورة. يرجى التحقق من الاتصال.',
+    ayahs: 'آيات',
+    loading_translation: 'جارٍ تحميل الترجمة',
+    loading_tafsir: 'جارٍ تحميل التفسير',
+    footer_credit: 'الصوتيات من',
+    footer_love: 'صُنع بحب للقرآن الكريم',
+    all: 'الكل',
+    off: 'إيقاف',
+    remove_favorite: 'إزالة من المفضلة',
+    add_favorite: 'إضافة إلى المفضلة',
+  },
+
+  eng: {
+    nav_home: 'Home',
+    nav_reciters: 'Reciters',
+    nav_surahs: 'Surahs',
+    nav_favorites: 'Favorites',
+    nav_history: 'History',
+    hero_badge: 'Powered by Mp3Quran · 100+ World-Renowned Reciters',
+    hero_title: 'The Holy Quran',
+    hero_subtitle: 'Experience the divine words in the voices of the world\'s finest reciters. A premium, immersive listening journey through all 114 Surahs.',
+    hero_browse_reciters: 'Browse Reciters',
+    hero_view_surahs: 'View All Surahs',
+    stat_surahs: 'Surahs',
+    stat_verses: 'Verses',
+    stat_reciters: 'Reciters',
+    featured_label: 'Featured Reciters',
+    featured_title: 'Master Voices of the Quran',
+    view_all: 'View All',
+    banner_translation: '"Indeed, it is We who sent down the Quran, and indeed, We will be its guardian."',
+    banner_ref: 'Surah Al-Hijr 15:9',
+    reciters_title: 'All Reciters',
+    reciters_subtitle: 'Discover world-renowned Quran reciters and their multiple recitation styles.',
+    search_reciters: 'Search reciters by name…',
+    reciters_found: 'reciters found',
+    riwaya: 'Riwaya',
+    riwayat: 'Riwayat',
+    surah: 'Surah',
+    surahs_word: 'Surahs',
+    surahs_available: 'Surahs available',
+    failed_load_reciters: 'Failed to load reciters',
+    no_reciters_found: 'No reciters found',
+    surahs_title: 'All Surahs',
+    surahs_subtitle: 'Browse all 114 Surahs of the Holy Quran.',
+    search_surahs: 'Search surahs…',
+    verses: 'verses',
+    play_all: 'Play All',
+    pause_all: 'Pause All',
+    search_surahs_dots: 'Search surahs…',
+    favorites_title: 'My Favorites',
+    favorites_empty: 'No favorites yet — start adding some!',
+    no_fav_reciters: 'No favorite reciters',
+    no_fav_reciters_desc: 'Tap the heart icon on any reciter to save them here.',
+    no_fav_surahs: 'No favorite surahs',
+    no_fav_surahs_desc: 'Tap the heart icon on any surah to save it here.',
+    clear_all: 'Clear All',
+    added: 'Added',
+    browse_reciters: 'Browse Reciters',
+    browse_surahs: 'Browse Surahs',
+    saved_items: 'saved items',
+    history_title: 'Listening History',
+    history_empty: 'Nothing played yet',
+    history_empty_desc: 'Your recently played surahs will appear here.',
+    clear_history: 'Clear History',
+    recently_played: 'recently played tracks',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    just_now: 'Just now',
+    sleep_timer: 'Sleep Timer',
+    end_of_surah: 'End of Surah',
+    cancel_timer: 'Cancel Timer',
+    pausing_in: 'Pausing in',
+    pausing_after_surah: 'Pausing after this surah ends',
+    quran_text: 'Quran Text',
+    translation: 'Translation',
+    tafsir: 'Tafsir',
+    no_surah_playing: 'No surah playing',
+    no_surah_playing_desc: 'Start playing a surah to see its text here.',
+    failed_to_load: 'Failed to load',
+    failed_to_load_desc: 'Could not fetch the surah text. Please check your connection.',
+    ayahs: 'Ayahs',
+    loading_translation: 'Loading translation',
+    loading_tafsir: 'Loading tafsir',
+    footer_credit: 'Audio provided by',
+    footer_love: 'Built with love for the Holy Quran',
+    all: 'All',
+    off: 'Off',
+    remove_favorite: 'Remove from favorites',
+    add_favorite: 'Add to favorites',
+  },
+
+  fr: {
+    nav_home: 'Accueil',
+    nav_reciters: 'Récitants',
+    nav_surahs: 'Sourates',
+    nav_favorites: 'Favoris',
+    nav_history: 'Historique',
+    hero_badge: 'Propulsé par Mp3Quran · Plus de 100 récitants renommés',
+    hero_title: 'Le Saint Coran',
+    hero_subtitle: 'Écoutez les paroles divines par les voix des meilleurs récitants du monde. Un voyage d\'écoute à travers les 114 sourates.',
+    hero_browse_reciters: 'Parcourir les récitants',
+    hero_view_surahs: 'Voir les sourates',
+    stat_surahs: 'Sourates',
+    stat_verses: 'Versets',
+    stat_reciters: 'Récitants',
+    featured_label: 'Récitants en vedette',
+    featured_title: 'Voix magistrales du Coran',
+    view_all: 'Voir tout',
+    banner_translation: '"C\'est Nous qui avons fait descendre le Rappel et c\'est Nous qui en sommes les gardiens."',
+    banner_ref: 'Sourate Al-Hijr 15:9',
+    reciters_title: 'Tous les récitants',
+    reciters_subtitle: 'Découvrez les récitants du Coran et leurs styles de récitation.',
+    search_reciters: 'Rechercher un récitant…',
+    reciters_found: 'récitants trouvés',
+    riwaya: 'Riwaya',
+    riwayat: 'Riwayat',
+    surah: 'Sourate',
+    surahs_word: 'Sourates',
+    surahs_available: 'sourates disponibles',
+    failed_load_reciters: 'Échec du chargement des récitants',
+    no_reciters_found: 'Aucun récitant trouvé',
+    surahs_title: 'Toutes les sourates',
+    surahs_subtitle: 'Parcourez les 114 sourates du Saint Coran.',
+    search_surahs: 'Rechercher une sourate…',
+    verses: 'versets',
+    play_all: 'Tout lire',
+    pause_all: 'Tout mettre en pause',
+    search_surahs_dots: 'Rechercher des sourates…',
+    favorites_title: 'Mes favoris',
+    favorites_empty: 'Pas encore de favoris — commencez à en ajouter !',
+    no_fav_reciters: 'Pas de récitants favoris',
+    no_fav_reciters_desc: 'Appuyez sur le cœur sur un récitant pour le sauvegarder ici.',
+    no_fav_surahs: 'Pas de sourates favorites',
+    no_fav_surahs_desc: 'Appuyez sur le cœur sur une sourate pour la sauvegarder ici.',
+    clear_all: 'Tout effacer',
+    added: 'Ajouté',
+    browse_reciters: 'Parcourir les récitants',
+    browse_surahs: 'Parcourir les sourates',
+    saved_items: 'éléments sauvegardés',
+    history_title: 'Historique d\'écoute',
+    history_empty: 'Rien n\'a été lu encore',
+    history_empty_desc: 'Vos sourates récemment lues apparaîtront ici.',
+    clear_history: 'Effacer l\'historique',
+    recently_played: 'pistes récemment lues',
+    today: 'Aujourd\'hui',
+    yesterday: 'Hier',
+    just_now: 'À l\'instant',
+    sleep_timer: 'Minuterie de sommeil',
+    end_of_surah: 'Fin de la sourate',
+    cancel_timer: 'Annuler la minuterie',
+    pausing_in: 'Pause dans',
+    pausing_after_surah: 'Pause après la fin de cette sourate',
+    quran_text: 'Texte du Coran',
+    translation: 'Traduction',
+    tafsir: 'Tafsir',
+    no_surah_playing: 'Aucune sourate en lecture',
+    no_surah_playing_desc: 'Lancez une sourate pour voir son texte ici.',
+    failed_to_load: 'Échec du chargement',
+    failed_to_load_desc: 'Impossible de récupérer le texte. Vérifiez votre connexion.',
+    ayahs: 'Versets',
+    loading_translation: 'Chargement de la traduction',
+    loading_tafsir: 'Chargement du tafsir',
+    footer_credit: 'Audio fourni par',
+    footer_love: 'Fait avec amour pour le Saint Coran',
+    all: 'Tous',
+    off: 'Désactivé',
+    remove_favorite: 'Retirer des favoris',
+    add_favorite: 'Ajouter aux favoris',
+  },
+
+  tr: {
+    nav_home: 'Ana Sayfa',
+    nav_reciters: 'Kariler',
+    nav_surahs: 'Sureler',
+    nav_favorites: 'Favoriler',
+    nav_history: 'Geçmiş',
+    hero_badge: 'Mp3Quran tarafından desteklenmektedir · 100+ dünyaca ünlü kari',
+    hero_title: 'Kur\'an-ı Kerim',
+    hero_subtitle: 'Dünyanın en iyi karilerinin sesleriyle ilahi kelimeleri dinleyin. 114 sure boyunca etkileyici bir dinleme yolculuğu.',
+    hero_browse_reciters: 'Karilere Göz At',
+    hero_view_surahs: 'Tüm Sureleri Gör',
+    stat_surahs: 'Sure',
+    stat_verses: 'Ayet',
+    stat_reciters: 'Kari',
+    featured_label: 'Öne Çıkan Kariler',
+    featured_title: 'Kur\'an\'ın Usta Sesleri',
+    view_all: 'Tümünü Gör',
+    banner_translation: '"Şüphesiz o Zikr\'i Biz indirdik ve onu koruyacak olan da Biziz."',
+    banner_ref: 'Hicr Suresi 15:9',
+    reciters_title: 'Tüm Kariler',
+    reciters_subtitle: 'Dünyaca ünlü Kur\'an karilerini ve tilavet tarzlarını keşfedin.',
+    search_reciters: 'Kari ara…',
+    reciters_found: 'kari bulundu',
+    riwaya: 'Rivayet',
+    riwayat: 'Rivayetler',
+    surah: 'Sure',
+    surahs_word: 'Sure',
+    surahs_available: 'sure mevcut',
+    failed_load_reciters: 'Kariler yüklenemedi',
+    no_reciters_found: 'Kari bulunamadı',
+    surahs_title: 'Tüm Sureler',
+    surahs_subtitle: 'Kur\'an-ı Kerim\'in 114 suresine göz atın.',
+    search_surahs: 'Sure ara…',
+    verses: 'ayet',
+    play_all: 'Tümünü Oynat',
+    pause_all: 'Tümünü Duraklat',
+    search_surahs_dots: 'Sure ara…',
+    favorites_title: 'Favorilerim',
+    favorites_empty: 'Henüz favori yok — eklemeye başlayın!',
+    no_fav_reciters: 'Favori kari yok',
+    no_fav_reciters_desc: 'Buraya kaydetmek için herhangi bir karideki kalp simgesine dokunun.',
+    no_fav_surahs: 'Favori sure yok',
+    no_fav_surahs_desc: 'Buraya kaydetmek için herhangi bir suredeki kalp simgesine dokunun.',
+    clear_all: 'Tümünü Temizle',
+    added: 'Eklendi',
+    browse_reciters: 'Karilere Göz At',
+    browse_surahs: 'Surelere Göz At',
+    saved_items: 'kayıtlı öğe',
+    history_title: 'Dinleme Geçmişi',
+    history_empty: 'Henüz bir şey dinlenmedi',
+    history_empty_desc: 'Son dinlediğiniz sureler burada görünecek.',
+    clear_history: 'Geçmişi Temizle',
+    recently_played: 'son dinlenen parçalar',
+    today: 'Bugün',
+    yesterday: 'Dün',
+    just_now: 'Az önce',
+    sleep_timer: 'Uyku Zamanlayıcısı',
+    end_of_surah: 'Sure Sonu',
+    cancel_timer: 'Zamanlayıcıyı İptal Et',
+    pausing_in: 'Duraklatılacak',
+    pausing_after_surah: 'Bu sure bittikten sonra duraklatılacak',
+    quran_text: 'Kur\'an Metni',
+    translation: 'Çeviri',
+    tafsir: 'Tefsir',
+    no_surah_playing: 'Oynatılan sure yok',
+    no_surah_playing_desc: 'Metnini görmek için bir sure başlatın.',
+    failed_to_load: 'Yükleme başarısız',
+    failed_to_load_desc: 'Sure metni alınamadı. Bağlantınızı kontrol edin.',
+    ayahs: 'Ayet',
+    loading_translation: 'Çeviri yükleniyor',
+    loading_tafsir: 'Tefsir yükleniyor',
+    footer_credit: 'Ses kaynağı',
+    footer_love: 'Kur\'an-ı Kerim sevgisiyle yapıldı',
+    all: 'Tümü',
+    off: 'Kapalı',
+    remove_favorite: 'Favorilerden kaldır',
+    add_favorite: 'Favorilere ekle',
+  },
+
+  es: {
+    nav_home: 'Inicio',
+    nav_reciters: 'Recitadores',
+    nav_surahs: 'Suras',
+    nav_favorites: 'Favoritos',
+    nav_history: 'Historial',
+    hero_badge: 'Desarrollado por Mp3Quran · Más de 100 recitadores de renombre mundial',
+    hero_title: 'El Sagrado Corán',
+    hero_subtitle: 'Escucha las palabras divinas con las voces de los mejores recitadores del mundo. Un viaje de escucha a través de las 114 suras.',
+    hero_browse_reciters: 'Explorar recitadores',
+    hero_view_surahs: 'Ver todas las suras',
+    stat_surahs: 'Suras',
+    stat_verses: 'Versículos',
+    stat_reciters: 'Recitadores',
+    featured_label: 'Recitadores destacados',
+    featured_title: 'Voces maestras del Corán',
+    view_all: 'Ver todo',
+    banner_translation: '"Ciertamente Nosotros hemos hecho descender el Recuerdo y somos sus guardianes."',
+    banner_ref: 'Sura Al-Hijr 15:9',
+    reciters_title: 'Todos los recitadores',
+    reciters_subtitle: 'Descubre recitadores del Corán y sus múltiples estilos de recitación.',
+    search_reciters: 'Buscar recitadores…',
+    reciters_found: 'recitadores encontrados',
+    riwaya: 'Riwaya',
+    riwayat: 'Riwayat',
+    surah: 'Sura',
+    surahs_word: 'Suras',
+    surahs_available: 'suras disponibles',
+    failed_load_reciters: 'Error al cargar recitadores',
+    no_reciters_found: 'No se encontraron recitadores',
+    surahs_title: 'Todas las suras',
+    surahs_subtitle: 'Explora las 114 suras del Sagrado Corán.',
+    search_surahs: 'Buscar suras…',
+    verses: 'versículos',
+    play_all: 'Reproducir todo',
+    pause_all: 'Pausar todo',
+    search_surahs_dots: 'Buscar suras…',
+    favorites_title: 'Mis favoritos',
+    favorites_empty: 'Aún no hay favoritos — ¡empieza a agregar algunos!',
+    no_fav_reciters: 'Sin recitadores favoritos',
+    no_fav_reciters_desc: 'Toca el corazón en cualquier recitador para guardarlo aquí.',
+    no_fav_surahs: 'Sin suras favoritas',
+    no_fav_surahs_desc: 'Toca el corazón en cualquier sura para guardarla aquí.',
+    clear_all: 'Borrar todo',
+    added: 'Añadido',
+    browse_reciters: 'Explorar recitadores',
+    browse_surahs: 'Explorar suras',
+    saved_items: 'elementos guardados',
+    history_title: 'Historial de escucha',
+    history_empty: 'Nada reproducido aún',
+    history_empty_desc: 'Tus suras reproducidas recientemente aparecerán aquí.',
+    clear_history: 'Borrar historial',
+    recently_played: 'pistas reproducidas recientemente',
+    today: 'Hoy',
+    yesterday: 'Ayer',
+    just_now: 'Ahora mismo',
+    sleep_timer: 'Temporizador de sueño',
+    end_of_surah: 'Fin de la sura',
+    cancel_timer: 'Cancelar temporizador',
+    pausing_in: 'Pausa en',
+    pausing_after_surah: 'Pausa después de que termine esta sura',
+    quran_text: 'Texto del Corán',
+    translation: 'Traducción',
+    tafsir: 'Tafsir',
+    no_surah_playing: 'Ninguna sura reproduciéndose',
+    no_surah_playing_desc: 'Reproduce una sura para ver su texto aquí.',
+    failed_to_load: 'Error al cargar',
+    failed_to_load_desc: 'No se pudo obtener el texto. Verifica tu conexión.',
+    ayahs: 'Aleyas',
+    loading_translation: 'Cargando traducción',
+    loading_tafsir: 'Cargando tafsir',
+    footer_credit: 'Audio proporcionado por',
+    footer_love: 'Hecho con amor por el Sagrado Corán',
+    all: 'Todos',
+    off: 'Desactivado',
+    remove_favorite: 'Quitar de favoritos',
+    add_favorite: 'Añadir a favoritos',
+  },
+
+  id: {
+    nav_home: 'Beranda',
+    nav_reciters: 'Qari',
+    nav_surahs: 'Surah',
+    nav_favorites: 'Favorit',
+    nav_history: 'Riwayat',
+    hero_badge: 'Didukung oleh Mp3Quran · 100+ Qari Terkenal Dunia',
+    hero_title: 'Al-Quran Al-Karim',
+    hero_subtitle: 'Dengarkan firman Allah dengan suara para qari terbaik dunia. Perjalanan mendengarkan 114 surah.',
+    hero_browse_reciters: 'Jelajahi Qari',
+    hero_view_surahs: 'Lihat Semua Surah',
+    stat_surahs: 'Surah',
+    stat_verses: 'Ayat',
+    stat_reciters: 'Qari',
+    featured_label: 'Qari Unggulan',
+    featured_title: 'Suara Terbaik Al-Quran',
+    view_all: 'Lihat Semua',
+    banner_translation: '"Sesungguhnya Kamilah yang menurunkan Al-Quran dan pasti Kami pula yang menjaganya."',
+    banner_ref: 'Surah Al-Hijr 15:9',
+    reciters_title: 'Semua Qari',
+    reciters_subtitle: 'Temukan qari Al-Quran terkenal dan gaya tilawah mereka.',
+    search_reciters: 'Cari qari…',
+    reciters_found: 'qari ditemukan',
+    riwaya: 'Riwayat',
+    riwayat: 'Riwayat',
+    surah: 'Surah',
+    surahs_word: 'Surah',
+    surahs_available: 'surah tersedia',
+    failed_load_reciters: 'Gagal memuat qari',
+    no_reciters_found: 'Qari tidak ditemukan',
+    surahs_title: 'Semua Surah',
+    surahs_subtitle: 'Jelajahi 114 surah Al-Quran.',
+    search_surahs: 'Cari surah…',
+    verses: 'ayat',
+    play_all: 'Putar Semua',
+    pause_all: 'Jeda Semua',
+    search_surahs_dots: 'Cari surah…',
+    favorites_title: 'Favorit Saya',
+    favorites_empty: 'Belum ada favorit — mulai tambahkan!',
+    no_fav_reciters: 'Belum ada qari favorit',
+    no_fav_reciters_desc: 'Ketuk ikon hati pada qari mana pun untuk menyimpannya di sini.',
+    no_fav_surahs: 'Belum ada surah favorit',
+    no_fav_surahs_desc: 'Ketuk ikon hati pada surah mana pun untuk menyimpannya di sini.',
+    clear_all: 'Hapus Semua',
+    added: 'Ditambahkan',
+    browse_reciters: 'Jelajahi Qari',
+    browse_surahs: 'Jelajahi Surah',
+    saved_items: 'item tersimpan',
+    history_title: 'Riwayat Mendengarkan',
+    history_empty: 'Belum ada yang diputar',
+    history_empty_desc: 'Surah yang baru diputar akan muncul di sini.',
+    clear_history: 'Hapus Riwayat',
+    recently_played: 'baru diputar',
+    today: 'Hari ini',
+    yesterday: 'Kemarin',
+    just_now: 'Baru saja',
+    sleep_timer: 'Timer Tidur',
+    end_of_surah: 'Akhir Surah',
+    cancel_timer: 'Batalkan Timer',
+    pausing_in: 'Jeda dalam',
+    pausing_after_surah: 'Jeda setelah surah ini selesai',
+    quran_text: 'Teks Al-Quran',
+    translation: 'Terjemahan',
+    tafsir: 'Tafsir',
+    no_surah_playing: 'Tidak ada surah diputar',
+    no_surah_playing_desc: 'Mulai putar surah untuk melihat teksnya di sini.',
+    failed_to_load: 'Gagal memuat',
+    failed_to_load_desc: 'Tidak dapat mengambil teks surah. Periksa koneksi Anda.',
+    ayahs: 'Ayat',
+    loading_translation: 'Memuat terjemahan',
+    loading_tafsir: 'Memuat tafsir',
+    footer_credit: 'Audio disediakan oleh',
+    footer_love: 'Dibuat dengan cinta untuk Al-Quran Al-Karim',
+    all: 'Semua',
+    off: 'Mati',
+    remove_favorite: 'Hapus dari favorit',
+    add_favorite: 'Tambah ke favorit',
+  },
+}
+
+// ── Hook to get translations ─────────────────────────
+
+export function useT(): Translations {
+  const locale = useLanguageStore((s) => s.locale)
+  return translations[locale] ?? translations['eng']
+}
+
+// ── Static getter (for non-React contexts) ───────────
+
+export function getT(): Translations {
+  const locale = useLanguageStore.getState().locale
+  return translations[locale] ?? translations['eng']
+}

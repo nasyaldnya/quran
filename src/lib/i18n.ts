@@ -10,6 +10,10 @@ export interface Translations {
   nav_surahs: string
   nav_favorites: string
   nav_history: string
+  nav_search: string
+  nav_playlists: string
+  nav_compare: string
+  nav_stats: string
 
   // Hero
   hero_badge: string
@@ -121,6 +125,71 @@ export interface Translations {
   // Batch A — Playback speed
   playback_speed: string
   speed_normal: string
+
+  // Batch B — Nav additions
+  nav_juz: string
+  nav_bookmarks: string
+
+  // Batch B — Bookmarks
+  bookmarks_title: string
+  bookmarks_empty: string
+  bookmarks_empty_desc: string
+  bookmarks_saved: string
+  remove_bookmark: string
+
+  // Batch B — Juz navigation
+  juz_navigation: string
+  juz_title: string
+  juz_subtitle: string
+  juz_label: string
+
+  // Batch B — Reading progress
+  progress_title: string
+  progress_listened: string
+  progress_read: string
+  progress_reset: string
+
+  // Batch C — Search
+  search_quran: string
+  search_title: string
+  search_subtitle: string
+  search_placeholder: string
+  search_no_results: string
+  search_try_again: string
+  search_results_found: string
+
+  // Batch C — Playlists
+  playlists_label: string
+  playlists_title: string
+  playlists_subtitle: string
+  playlists_empty: string
+  playlists_empty_desc: string
+  playlist_new_placeholder: string
+  playlist_create: string
+
+  // Batch C — Reciter comparison
+  compare_label: string
+  compare_title: string
+  compare_subtitle: string
+  compare_select_surah: string
+  compare_reciter: string
+  compare_choose: string
+
+  // Batch D — Analytics
+  stats_label: string
+  stats_title: string
+  stats_subtitle: string
+  stats_total_time: string
+  stats_surahs_played: string
+  stats_streak: string
+  stats_weekly: string
+  stats_most_played: string
+
+  // Batch D — Notifications
+  reminder_title: string
+  reminder_enable: string
+  reminder_disable: string
+  reminder_time: string
 }
 
 // ── Translations per locale ──────────────────────────
@@ -132,6 +201,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'السور',
     nav_favorites: 'المفضلة',
     nav_history: 'السجل',
+    nav_search: 'بحث',
+    nav_playlists: 'قوائم التشغيل',
+    nav_compare: 'مقارنة',
+    nav_stats: 'الإحصائيات',
     hero_badge: 'مدعوم من Mp3Quran · أكثر من 100 قارئ عالمي',
     hero_title: 'القرآن الكريم',
     hero_subtitle: 'استمع إلى كلام الله بأصوات أشهر القراء في العالم. رحلة استماع مميزة عبر 114 سورة.',
@@ -211,6 +284,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'تكبير الخط',
     playback_speed: 'سرعة التشغيل',
     speed_normal: 'عادي',
+    nav_juz: 'الأجزاء',
+    nav_bookmarks: 'الإشارات المرجعية',
+    bookmarks_title: 'الآيات المحفوظة',
+    bookmarks_empty: 'لا توجد إشارات مرجعية بعد',
+    bookmarks_empty_desc: 'اضغط على أيقونة الإشارة المرجعية على أي آية لحفظها.',
+    bookmarks_saved: 'آيات محفوظة',
+    remove_bookmark: 'إزالة الإشارة المرجعية',
+    juz_navigation: 'تصفح الأجزاء',
+    juz_title: 'تصفح بالجزء',
+    juz_subtitle: 'القرآن الكريم مقسم إلى 30 جزءاً لتسهيل القراءة.',
+    juz_label: 'الجزء',
+    progress_title: 'التقدم',
+    progress_listened: 'تم الاستماع',
+    progress_read: 'تمت القراءة',
+    progress_reset: 'إعادة تعيين التقدم',
+    search_quran: 'البحث في القرآن',
+    search_title: 'البحث عن آيات',
+    search_subtitle: 'ابحث عن كلمة أو عبارة في القرآن الكريم.',
+    search_placeholder: 'اكتب للبحث...',
+    search_no_results: 'لا توجد نتائج',
+    search_try_again: 'جرّب كلمة مفتاحية مختلفة.',
+    search_results_found: 'نتيجة',
+    playlists_label: 'قوائم التشغيل',
+    playlists_title: 'قوائم التشغيل',
+    playlists_subtitle: 'أنشئ قوائم تشغيل مخصصة من السور المفضلة لديك.',
+    playlists_empty: 'لا توجد قوائم تشغيل',
+    playlists_empty_desc: 'أنشئ قائمة التشغيل الأولى للبدء.',
+    playlist_new_placeholder: 'اسم القائمة...',
+    playlist_create: 'إنشاء',
+    compare_label: 'مقارنة',
+    compare_title: 'مقارنة القراء',
+    compare_subtitle: 'استمع إلى نفس السورة من قارئين مختلفين.',
+    compare_select_surah: 'اختر السورة',
+    compare_reciter: 'القارئ',
+    compare_choose: 'اختر قارئاً...',
+    stats_label: 'الإحصائيات',
+    stats_title: 'إحصائياتي',
+    stats_subtitle: 'تابع رحلتك في الاستماع للقرآن الكريم.',
+    stats_total_time: 'إجمالي الاستماع',
+    stats_surahs_played: 'السور المسموعة',
+    stats_streak: 'أيام متتالية',
+    stats_weekly: 'النشاط الأسبوعي',
+    stats_most_played: 'الأكثر استماعاً',
+    reminder_title: 'التذكير',
+    reminder_enable: 'تفعيل التذكير اليومي',
+    reminder_disable: 'تعطيل',
+    reminder_time: 'وقت التذكير',
   },
 
   eng: {
@@ -219,6 +339,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'Surahs',
     nav_favorites: 'Favorites',
     nav_history: 'History',
+    nav_search: 'Search',
+    nav_playlists: 'Playlists',
+    nav_compare: 'Compare',
+    nav_stats: 'Stats',
     hero_badge: 'Powered by Mp3Quran · 100+ World-Renowned Reciters',
     hero_title: 'The Holy Quran',
     hero_subtitle: 'Experience the divine words in the voices of the world\'s finest reciters. A premium, immersive listening journey through all 114 Surahs.',
@@ -298,6 +422,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'Increase font size',
     playback_speed: 'Playback Speed',
     speed_normal: 'Normal',
+    nav_juz: 'Juz',
+    nav_bookmarks: 'Bookmarks',
+    bookmarks_title: 'Bookmarked Ayahs',
+    bookmarks_empty: 'No bookmarks yet',
+    bookmarks_empty_desc: 'Tap the bookmark icon on any ayah to save it here.',
+    bookmarks_saved: 'ayahs bookmarked',
+    remove_bookmark: 'Remove bookmark',
+    juz_navigation: 'Juz Navigation',
+    juz_title: 'Browse by Juz',
+    juz_subtitle: 'The Quran is divided into 30 Juz for structured reading.',
+    juz_label: 'Juz',
+    progress_title: 'Progress',
+    progress_listened: 'Listened',
+    progress_read: 'Read',
+    progress_reset: 'Reset progress',
+    search_quran: 'Search Quran',
+    search_title: 'Search Ayahs',
+    search_subtitle: 'Search for words or phrases across the entire Holy Quran.',
+    search_placeholder: 'Type to search...',
+    search_no_results: 'No results found',
+    search_try_again: 'Try a different keyword.',
+    search_results_found: 'results found',
+    playlists_label: 'Playlists',
+    playlists_title: 'My Playlists',
+    playlists_subtitle: 'Create custom playlists from your favorite surahs.',
+    playlists_empty: 'No playlists yet',
+    playlists_empty_desc: 'Create your first playlist to get started.',
+    playlist_new_placeholder: 'Playlist name...',
+    playlist_create: 'Create',
+    compare_label: 'Compare',
+    compare_title: 'Compare Reciters',
+    compare_subtitle: 'Listen to the same surah from two different reciters side by side.',
+    compare_select_surah: 'Select Surah',
+    compare_reciter: 'Reciter',
+    compare_choose: 'Choose a reciter...',
+    stats_label: 'Statistics',
+    stats_title: 'My Statistics',
+    stats_subtitle: 'Track your Quran listening journey.',
+    stats_total_time: 'Total listening',
+    stats_surahs_played: 'Surahs played',
+    stats_streak: 'Day streak',
+    stats_weekly: 'Weekly activity',
+    stats_most_played: 'Most played',
+    reminder_title: 'Reminder',
+    reminder_enable: 'Enable daily reminder',
+    reminder_disable: 'Disable',
+    reminder_time: 'Reminder time',
   },
 
   fr: {
@@ -306,6 +477,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'Sourates',
     nav_favorites: 'Favoris',
     nav_history: 'Historique',
+    nav_search: 'Recherche',
+    nav_playlists: 'Listes',
+    nav_compare: 'Comparer',
+    nav_stats: 'Statistiques',
     hero_badge: 'Propulsé par Mp3Quran · Plus de 100 récitants renommés',
     hero_title: 'Le Saint Coran',
     hero_subtitle: 'Écoutez les paroles divines par les voix des meilleurs récitants du monde. Un voyage d\'écoute à travers les 114 sourates.',
@@ -385,6 +560,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'Agrandir la police',
     playback_speed: 'Vitesse',
     speed_normal: 'Normale',
+    nav_juz: 'Juz',
+    nav_bookmarks: 'Signets',
+    bookmarks_title: 'Versets marqués',
+    bookmarks_empty: 'Aucun signet pour le moment',
+    bookmarks_empty_desc: 'Appuyez sur le signet d'un verset pour le sauvegarder.',
+    bookmarks_saved: 'versets marqués',
+    remove_bookmark: 'Supprimer le signet',
+    juz_navigation: 'Navigation par Juz',
+    juz_title: 'Explorer par Juz',
+    juz_subtitle: 'Le Coran est divisé en 30 juz pour une lecture structurée.',
+    juz_label: 'Juz',
+    progress_title: 'Progression',
+    progress_listened: 'Écoutées',
+    progress_read: 'Lues',
+    progress_reset: 'Réinitialiser',
+    search_quran: 'Rechercher dans le Coran',
+    search_title: 'Rechercher des versets',
+    search_subtitle: 'Recherchez un mot ou une expression dans tout le Coran.',
+    search_placeholder: 'Tapez pour rechercher...',
+    search_no_results: 'Aucun résultat',
+    search_try_again: 'Essayez un autre mot-clé.',
+    search_results_found: 'résultats trouvés',
+    playlists_label: 'Listes de lecture',
+    playlists_title: 'Mes listes',
+    playlists_subtitle: 'Créez des listes personnalisées avec vos sourates préférées.',
+    playlists_empty: 'Aucune liste encore',
+    playlists_empty_desc: 'Créez votre première liste pour commencer.',
+    playlist_new_placeholder: 'Nom de la liste...',
+    playlist_create: 'Créer',
+    compare_label: 'Comparer',
+    compare_title: 'Comparer les récitants',
+    compare_subtitle: 'Écoutez la même sourate de deux récitants différents.',
+    compare_select_surah: 'Sélectionner une sourate',
+    compare_reciter: 'Récitant',
+    compare_choose: 'Choisir un récitant...',
+    stats_label: 'Statistiques',
+    stats_title: 'Mes statistiques',
+    stats_subtitle: 'Suivez votre parcours d'écoute du Coran.',
+    stats_total_time: 'Temps total',
+    stats_surahs_played: 'Sourates écoutées',
+    stats_streak: 'Jours consécutifs',
+    stats_weekly: 'Activité hebdomadaire',
+    stats_most_played: 'Les plus écoutées',
+    reminder_title: 'Rappel',
+    reminder_enable: 'Activer le rappel',
+    reminder_disable: 'Désactiver',
+    reminder_time: 'Heure du rappel',
   },
 
   tr: {
@@ -393,6 +615,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'Sureler',
     nav_favorites: 'Favoriler',
     nav_history: 'Geçmiş',
+    nav_search: 'Ara',
+    nav_playlists: 'Listeler',
+    nav_compare: 'Karşılaştır',
+    nav_stats: 'İstatistik',
     hero_badge: 'Mp3Quran tarafından desteklenmektedir · 100+ dünyaca ünlü kari',
     hero_title: 'Kur\'an-ı Kerim',
     hero_subtitle: 'Dünyanın en iyi karilerinin sesleriyle ilahi kelimeleri dinleyin. 114 sure boyunca etkileyici bir dinleme yolculuğu.',
@@ -472,6 +698,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'Yazı büyüt',
     playback_speed: 'Hız',
     speed_normal: 'Normal',
+    nav_juz: 'Cüz',
+    nav_bookmarks: 'Yer İmleri',
+    bookmarks_title: 'İşaretli Ayetler',
+    bookmarks_empty: 'Henüz yer imi yok',
+    bookmarks_empty_desc: 'Kaydetmek için herhangi bir ayetteki yer imi simgesine dokunun.',
+    bookmarks_saved: 'ayet işaretlendi',
+    remove_bookmark: 'Yer imini kaldır',
+    juz_navigation: 'Cüz Gezintisi',
+    juz_title: 'Cüzlere Göz At',
+    juz_subtitle: 'Kur'an-ı Kerim yapılandırılmış okuma için 30 cüze ayrılmıştır.',
+    juz_label: 'Cüz',
+    progress_title: 'İlerleme',
+    progress_listened: 'Dinlenen',
+    progress_read: 'Okunan',
+    progress_reset: 'İlerlemeyi sıfırla',
+    search_quran: 'Kur'an'da Ara',
+    search_title: 'Ayet Ara',
+    search_subtitle: 'Kur'an-ı Kerim'de kelime veya cümle arayın.',
+    search_placeholder: 'Aramak için yazın...',
+    search_no_results: 'Sonuç bulunamadı',
+    search_try_again: 'Farklı bir anahtar kelime deneyin.',
+    search_results_found: 'sonuç bulundu',
+    playlists_label: 'Çalma Listeleri',
+    playlists_title: 'Çalma Listelerim',
+    playlists_subtitle: 'Seçtiğiniz surelerden özel çalma listeleri oluşturun.',
+    playlists_empty: 'Henüz çalma listesi yok',
+    playlists_empty_desc: 'İlk çalma listenizi oluşturun.',
+    playlist_new_placeholder: 'Liste adı...',
+    playlist_create: 'Oluştur',
+    compare_label: 'Karşılaştır',
+    compare_title: 'Karileri Karşılaştır',
+    compare_subtitle: 'Aynı sureyi iki farklı kariden dinleyin.',
+    compare_select_surah: 'Sure Seçin',
+    compare_reciter: 'Kari',
+    compare_choose: 'Kari seçin...',
+    stats_label: 'İstatistikler',
+    stats_title: 'İstatistiklerim',
+    stats_subtitle: 'Kur'an dinleme yolculuğunuzu takip edin.',
+    stats_total_time: 'Toplam süre',
+    stats_surahs_played: 'Dinlenen sureler',
+    stats_streak: 'Ardışık gün',
+    stats_weekly: 'Haftalık aktivite',
+    stats_most_played: 'En çok dinlenen',
+    reminder_title: 'Hatırlatıcı',
+    reminder_enable: 'Hatırlatıcıyı aç',
+    reminder_disable: 'Kapat',
+    reminder_time: 'Hatırlatma saati',
   },
 
   es: {
@@ -480,6 +753,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'Suras',
     nav_favorites: 'Favoritos',
     nav_history: 'Historial',
+    nav_search: 'Buscar',
+    nav_playlists: 'Listas',
+    nav_compare: 'Comparar',
+    nav_stats: 'Estadísticas',
     hero_badge: 'Desarrollado por Mp3Quran · Más de 100 recitadores de renombre mundial',
     hero_title: 'El Sagrado Corán',
     hero_subtitle: 'Escucha las palabras divinas con las voces de los mejores recitadores del mundo. Un viaje de escucha a través de las 114 suras.',
@@ -559,6 +836,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'Aumentar fuente',
     playback_speed: 'Velocidad',
     speed_normal: 'Normal',
+    nav_juz: 'Juz',
+    nav_bookmarks: 'Marcadores',
+    bookmarks_title: 'Aleyas marcadas',
+    bookmarks_empty: 'Sin marcadores aún',
+    bookmarks_empty_desc: 'Toca el ícono de marcador en cualquier aleya para guardarla.',
+    bookmarks_saved: 'aleyas marcadas',
+    remove_bookmark: 'Eliminar marcador',
+    juz_navigation: 'Navegación por Juz',
+    juz_title: 'Explorar por Juz',
+    juz_subtitle: 'El Corán está dividido en 30 juz para una lectura estructurada.',
+    juz_label: 'Juz',
+    progress_title: 'Progreso',
+    progress_listened: 'Escuchadas',
+    progress_read: 'Leídas',
+    progress_reset: 'Resetear progreso',
+    search_quran: 'Buscar en el Corán',
+    search_title: 'Buscar Aleyas',
+    search_subtitle: 'Busca palabras o frases en todo el Sagrado Corán.',
+    search_placeholder: 'Escribe para buscar...',
+    search_no_results: 'Sin resultados',
+    search_try_again: 'Intenta con otra palabra.',
+    search_results_found: 'resultados encontrados',
+    playlists_label: 'Listas',
+    playlists_title: 'Mis Listas',
+    playlists_subtitle: 'Crea listas personalizadas con tus suras favoritas.',
+    playlists_empty: 'Aún no hay listas',
+    playlists_empty_desc: 'Crea tu primera lista para comenzar.',
+    playlist_new_placeholder: 'Nombre de la lista...',
+    playlist_create: 'Crear',
+    compare_label: 'Comparar',
+    compare_title: 'Comparar Recitadores',
+    compare_subtitle: 'Escucha la misma sura de dos recitadores diferentes.',
+    compare_select_surah: 'Seleccionar Sura',
+    compare_reciter: 'Recitador',
+    compare_choose: 'Elegir recitador...',
+    stats_label: 'Estadísticas',
+    stats_title: 'Mis estadísticas',
+    stats_subtitle: 'Sigue tu progreso de escucha del Corán.',
+    stats_total_time: 'Tiempo total',
+    stats_surahs_played: 'Suras reproducidas',
+    stats_streak: 'Días consecutivos',
+    stats_weekly: 'Actividad semanal',
+    stats_most_played: 'Más reproducidas',
+    reminder_title: 'Recordatorio',
+    reminder_enable: 'Activar recordatorio',
+    reminder_disable: 'Desactivar',
+    reminder_time: 'Hora del recordatorio',
   },
 
   id: {
@@ -567,6 +891,10 @@ const translations: Record<string, Translations> = {
     nav_surahs: 'Surah',
     nav_favorites: 'Favorit',
     nav_history: 'Riwayat',
+    nav_search: 'Cari',
+    nav_playlists: 'Daftar Putar',
+    nav_compare: 'Bandingkan',
+    nav_stats: 'Statistik',
     hero_badge: 'Didukung oleh Mp3Quran · 100+ Qari Terkenal Dunia',
     hero_title: 'Al-Quran Al-Karim',
     hero_subtitle: 'Dengarkan firman Allah dengan suara para qari terbaik dunia. Perjalanan mendengarkan 114 surah.',
@@ -646,6 +974,53 @@ const translations: Record<string, Translations> = {
     font_size_increase: 'Perbesar font',
     playback_speed: 'Kecepatan putar',
     speed_normal: 'Normal',
+    nav_juz: 'Juz',
+    nav_bookmarks: 'Penanda',
+    bookmarks_title: 'Penanda Ayat',
+    bookmarks_empty: 'Belum ada penanda',
+    bookmarks_empty_desc: 'Ketuk ikon penanda pada ayat untuk menyimpannya.',
+    bookmarks_saved: 'ayat ditandai',
+    remove_bookmark: 'Hapus penanda',
+    juz_navigation: 'Navigasi Juz',
+    juz_title: 'Jelajahi Juz',
+    juz_subtitle: 'Al-Quran terbagi menjadi 30 juz untuk memudahkan pembacaan.',
+    juz_label: 'Juz',
+    progress_title: 'Progres',
+    progress_listened: 'Didengarkan',
+    progress_read: 'Dibaca',
+    progress_reset: 'Reset progres',
+    search_quran: 'Cari di Al-Quran',
+    search_title: 'Cari Ayat',
+    search_subtitle: 'Cari kata atau frasa di seluruh Al-Quran.',
+    search_placeholder: 'Ketik untuk mencari...',
+    search_no_results: 'Tidak ada hasil',
+    search_try_again: 'Coba kata kunci lain.',
+    search_results_found: 'hasil ditemukan',
+    playlists_label: 'Daftar Putar',
+    playlists_title: 'Daftar Putar Saya',
+    playlists_subtitle: 'Buat daftar putar kustom dari surah pilihan Anda.',
+    playlists_empty: 'Belum ada daftar putar',
+    playlists_empty_desc: 'Buat daftar putar pertama Anda untuk memulai.',
+    playlist_new_placeholder: 'Nama daftar putar...',
+    playlist_create: 'Buat',
+    compare_label: 'Bandingkan',
+    compare_title: 'Bandingkan Qari',
+    compare_subtitle: 'Dengarkan surah yang sama dari dua qari berbeda.',
+    compare_select_surah: 'Pilih Surah',
+    compare_reciter: 'Qari',
+    compare_choose: 'Pilih qari...',
+    stats_label: 'Statistik',
+    stats_title: 'Statistik Saya',
+    stats_subtitle: 'Lacak perjalanan mendengarkan Al-Quran Anda.',
+    stats_total_time: 'Total mendengarkan',
+    stats_surahs_played: 'Surah diputar',
+    stats_streak: 'Hari berturut-turut',
+    stats_weekly: 'Aktivitas mingguan',
+    stats_most_played: 'Paling sering diputar',
+    reminder_title: 'Pengingat',
+    reminder_enable: 'Aktifkan pengingat',
+    reminder_disable: 'Nonaktifkan',
+    reminder_time: 'Waktu pengingat',
   },
 }
 

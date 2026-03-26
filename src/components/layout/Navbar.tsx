@@ -16,7 +16,13 @@ export default function Navbar() {
     { to: '/',          label: t.nav_home      },
     { to: '/reciters',  label: t.nav_reciters  },
     { to: '/surahs',    label: t.nav_surahs    },
+    { to: '/juz',       label: t.nav_juz       },
+    { to: '/search',    label: t.nav_search    },
     { to: '/favorites', label: t.nav_favorites },
+    { to: '/bookmarks', label: t.nav_bookmarks },
+    { to: '/playlists', label: t.nav_playlists },
+    { to: '/compare',   label: t.nav_compare   },
+    { to: '/stats',     label: t.nav_stats     },
     { to: '/history',   label: t.nav_history   },
   ]
 

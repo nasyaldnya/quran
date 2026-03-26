@@ -11,6 +11,12 @@ import ReciterDetailPage from '@/pages/ReciterDetailPage'
 import SurahsPage from '@/pages/SurahsPage'
 import FavoritesPage from '@/pages/FavoritesPage'
 import HistoryPage from '@/pages/HistoryPage'
+import BookmarksPage from '@/pages/BookmarksPage'
+import JuzPage from '@/pages/JuzPage'
+import SearchPage from '@/pages/SearchPage'
+import PlaylistsPage from '@/pages/PlaylistsPage'
+import ComparePage from '@/pages/ComparePage'
+import StatsPage from '@/pages/StatsPage'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 export default function App() {
@@ -30,6 +36,12 @@ export default function App() {
               <Route path="/surahs"          element={<SurahsPage />} />
               <Route path="/favorites"       element={<FavoritesPage />} />
               <Route path="/history"         element={<HistoryPage />} />
+              <Route path="/bookmarks"       element={<BookmarksPage />} />
+              <Route path="/juz"             element={<JuzPage />} />
+              <Route path="/search"          element={<SearchPage />} />
+              <Route path="/playlists"       element={<PlaylistsPage />} />
+              <Route path="/compare"         element={<ComparePage />} />
+              <Route path="/stats"           element={<StatsPage />} />
             </Routes>
           </AnimatePresence>
         </main>

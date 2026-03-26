@@ -7,6 +7,8 @@ import { queryClient } from './lib/queryClient'
 import { useAudioStore } from '@/store/audioStore'
 import { useHistoryStore } from '@/store/historyStore'
 import { useUiStore } from '@/store/uiStore'
+import { useAnalyticsStore } from '@/store/analyticsStore'
+import { useProgressStore } from '@/store/progressStore'
 import './index.css'
 
 // Auto-log to listening history whenever a new track starts
@@ -16,8 +18,19 @@ useAudioStore.subscribe((state, prevState) => {
     state.currentTrack.audioUrl !== prevState.currentTrack?.audioUrl
   ) {
     useHistoryStore.getState().addEntry(state.currentTrack)
-    // Switch panel to show the playing surah (clear manual browsing)
     useUiStore.getState().setViewingSurahNumber(null)
+
+    // Log analytics for the PREVIOUS track (it finished or was skipped)
+    if (prevState.currentTrack && prevState.duration > 0) {
+      const listenedSeconds = Math.floor(prevState.currentTime)
+      if (listenedSeconds > 10) {
+        useAnalyticsStore.getState().logPlay(prevState.currentTrack.surahNumber, listenedSeconds)
+      }
+      // Mark as fully listened if played > 90%
+      if (prevState.currentTime / prevState.duration > 0.9) {
+        useProgressStore.getState().markListened(prevState.currentTrack.surahNumber)
+      }
+    }
   }
 })
 

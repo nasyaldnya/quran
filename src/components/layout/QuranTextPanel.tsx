@@ -216,6 +216,9 @@ export default function QuranTextPanel() {
                           translationDirection={translationEdition?.direction ?? 'ltr'}
                           tafsirDirection={tafsirEdition?.direction ?? 'rtl'}
                           hasTafsir={!!selectedTafsir && !!tafsirAyah}
+                          surahNumber={surahNumber}
+                          surahNameEn={arabicData.englishName}
+                          surahNameAr={arabicData.name}
                         />
                       )
                     })}

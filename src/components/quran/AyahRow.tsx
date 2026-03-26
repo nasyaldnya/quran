@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, BookOpen } from 'lucide-react'
+import { ChevronDown, BookOpen, Bookmark } from 'lucide-react'
 import { useUiStore } from '@/store/uiStore'
+import { useBookmarkStore } from '@/store/bookmarkStore'
 import { cn } from '@/lib/utils'
 import type { QuranAyah } from '@/types/quranText'
 
@@ -11,6 +12,9 @@ interface AyahRowProps {
   translationDirection?: 'ltr' | 'rtl'
   tafsirDirection?: 'ltr' | 'rtl'
   hasTafsir: boolean
+  surahNumber?: number
+  surahNameEn?: string
+  surahNameAr?: string
 }
 
 export default function AyahRow({
@@ -20,9 +24,14 @@ export default function AyahRow({
   translationDirection = 'ltr',
   tafsirDirection = 'rtl',
   hasTafsir,
+  surahNumber,
+  surahNameEn = '',
+  surahNameAr = '',
 }: AyahRowProps) {
   const { expandedAyah, toggleExpandedAyah, arabicFontSize } = useUiStore()
+  const { isBookmarked, toggleBookmark } = useBookmarkStore()
   const isExpanded = expandedAyah === ayah.numberInSurah
+  const isBm = surahNumber ? isBookmarked(surahNumber, ayah.numberInSurah) : false
 
   return (
     <div
@@ -33,12 +42,32 @@ export default function AyahRow({
           : 'border-transparent hover:bg-accent/50'
       )}
     >
-      {/* ── Ayah number badge ── */}
+      {/* ── Ayah number badge + bookmark ── */}
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mt-1">
-          <span className="text-xs font-bold tabular-nums text-primary">
-            {ayah.numberInSurah}
-          </span>
+        <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <span className="text-xs font-bold tabular-nums text-primary">
+              {ayah.numberInSurah}
+            </span>
+          </div>
+          {surahNumber && (
+            <button
+              onClick={() => toggleBookmark({
+                surahNumber,
+                ayahNumber: ayah.numberInSurah,
+                surahNameEn,
+                surahNameAr,
+                arabicText: ayah.text,
+              })}
+              className={cn(
+                'p-1 rounded transition-colors',
+                isBm ? 'text-primary' : 'text-muted-foreground/40 hover:text-primary/60 opacity-0 group-hover:opacity-100'
+              )}
+              aria-label="Bookmark"
+            >
+              <Bookmark className={cn('w-3.5 h-3.5', isBm && 'fill-current')} />
+            </button>
+          )}
         </div>
 
         <div className="flex-1 min-w-0 space-y-3">

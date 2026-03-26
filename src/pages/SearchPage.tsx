@@ -27,12 +27,46 @@ export default function SearchPage() {
     setLoading(true)
     setSearched(true)
     try {
-      const edition = /[\u0600-\u06FF]/.test(query) ? 'quran-uthmani' : 'en.sahih'
-      const res = await fetch(
-        `https://api.alquran.cloud/v1/search/${encodeURIComponent(query.trim())}/all/${edition}`
-      )
-      const data = await res.json()
-      setResults(data.data?.matches?.slice(0, 50) ?? [])
+      const isArabic = /[\u0600-\u06FF]/.test(query)
+
+      if (isArabic) {
+        // Strip tashkeel (diacritics) so both تَكْفُرُونَ and تكفرون work
+        const stripped = query.trim().replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/g, '')
+
+        // Try quran-simple first (no diacritics — best for matching)
+        let res = await fetch(
+          `https://api.alquran.cloud/v1/search/${encodeURIComponent(stripped)}/all/quran-simple`
+        )
+        let data = await res.json()
+        let matches = data.data?.matches ?? []
+
+        // Fallback: try quran-uthmani with the original query (in case user typed exact tashkeel)
+        if (matches.length === 0) {
+          res = await fetch(
+            `https://api.alquran.cloud/v1/search/${encodeURIComponent(query.trim())}/all/quran-uthmani`
+          )
+          data = await res.json()
+          matches = data.data?.matches ?? []
+        }
+
+        // Fallback: try quran-simple-clean
+        if (matches.length === 0) {
+          res = await fetch(
+            `https://api.alquran.cloud/v1/search/${encodeURIComponent(stripped)}/all/quran-simple-clean`
+          )
+          data = await res.json()
+          matches = data.data?.matches ?? []
+        }
+
+        setResults(matches.slice(0, 50))
+      } else {
+        // English search
+        const res = await fetch(
+          `https://api.alquran.cloud/v1/search/${encodeURIComponent(query.trim())}/all/en.sahih`
+        )
+        const data = await res.json()
+        setResults(data.data?.matches?.slice(0, 50) ?? [])
+      }
     } catch {
       setResults([])
     } finally {

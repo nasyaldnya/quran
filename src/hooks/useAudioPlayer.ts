@@ -112,6 +112,12 @@ export function useAudioPlayer() {
     howl?.volume(isMuted ? 0 : volume)
   }, [volume, isMuted])
 
+  // ── Sync playback rate ─────────────────────────
+  const playbackRate = useAudioStore((s) => s.playbackRate)
+  useEffect(() => {
+    howl?.rate(playbackRate)
+  }, [playbackRate])
+
   // ── Cleanup on unmount ──────────────────────────
   useEffect(() => {
     return () => {

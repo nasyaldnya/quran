@@ -16,6 +16,8 @@ useAudioStore.subscribe((state, prevState) => {
     state.currentTrack.audioUrl !== prevState.currentTrack?.audioUrl
   ) {
     useHistoryStore.getState().addEntry(state.currentTrack)
+    // Switch panel to show the playing surah (clear manual browsing)
+    useUiStore.getState().setViewingSurahNumber(null)
   }
 })
 

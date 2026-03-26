@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import ReciterCard from '@/components/reciters/ReciterCard'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import PageTransition from '@/components/common/PageTransition'
+import DailyAyah from '@/components/common/DailyAyah'
 import { useReciters } from '@/hooks/useReciters'
 import { useT } from '@/lib/i18n'
 
@@ -236,6 +237,7 @@ export default function HomePage() {
     <PageTransition>
       <Hero />
       <FeaturedReciters />
+      <DailyAyah />
       <QuranBanner />
     </PageTransition>
   )

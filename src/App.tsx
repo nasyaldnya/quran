@@ -11,9 +11,11 @@ import ReciterDetailPage from '@/pages/ReciterDetailPage'
 import SurahsPage from '@/pages/SurahsPage'
 import FavoritesPage from '@/pages/FavoritesPage'
 import HistoryPage from '@/pages/HistoryPage'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 export default function App() {
   const location = useLocation()
+  useKeyboardShortcuts()
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="quran-ui-theme">

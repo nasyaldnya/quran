@@ -18,6 +18,7 @@ interface AudioState {
   isMuted:       boolean
   repeatMode:    RepeatMode
   isShuffled:    boolean
+  playbackRate:  number
 
   // Actions
   setCurrentTrack: (track: Track, queue?: Track[], index?: number) => void
@@ -27,6 +28,7 @@ interface AudioState {
   setDuration:     (v: number) => void
   setCurrentTime:  (v: number) => void
   setVolume:       (v: number) => void
+  setPlaybackRate: (rate: number) => void
   toggleMute:      () => void
   toggleRepeat:    () => void
   toggleShuffle:   () => void
@@ -47,6 +49,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   isMuted:      false,
   repeatMode:   'none',
   isShuffled:   false,
+  playbackRate: 1,
 
   setCurrentTrack: (track, queue, index = 0) =>
     set({ currentTrack: track, queue: queue ?? get().queue, queueIndex: index, currentTime: 0, duration: 0 }),
@@ -60,6 +63,7 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   setCurrentTime: (v) => set({ currentTime: v }),
 
   setVolume: (v) => set({ volume: v, isMuted: v === 0 }),
+  setPlaybackRate: (rate) => set({ playbackRate: rate }),
 
   toggleMute: () =>
     set((s) => ({ isMuted: !s.isMuted })),

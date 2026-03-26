@@ -105,6 +105,22 @@ export interface Translations {
   off: string
   remove_favorite: string
   add_favorite: string
+
+  // Batch A — Keyboard shortcuts
+  shortcuts_hint: string
+
+  // Batch A — Daily Ayah
+  daily_ayah: string
+  daily_ayah_subtitle: string
+  read_more: string
+
+  // Batch A — Font size
+  font_size_decrease: string
+  font_size_increase: string
+
+  // Batch A — Playback speed
+  playback_speed: string
+  speed_normal: string
 }
 
 // ── Translations per locale ──────────────────────────
@@ -187,6 +203,14 @@ const translations: Record<string, Translations> = {
     off: 'إيقاف',
     remove_favorite: 'إزالة من المفضلة',
     add_favorite: 'إضافة إلى المفضلة',
+    shortcuts_hint: 'مسافة: تشغيل/إيقاف · ←→: التالي/السابق · ↑↓: الصوت · M: كتم · T: النص',
+    daily_ayah: 'آية اليوم',
+    daily_ayah_subtitle: 'تأمل يومي من القرآن الكريم',
+    read_more: 'اقرأ المزيد',
+    font_size_decrease: 'تصغير الخط',
+    font_size_increase: 'تكبير الخط',
+    playback_speed: 'سرعة التشغيل',
+    speed_normal: 'عادي',
   },
 
   eng: {
@@ -266,6 +290,14 @@ const translations: Record<string, Translations> = {
     off: 'Off',
     remove_favorite: 'Remove from favorites',
     add_favorite: 'Add to favorites',
+    shortcuts_hint: 'Space: play/pause · ←→: prev/next · ↑↓: volume · M: mute · T: text panel',
+    daily_ayah: 'Ayah of the Day',
+    daily_ayah_subtitle: 'Daily reflection from the Holy Quran',
+    read_more: 'Read more',
+    font_size_decrease: 'Decrease font size',
+    font_size_increase: 'Increase font size',
+    playback_speed: 'Playback Speed',
+    speed_normal: 'Normal',
   },
 
   fr: {
@@ -345,6 +377,14 @@ const translations: Record<string, Translations> = {
     off: 'Désactivé',
     remove_favorite: 'Retirer des favoris',
     add_favorite: 'Ajouter aux favoris',
+    shortcuts_hint: 'Espace: lecture/pause · ←→: précédent/suivant · ↑↓: volume · M: muet · T: texte',
+    daily_ayah: 'Verset du jour',
+    daily_ayah_subtitle: 'Réflexion quotidienne du Saint Coran',
+    read_more: 'Lire la suite',
+    font_size_decrease: 'Réduire la police',
+    font_size_increase: 'Agrandir la police',
+    playback_speed: 'Vitesse',
+    speed_normal: 'Normale',
   },
 
   tr: {
@@ -424,6 +464,14 @@ const translations: Record<string, Translations> = {
     off: 'Kapalı',
     remove_favorite: 'Favorilerden kaldır',
     add_favorite: 'Favorilere ekle',
+    shortcuts_hint: 'Boşluk: oynat/duraklat · ←→: önceki/sonraki · ↑↓: ses · M: sessiz · T: metin',
+    daily_ayah: 'Günün Ayeti',
+    daily_ayah_subtitle: 'Kur'an-ı Kerim'den günlük tefekkür',
+    read_more: 'Devamını oku',
+    font_size_decrease: 'Yazı küçült',
+    font_size_increase: 'Yazı büyüt',
+    playback_speed: 'Hız',
+    speed_normal: 'Normal',
   },
 
   es: {
@@ -503,6 +551,14 @@ const translations: Record<string, Translations> = {
     off: 'Desactivado',
     remove_favorite: 'Quitar de favoritos',
     add_favorite: 'Añadir a favoritos',
+    shortcuts_hint: 'Espacio: reproducir/pausar · ←→: anterior/siguiente · ↑↓: volumen · M: silenciar · T: texto',
+    daily_ayah: 'Aleya del día',
+    daily_ayah_subtitle: 'Reflexión diaria del Sagrado Corán',
+    read_more: 'Leer más',
+    font_size_decrease: 'Reducir fuente',
+    font_size_increase: 'Aumentar fuente',
+    playback_speed: 'Velocidad',
+    speed_normal: 'Normal',
   },
 
   id: {
@@ -582,6 +638,14 @@ const translations: Record<string, Translations> = {
     off: 'Mati',
     remove_favorite: 'Hapus dari favorit',
     add_favorite: 'Tambah ke favorit',
+    shortcuts_hint: 'Spasi: putar/jeda · ←→: sebelum/berikut · ↑↓: volume · M: bisukan · T: teks',
+    daily_ayah: 'Ayat Hari Ini',
+    daily_ayah_subtitle: 'Renungan harian dari Al-Quran',
+    read_more: 'Baca selengkapnya',
+    font_size_decrease: 'Perkecil font',
+    font_size_increase: 'Perbesar font',
+    playback_speed: 'Kecepatan putar',
+    speed_normal: 'Normal',
   },
 }
 

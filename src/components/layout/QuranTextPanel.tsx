@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import AyahRow from '@/components/quran/AyahRow'
 import LanguageSelector from '@/components/quran/LanguageSelector'
+import FontSizeControl from '@/components/quran/FontSizeControl'
 import { useQuranArabic, useQuranTranslation, useQuranTafsir } from '@/hooks/useQuranText'
 import { useAudioStore } from '@/store/audioStore'
 import { useUiStore } from '@/store/uiStore'
@@ -21,12 +22,17 @@ const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلر
 
 export default function QuranTextPanel() {
   const t = useT()
-  const { isTextPanelOpen, setTextPanelOpen, selectedTranslation, selectedTafsir, setExpandedAyah } =
-    useUiStore()
+  const {
+    isTextPanelOpen, setTextPanelOpen,
+    viewingSurahNumber,
+    selectedTranslation, selectedTafsir, setExpandedAyah,
+  } = useUiStore()
   const { currentTrack } = useAudioStore()
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const surahNumber = currentTrack?.surahNumber
+  // viewingSurahNumber takes priority (user clicked a card)
+  // falls back to currently playing track
+  const surahNumber = viewingSurahNumber ?? currentTrack?.surahNumber
 
   // ── Data fetching ──
   const {
@@ -136,8 +142,11 @@ export default function QuranTextPanel() {
                 </Button>
               </div>
 
-              {/* Language & Tafsir selectors */}
-              <LanguageSelector />
+              {/* Language, Tafsir & Font size controls */}
+              <div className="flex items-center justify-between gap-2">
+                <LanguageSelector />
+                <FontSizeControl />
+              </div>
             </div>
 
             {/* ── Surah name in Arabic ── */}

@@ -21,7 +21,7 @@ export default function AyahRow({
   tafsirDirection = 'rtl',
   hasTafsir,
 }: AyahRowProps) {
-  const { expandedAyah, toggleExpandedAyah } = useUiStore()
+  const { expandedAyah, toggleExpandedAyah, arabicFontSize } = useUiStore()
   const isExpanded = expandedAyah === ayah.numberInSurah
 
   return (
@@ -44,9 +44,10 @@ export default function AyahRow({
         <div className="flex-1 min-w-0 space-y-3">
           {/* ── Arabic text ── */}
           <p
-            className="font-arabic text-2xl leading-[2.2] text-foreground text-right"
+            className="font-arabic leading-[2.2] text-foreground text-right"
             dir="rtl"
             lang="ar"
+            style={{ fontSize: `${arabicFontSize}rem` }}
           >
             {ayah.text}
             <span className="inline-block mx-1.5 text-primary/60 text-lg">

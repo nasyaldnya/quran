@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from 'react'
-import { Eye, EyeOff, RotateCcw, ChevronRight } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { Eye, EyeOff, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useUiStore } from '@/store/uiStore'
 import { useT } from '@/lib/i18n'
@@ -11,24 +11,22 @@ interface MemorizationModeProps {
   visible: boolean
 }
 
-type HideLevel = 0 | 1 | 2 | 3 // 0=show all, 1=hide last word, 2=hide half, 3=hide all
+type HideLevel = 0 | 1 | 2 | 3
 
 export default function MemorizationMode({ ayahs, visible }: MemorizationModeProps) {
   const t = useT()
   const { arabicFontSize } = useUiStore()
   const [hideLevel, setHideLevel] = useState<HideLevel>(1)
-  const [revealedAyahs, setRevealedAyahs] = useState<Set<number>>(new Set())
+  // Use a plain object for reliable re-renders (Set doesn't trigger React updates)
+  const [revealed, setRevealed] = useState<Record<number, boolean>>({})
 
   const toggleReveal = useCallback((num: number) => {
-    setRevealedAyahs(prev => {
-      const next = new Set(prev)
-      if (next.has(num)) next.delete(num)
-      else next.add(num)
-      return next
-    })
+    setRevealed(prev => ({ ...prev, [num]: !prev[num] }))
   }, [])
 
-  const resetAll = useCallback(() => setRevealedAyahs(new Set()), [])
+  const resetAll = useCallback(() => {
+    setRevealed({})
+  }, [])
 
   const nextLevel = () => setHideLevel(l => Math.min(3, l + 1) as HideLevel)
   const prevLevel = () => setHideLevel(l => Math.max(0, l - 1) as HideLevel)
@@ -37,8 +35,8 @@ export default function MemorizationMode({ ayahs, visible }: MemorizationModePro
 
   return (
     <div className="space-y-3">
-      {/* Controls */}
-      <div className="flex items-center justify-between px-4 py-2 rounded-xl bg-accent border border-border/40">
+      {/* Controls bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-accent border border-border/40">
         <div className="flex items-center gap-2">
           <EyeOff className="w-3.5 h-3.5 text-primary" />
           <span className="text-xs font-semibold text-foreground">{t.memorization_title}</span>
@@ -46,67 +44,94 @@ export default function MemorizationMode({ ayahs, visible }: MemorizationModePro
         <div className="flex items-center gap-1.5">
           <Button variant="ghost" size="icon-sm" onClick={prevLevel} disabled={hideLevel <= 0}
             className="w-6 h-6 text-foreground/60">
-            <ChevronRight className="w-3 h-3 rotate-180" />
+            <ChevronLeft className="w-3 h-3" />
           </Button>
-          <span className="text-[10px] text-muted-foreground tabular-nums w-12 text-center">
+          <span className="text-[10px] text-muted-foreground tabular-nums w-14 text-center">
             {t.memorization_level} {hideLevel}/3
           </span>
           <Button variant="ghost" size="icon-sm" onClick={nextLevel} disabled={hideLevel >= 3}
             className="w-6 h-6 text-foreground/60">
             <ChevronRight className="w-3 h-3" />
           </Button>
+          <div className="w-px h-4 bg-border mx-0.5" />
           <Button variant="ghost" size="icon-sm" onClick={resetAll}
-            className="w-6 h-6 text-muted-foreground hover:text-foreground ml-1">
+            className="w-6 h-6 text-muted-foreground hover:text-foreground">
             <RotateCcw className="w-3 h-3" />
           </Button>
         </div>
       </div>
 
-      {/* Ayahs with hidden words */}
+      {/* Ayahs */}
       <div className="space-y-2">
         {ayahs.map(ayah => {
-          const isRevealed = revealedAyahs.has(ayah.numberInSurah)
-          const words = ayah.text.split(' ')
+          const isRevealed = !!revealed[ayah.numberInSurah]
+          const words = ayah.text.split(/\s+/).filter(Boolean)
           const totalWords = words.length
 
-          // Calculate how many words to hide
+          // How many words to hide from the end
           let hiddenCount = 0
-          if (!isRevealed) {
-            if (hideLevel === 1) hiddenCount = Math.max(1, Math.floor(totalWords * 0.25))
-            else if (hideLevel === 2) hiddenCount = Math.max(1, Math.floor(totalWords * 0.5))
-            else if (hideLevel === 3) hiddenCount = totalWords
-          }
+          if (hideLevel === 1) hiddenCount = Math.max(1, Math.floor(totalWords * 0.25))
+          else if (hideLevel === 2) hiddenCount = Math.max(1, Math.floor(totalWords * 0.5))
+          else if (hideLevel === 3) hiddenCount = totalWords
 
-          const visibleWords = words.slice(0, totalWords - hiddenCount)
-          const hiddenWords = words.slice(totalWords - hiddenCount)
+          // When revealed or level 0, show everything
+          const showAll = isRevealed || hideLevel === 0
+          const splitAt = showAll ? totalWords : totalWords - hiddenCount
 
           return (
-            <div key={ayah.numberInSurah}
-              className="group rounded-xl border border-transparent hover:border-border/40 hover:bg-accent/30 px-4 py-3 transition-all cursor-pointer"
-              onClick={() => toggleReveal(ayah.numberInSurah)}>
-              <div className="flex items-start gap-3">
+            <button
+              key={ayah.numberInSurah}
+              type="button"
+              onClick={() => toggleReveal(ayah.numberInSurah)}
+              className={cn(
+                'w-full text-right rounded-xl border px-4 py-3 transition-all duration-200 cursor-pointer',
+                isRevealed
+                  ? 'bg-primary/5 border-primary/20'
+                  : 'border-transparent hover:border-border/40 hover:bg-accent/30'
+              )}
+            >
+              <div className="flex items-start gap-3" dir="rtl">
+                {/* Ayah number */}
                 <div className="flex-shrink-0 w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center mt-1">
-                  <span className="text-[10px] font-bold tabular-nums text-primary">{ayah.numberInSurah}</span>
+                  <span className="text-[10px] font-bold tabular-nums text-primary">
+                    {ayah.numberInSurah}
+                  </span>
                 </div>
-                <p className="font-arabic leading-[2.2] text-right flex-1" dir="rtl"
+
+                {/* Text with hidden portions */}
+                <p className="font-arabic leading-[2.2] flex-1 text-right"
                   style={{ fontSize: `${arabicFontSize}rem` }}>
-                  {visibleWords.map((w, i) => (
-                    <span key={i} className="text-foreground">{w} </span>
+                  {/* Visible words */}
+                  {words.slice(0, splitAt).map((w, i) => (
+                    <span key={i} className="text-foreground">{w}{' '}</span>
                   ))}
-                  {hiddenWords.length > 0 && !isRevealed && (
-                    <span className="inline-flex items-center gap-1">
-                      {hiddenWords.map((_, i) => (
-                        <span key={i} className="inline-block w-12 h-5 rounded bg-primary/15 border border-primary/20" />
-                      ))}
-                      <Eye className="w-3 h-3 text-primary/40 inline ml-1" />
+
+                  {/* Hidden words — show blanks or revealed text */}
+                  {!showAll && words.slice(splitAt).map((w, i) => (
+                    <span
+                      key={`h-${i}`}
+                      className="inline-block mx-0.5 rounded bg-primary/12 border border-primary/20 align-middle"
+                      style={{
+                        width: `${Math.max(2, w.length * 0.6)}em`,
+                        height: '1.2em',
+                      }}
+                    />
+                  ))}
+
+                  {/* Revealed words (green tint) */}
+                  {showAll && hideLevel > 0 && words.slice(splitAt).map((w, i) => (
+                    <span key={`r-${i}`} className="text-primary">{w}{' '}</span>
+                  ))}
+
+                  {/* Tap hint */}
+                  {!showAll && hiddenCount > 0 && (
+                    <span className="inline-block align-middle mx-1">
+                      <Eye className="w-3 h-3 text-primary/30 inline" />
                     </span>
-                  )}
-                  {isRevealed && hiddenWords.length > 0 && (
-                    <span className="text-primary">{hiddenWords.join(' ')} </span>
                   )}
                 </p>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>

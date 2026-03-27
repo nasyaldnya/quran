@@ -268,6 +268,10 @@ export interface Translations {
   editions_title: string
   editions_subtitle: string
   editions_source: string
+
+  // Mushaf merged page
+  mushaf_page_title: string
+  mushaf_reader: string
 }
 
 // ── Translations per locale ──────────────────────────
@@ -452,6 +456,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'إصدارات المصحف الكاملة',
     editions_subtitle: 'تصفح إصدارات المصحف المختلفة من مجمع الملك فهد.',
     editions_source: 'المصدر: مجمع الملك فهد لطباعة المصحف الشريف، المدينة المنورة',
+    mushaf_page_title: 'المصحف الشريف',
+    mushaf_reader: 'قراءة المصحف',
     tajweed_mode: 'وضع التجويد',
     mushaf_mode: 'وضع المصحف',
     memorization_mode: 'وضع الحفظ',
@@ -642,6 +648,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'Complete Mushaf Editions',
     editions_subtitle: 'Browse various Mushaf editions from the King Fahd Complex.',
     editions_source: 'Source: King Fahd Quran Printing Complex, Madinah',
+    mushaf_page_title: 'The Holy Quran',
+    mushaf_reader: 'Mushaf Reader',
     tajweed_mode: "Tajweed Mode",
     mushaf_mode: "Mushaf Mode",
     memorization_mode: "Memorization Mode",
@@ -832,6 +840,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'Éditions complètes du Mushaf',
     editions_subtitle: 'Explorez les différentes éditions du Complexe Roi Fahd.',
     editions_source: 'Source : Complexe Roi Fahd pour la publication du Coran, Médine',
+    mushaf_page_title: 'Le Saint Coran',
+    mushaf_reader: 'Lecteur du Mushaf',
     tajweed_mode: "Mode Tajweed",
     mushaf_mode: "Mode Mushaf",
     memorization_mode: "Mode mémorisation",
@@ -1022,6 +1032,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'Mushaf Baskıları',
     editions_subtitle: 'Kral Fahd Kompleksi mushaf baskılarını keşfedin.',
     editions_source: 'Kaynak: Kral Fahd Mushaf Basım Kompleksi, Medine',
+    mushaf_page_title: 'Mushaf-ı Şerif',
+    mushaf_reader: 'Mushaf Okuyucu',
     tajweed_mode: "Tecvid Modu",
     mushaf_mode: "Mushaf Modu",
     memorization_mode: "Ezberleme Modu",
@@ -1191,6 +1203,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'Ediciones completas del Mushaf',
     editions_subtitle: 'Explore diversas ediciones del Mushaf del Complejo Rey Fahd.',
     editions_source: 'Fuente: Complejo del Rey Fahd para la Impresión del Corán, Medina',
+    mushaf_page_title: 'El Sagrado Corán',
+    mushaf_reader: 'Lector del Mushaf',
     word_meaning: 'Significado',
     tajweed_title: 'Reglas de Tajweed',
     tajweed_toggle: 'Activar Tajweed',
@@ -1381,6 +1395,8 @@ const translations: Record<string, Translations> = {
     editions_title: 'Edisi Mushaf Lengkap',
     editions_subtitle: 'Jelajahi berbagai edisi mushaf dari Kompleks Raja Fahd.',
     editions_source: 'Sumber: Kompleks Percetakan Al-Quran Raja Fahd, Madinah',
+    mushaf_page_title: 'المصحف الشريف',
+    mushaf_reader: 'قراءة المصحف',
     word_meaning: 'Arti',
     tajweed_title: 'Aturan Tajweed',
     tajweed_toggle: 'Aktifkan Tajweed',

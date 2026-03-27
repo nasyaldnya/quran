@@ -254,24 +254,44 @@ export default function QuranTextPanel() {
 
                         return (
                           <div key={ayah.numberInSurah}>
-                            <AyahRow
-                              ayah={ayah}
-                              translationAyah={translationAyah ?? null}
-                              tafsirAyah={tafsirAyah ?? null}
-                              translationDirection={translationEdition?.direction ?? 'ltr'}
-                              tafsirDirection={tafsirEdition?.direction ?? 'rtl'}
-                              hasTafsir={!!selectedTafsir && !!tafsirAyah}
-                              surahNumber={surahNumber}
-                              surahNameEn={arabicData.englishName}
-                              surahNameAr={arabicData.name}
-                            />
-                            {/* Tajweed colored text */}
-                            {showTajweed && surahNumber && (
-                              <div className="px-12">
-                                <TajweedText surahNumber={surahNumber} ayahNumber={ayah.numberInSurah} visible={showTajweed} />
+                            {showTajweed ? (
+                              // Tajweed ON → show colored text instead of normal AyahRow Arabic
+                              <div className={cn(
+                                'group rounded-xl border transition-all duration-200 px-4 py-4',
+                                'border-transparent hover:bg-accent/50'
+                              )}>
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mt-1">
+                                    <span className="text-xs font-bold tabular-nums text-primary">{ayah.numberInSurah}</span>
+                                  </div>
+                                  <div className="flex-1 min-w-0 space-y-3">
+                                    {/* Tajweed-colored Arabic text (replaces plain text) */}
+                                    <TajweedText surahNumber={surahNumber!} ayahNumber={ayah.numberInSurah} visible={true} />
+                                    {/* Translation still shows */}
+                                    {translationAyah && (
+                                      <p className="text-sm text-muted-foreground leading-relaxed"
+                                        dir={translationEdition?.direction ?? 'ltr'}>
+                                        {translationAyah.text}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
+                            ) : (
+                              // Tajweed OFF → normal AyahRow
+                              <AyahRow
+                                ayah={ayah}
+                                translationAyah={translationAyah ?? null}
+                                tafsirAyah={tafsirAyah ?? null}
+                                translationDirection={translationEdition?.direction ?? 'ltr'}
+                                tafsirDirection={tafsirEdition?.direction ?? 'rtl'}
+                                hasTafsir={!!selectedTafsir && !!tafsirAyah}
+                                surahNumber={surahNumber}
+                                surahNameEn={arabicData.englishName}
+                                surahNameAr={arabicData.name}
+                              />
                             )}
-                            {/* Word-by-word */}
+                            {/* Word-by-word (shown in both modes) */}
                             {showWordByWord && surahNumber && (
                               <div className="px-12">
                                 <WordByWord surahNumber={surahNumber} ayahNumber={ayah.numberInSurah} visible={showWordByWord} />

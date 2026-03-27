@@ -18,7 +18,6 @@ export default function Navbar() {
     { to: '/surahs',    label: t.nav_surahs    },
     { to: '/juz',       label: t.nav_juz       },
     { to: '/mushaf',    label: t.nav_mushaf    },
-    { to: '/editions',  label: t.nav_editions  },
     { to: '/search',    label: t.nav_search    },
     { to: '/favorites', label: t.nav_favorites },
     { to: '/bookmarks', label: t.nav_bookmarks },

@@ -25,6 +25,7 @@ const PlaylistsPage    = lazy(() => import('@/pages/PlaylistsPage'))
 const ComparePage      = lazy(() => import('@/pages/ComparePage'))
 const StatsPage        = lazy(() => import('@/pages/StatsPage'))
 const MushafPage       = lazy(() => import('@/pages/MushafPage'))
+const QuranEditionsPage = lazy(() => import('@/pages/QuranEditionsPage'))
 
 function PageLoader() {
   return (
@@ -60,6 +61,7 @@ export default function App() {
                 <Route path="/compare"         element={<ComparePage />} />
                 <Route path="/stats"           element={<StatsPage />} />
               <Route path="/mushaf"          element={<MushafPage />} />
+              <Route path="/editions"       element={<QuranEditionsPage />} />
               </Routes>
             </AnimatePresence>
           </Suspense>

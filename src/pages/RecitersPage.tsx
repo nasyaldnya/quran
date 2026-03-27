@@ -11,45 +11,45 @@ import { RECITATION_STYLES, reciterHasStyle, type RecitationStyle } from '@/lib/
 import { useT } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
-const FILTERS = ['All', 'A–F', 'G–M', 'N–S', 'T–Z']
-
-const FILTER_RANGES: Record<string, [string, string]> = {
-  'A–F': ['a', 'f'],
-  'G–M': ['g', 'm'],
-  'N–S': ['n', 's'],
-  'T–Z': ['t', 'z'],
-}
-
 export default function RecitersPage() {
   const t = useT()
-  const [search,      setSearch]      = useState('')
-  const [activeFilter, setActiveFilter] = useState('All')
-  const [activeStyle, setActiveStyle] = useState<RecitationStyle | 'all'>('all')
+  const [search,       setSearch]       = useState('')
+  const [activeLetter, setActiveLetter] = useState<string>('all')
+  const [activeStyle,  setActiveStyle]  = useState<RecitationStyle | 'all'>('all')
   const debouncedSearch = useDebounce(search, 280)
 
   const { data: reciters = [], isLoading, error } = useReciters()
 
+  // Derive unique letters from actual data (works for Arabic + Latin)
+  const availableLetters = useMemo(() => {
+    const letters = new Set<string>()
+    for (const r of reciters) {
+      if (r.letter) letters.add(r.letter)
+    }
+    return Array.from(letters).sort()
+  }, [reciters])
+
   const filtered = useMemo(() => {
     let list = reciters
-    // Alpha filter
-    if (activeFilter !== 'All') {
-      const [lo, hi] = FILTER_RANGES[activeFilter]
-      list = list.filter((r) => {
-        const first = r.name.trim().charAt(0).toLowerCase()
-        return first >= lo && first <= hi
-      })
+
+    // Letter filter — use the API's letter field
+    if (activeLetter !== 'all') {
+      list = list.filter((r) => r.letter === activeLetter)
     }
+
     // Style filter
     if (activeStyle !== 'all') {
       list = list.filter((r) => r.moshaf.length > 0 && reciterHasStyle(r.moshaf, activeStyle))
     }
+
     // Search filter
     if (debouncedSearch.trim()) {
       const q = debouncedSearch.toLowerCase()
       list = list.filter((r) => r.name.toLowerCase().includes(q))
     }
+
     return list
-  }, [reciters, activeFilter, activeStyle, debouncedSearch])
+  }, [reciters, activeLetter, activeStyle, debouncedSearch])
 
   return (
     <PageTransition>
@@ -95,20 +95,31 @@ export default function RecitersPage() {
             className="w-full sm:w-80"
           />
 
-          {/* Alpha filters */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {FILTERS.map((f) => (
+          {/* Letter filters — derived from actual reciter data */}
+          <div className="flex items-center gap-1 flex-wrap">
+            <button
+              onClick={() => setActiveLetter('all')}
+              className={cn(
+                'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+                activeLetter === 'all'
+                  ? 'bg-primary/15 text-primary border border-primary/30'
+                  : 'bg-card text-muted-foreground border border-border hover:border-border/80 hover:text-foreground'
+              )}
+            >
+              {t.all}
+            </button>
+            {availableLetters.map((letter) => (
               <button
-                key={f}
-                onClick={() => setActiveFilter(f)}
+                key={letter}
+                onClick={() => setActiveLetter(letter)}
                 className={cn(
-                  'px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
-                  activeFilter === f
+                  'px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 min-w-[2rem] text-center',
+                  activeLetter === letter
                     ? 'bg-primary/15 text-primary border border-primary/30'
                     : 'bg-card text-muted-foreground border border-border hover:border-border/80 hover:text-foreground'
                 )}
               >
-                {f}
+                {letter}
               </button>
             ))}
           </div>

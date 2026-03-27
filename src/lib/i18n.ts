@@ -190,6 +190,76 @@ export interface Translations {
   reminder_enable: string
   reminder_disable: string
   reminder_time: string
+
+  // New — Queue
+  queue_title: string
+
+  // New — Repeat Range
+  repeat_range: string
+  repeat_ab_loop: string
+  repeat_looping: string
+  repeat_count: string
+
+  // New — Recitation Styles
+  style_murattal: string
+  style_murattal_desc: string
+  style_mujawwad: string
+  style_mujawwad_desc: string
+  style_muallim: string
+  style_muallim_desc: string
+  style_filter: string
+  style_all: string
+
+  // New — Similar Reciters
+  similar_reciters: string
+
+  // New — Reading features
+  tajweed_mode: string
+  mushaf_mode: string
+  memorization_mode: string
+  hide_level: string
+  show_all: string
+  mark_memorized: string
+  memorized: string
+  page_label: string
+  word_meaning: string
+
+  // New — Repeat Ayah
+  repeat_ayah: string
+  repeat_single: string
+  repeat_ayah_num: string
+  repeat_from: string
+  repeat_to: string
+  repeat_times: string
+  repeat_stop: string
+
+  // New — Word-by-Word
+  loading_word_by_word: string
+  word_by_word_title: string
+
+  // New — Tajweed
+  tajweed_title: string
+  tajweed_toggle: string
+
+  // New — Mushaf
+  mushaf_page: string
+  mushaf_next_page: string
+  mushaf_prev_page: string
+  nav_mushaf: string
+
+  // New — Memorization
+  memorization_title: string
+  memorization_level: string
+
+  // New — Recitation style labels
+  style_murattal_label: string
+  style_mujawwad_label: string
+  style_muallim_label: string
+
+  // Toggle button labels
+  word_by_word: string
+  tajweed: string
+  memorization: string
 }
 
 // ── Translations per locale ──────────────────────────
@@ -331,6 +401,53 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'تفعيل التذكير اليومي',
     reminder_disable: 'تعطيل',
     reminder_time: 'وقت التذكير',
+    nav_mushaf: 'المصحف',
+    repeat_ayah: 'تكرار الآية',
+    repeat_single: 'آية واحدة',
+    repeat_ayah_num: 'رقم الآية',
+    repeat_from: 'من',
+    repeat_to: 'إلى',
+    repeat_times: 'عدد المرات',
+    repeat_stop: 'إيقاف التكرار',
+    loading_word_by_word: 'جارٍ تحميل الكلمات...',
+    word_by_word: 'كلمة بكلمة',
+    tajweed_colors: 'ألوان التجويد',
+    mushaf_page: 'صفحة المصحف',
+    mushaf_next_page: 'الصفحة التالية',
+    mushaf_prev_page: 'الصفحة السابقة',
+    memorization_title: 'وضع الحفظ',
+    memorization_level: 'المستوى',
+    queue_title: 'قائمة الانتظار',
+    repeat_ab_loop: 'تكرار مقطع',
+    repeat_looping: 'جارٍ التكرار',
+    repeat_count: 'عدد التكرار',
+    style_murattal: 'مرتل',
+    style_murattal_desc: 'تلاوة بطيئة للتعلم',
+    style_mujawwad: 'مجود',
+    style_mujawwad_desc: 'تلاوة ملحنة',
+    style_muallim: 'معلم',
+    style_muallim_desc: 'تلاوة تعليمية',
+    style_filter: 'تصفية حسب الأسلوب',
+    style_all: 'الكل',
+    similar_reciters: 'قراء مشابهون',
+    repeat_range: 'نطاق',
+    style_murattal_label: 'مرتل',
+    style_mujawwad_label: 'مجود',
+    style_muallim_label: 'معلم',
+    tajweed_title: 'أحكام التجويد',
+    tajweed_toggle: 'تفعيل التجويد',
+    word_by_word_title: 'كلمة بكلمة',
+    tajweed: 'تجويد',
+    memorization: 'حفظ',
+    tajweed_mode: 'وضع التجويد',
+    mushaf_mode: 'وضع المصحف',
+    memorization_mode: 'وضع الحفظ',
+    hide_level: 'مستوى الإخفاء',
+    show_all: 'إظهار الكل',
+    mark_memorized: 'تم الحفظ',
+    memorized: 'محفوظ',
+    page_label: 'الصفحة',
+    word_meaning: 'معنى الكلمة',
   },
 
   eng: {
@@ -469,6 +586,53 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'Enable daily reminder',
     reminder_disable: 'Disable',
     reminder_time: 'Reminder time',
+    nav_mushaf: "Mushaf",
+    repeat_ayah: "Repeat Ayah",
+    repeat_single: "Single Ayah",
+    repeat_ayah_num: "Ayah Number",
+    repeat_from: "From",
+    repeat_to: "To",
+    repeat_times: "Repeat Count",
+    repeat_stop: "Stop Repeat",
+    loading_word_by_word: "Loading word meanings...",
+    word_by_word: "Word by Word",
+    tajweed_colors: "Tajweed Colors",
+    mushaf_page: "Page",
+    mushaf_next_page: "Next Page",
+    mushaf_prev_page: "Previous Page",
+    memorization_title: "Memorization Mode",
+    memorization_level: "Level",
+    queue_title: "Up Next",
+    repeat_ab_loop: "A-B Loop",
+    repeat_looping: "Looping",
+    repeat_count: "Times",
+    style_murattal: "Murattal",
+    style_murattal_desc: "Steady pace for daily reading",
+    style_mujawwad: "Mujawwad",
+    style_mujawwad_desc: "Melodic recitation style",
+    style_muallim: "Muallim",
+    style_muallim_desc: "Teaching style with pauses",
+    style_filter: "Filter by Style",
+    style_all: "All Styles",
+    similar_reciters: "Similar Reciters",
+    repeat_range: 'Range',
+    style_murattal_label: 'Murattal',
+    style_mujawwad_label: 'Mujawwad',
+    style_muallim_label: 'Muallim',
+    tajweed_title: 'Tajweed Rules',
+    tajweed_toggle: 'Toggle Tajweed',
+    word_by_word_title: 'Word by Word',
+    tajweed: 'Tajweed',
+    memorization: 'Memorization',
+    tajweed_mode: "Tajweed Mode",
+    mushaf_mode: "Mushaf Mode",
+    memorization_mode: "Memorization Mode",
+    hide_level: "Hide Level",
+    show_all: "Show All",
+    mark_memorized: "Mark Memorized",
+    memorized: "Memorized",
+    page_label: "Page",
+    word_meaning: "Word Meaning",
   },
 
   fr: {
@@ -607,6 +771,53 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'Activer le rappel',
     reminder_disable: 'Désactiver',
     reminder_time: 'Heure du rappel',
+    nav_mushaf: "Mushaf",
+    repeat_ayah: "Répéter le verset",
+    repeat_single: "Verset unique",
+    repeat_ayah_num: "Numéro du verset",
+    repeat_from: "De",
+    repeat_to: "À",
+    repeat_times: "Nombre de répétitions",
+    repeat_stop: "Arrêter",
+    loading_word_by_word: "Chargement des sens...",
+    word_by_word: "Mot à mot",
+    tajweed_colors: "Couleurs Tajweed",
+    mushaf_page: "Page",
+    mushaf_next_page: "Page suivante",
+    mushaf_prev_page: "Page précédente",
+    memorization_title: "Mode mémorisation",
+    memorization_level: "Niveau",
+    queue_title: "À suivre",
+    repeat_ab_loop: "Boucle A-B",
+    repeat_looping: "En boucle",
+    repeat_count: "Fois",
+    style_murattal: "Murattal",
+    style_murattal_desc: "Rythme régulier pour la lecture",
+    style_mujawwad: "Mujawwad",
+    style_mujawwad_desc: "Récitation mélodique",
+    style_muallim: "Muallim",
+    style_muallim_desc: "Style pédagogique avec pauses",
+    style_filter: "Filtrer par style",
+    style_all: "Tous les styles",
+    similar_reciters: "Récitants similaires",
+    repeat_range: 'Plage',
+    style_murattal_label: 'Murattal',
+    style_mujawwad_label: 'Mujawwad',
+    style_muallim_label: 'Muallim',
+    tajweed_title: 'Règles de Tajweed',
+    tajweed_toggle: 'Activer le Tajweed',
+    word_by_word_title: 'Mot par Mot',
+    tajweed: 'Tajweed',
+    memorization: 'Mémorisation',
+    tajweed_mode: "Mode Tajweed",
+    mushaf_mode: "Mode Mushaf",
+    memorization_mode: "Mode mémorisation",
+    hide_level: "Niveau masquage",
+    show_all: "Tout afficher",
+    mark_memorized: "Mémorisé",
+    memorized: "Mémorisé",
+    page_label: "Page",
+    word_meaning: "Sens du mot",
   },
 
   tr: {
@@ -745,6 +956,53 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'Hatırlatıcıyı aç',
     reminder_disable: 'Kapat',
     reminder_time: 'Hatırlatma saati',
+    nav_mushaf: "Mushaf",
+    repeat_ayah: "Ayeti Tekrarla",
+    repeat_single: "Tek Ayet",
+    repeat_ayah_num: "Ayet Numarası",
+    repeat_from: "Başlangıç",
+    repeat_to: "Bitiş",
+    repeat_times: "Tekrar Sayısı",
+    repeat_stop: "Tekrarı Durdur",
+    loading_word_by_word: "Kelime anlamları yükleniyor...",
+    word_by_word: "Kelime Kelime",
+    tajweed_colors: "Tecvid Renkleri",
+    mushaf_page: "Sayfa",
+    mushaf_next_page: "Sonraki Sayfa",
+    mushaf_prev_page: "Önceki Sayfa",
+    memorization_title: "Ezberleme Modu",
+    memorization_level: "Seviye",
+    queue_title: "Sıradaki",
+    repeat_ab_loop: "A-B Döngü",
+    repeat_looping: "Döngüde",
+    repeat_count: "Kez",
+    style_murattal: "Murattal",
+    style_murattal_desc: "Düzenli okuma hızı",
+    style_mujawwad: "Mücevved",
+    style_mujawwad_desc: "Melodik tilavet",
+    style_muallim: "Muallim",
+    style_muallim_desc: "Öğretici tarz",
+    style_filter: "Tarza Göre Filtrele",
+    style_all: "Tüm Tarzlar",
+    similar_reciters: "Benzer Kariler",
+    repeat_range: 'Aralık',
+    style_murattal_label: 'Murattal',
+    style_mujawwad_label: 'Mujawwad',
+    style_muallim_label: 'Muallim',
+    tajweed_title: 'Tecvid Kuralları',
+    tajweed_toggle: 'Tecvidi Aç',
+    word_by_word_title: 'Kelime Kelime',
+    tajweed: 'Tecvid',
+    memorization: 'Ezberleme',
+    tajweed_mode: "Tecvid Modu",
+    mushaf_mode: "Mushaf Modu",
+    memorization_mode: "Ezberleme Modu",
+    hide_level: "Gizleme Seviyesi",
+    show_all: "Tümünü Göster",
+    mark_memorized: "Ezberledim",
+    memorized: "Ezberlenmiş",
+    page_label: "Sayfa",
+    word_meaning: "Kelime Anlamı",
   },
 
   es: {
@@ -883,6 +1141,52 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'Activar recordatorio',
     reminder_disable: 'Desactivar',
     reminder_time: 'Hora del recordatorio',
+    nav_mushaf: 'Mushaf',
+    repeat_ayah: 'Repetir Aleya',
+    repeat_single: 'Una Aleya',
+    repeat_range: 'Rango',
+    repeat_ayah_num: 'Número de Aleya',
+    repeat_from: 'Desde',
+    repeat_to: 'Hasta',
+    repeat_times: 'Repeticiones',
+    repeat_stop: 'Detener repetición',
+    repeat_count: 'Veces',
+    repeat_ab_loop: 'Bucle A-B',
+    repeat_looping: 'Repitiendo',
+    loading_word_by_word: 'Cargando palabra por palabra...',
+    word_by_word_title: 'Palabra por Palabra',
+    word_by_word: 'Palabra por Palabra',
+    tajweed: 'Tajweed',
+    memorization: 'Memorización',
+    word_meaning: 'Significado',
+    tajweed_title: 'Reglas de Tajweed',
+    tajweed_toggle: 'Activar Tajweed',
+    tajweed_mode: 'Modo Tajweed',
+    mushaf_mode: 'Modo Mushaf',
+    mushaf_page: 'Página',
+    mushaf_next_page: 'Siguiente',
+    mushaf_prev_page: 'Anterior',
+    page_label: 'Página',
+    memorization_title: 'Memorización',
+    memorization_mode: 'Modo Memorización',
+    memorization_level: 'Nivel',
+    memorized: 'Memorizado',
+    mark_memorized: 'Marcar como memorizado',
+    hide_level: 'Nivel de ocultamiento',
+    show_all: 'Mostrar todo',
+    queue_title: 'Cola de reproducción',
+    similar_reciters: 'Recitadores similares',
+    style_filter: 'Estilo de recitación',
+    style_all: 'Todos',
+    style_murattal: 'Murattal',
+    style_murattal_desc: 'Recitación pausada para estudio',
+    style_murattal_label: 'Murattal',
+    style_mujawwad: 'Mujawwad',
+    style_mujawwad_desc: 'Recitación melódica',
+    style_mujawwad_label: 'Mujawwad',
+    style_muallim: 'Muallim',
+    style_muallim_desc: 'Estilo de enseñanza',
+    style_muallim_label: 'Muallim',
   },
 
   id: {
@@ -1021,6 +1325,52 @@ const translations: Record<string, Translations> = {
     reminder_enable: 'Aktifkan pengingat',
     reminder_disable: 'Nonaktifkan',
     reminder_time: 'Waktu pengingat',
+    nav_mushaf: 'Mushaf',
+    repeat_ayah: 'Ulangi Ayat',
+    repeat_single: 'Satu Ayat',
+    repeat_range: 'Rentang',
+    repeat_ayah_num: 'Nomor Ayat',
+    repeat_from: 'Dari',
+    repeat_to: 'Sampai',
+    repeat_times: 'Pengulangan',
+    repeat_stop: 'Hentikan pengulangan',
+    repeat_count: 'Kali',
+    repeat_ab_loop: 'Loop A-B',
+    repeat_looping: 'Mengulang',
+    loading_word_by_word: 'Memuat kata per kata...',
+    word_by_word_title: 'Kata per Kata',
+    word_by_word: 'Kata per Kata',
+    tajweed: 'Tajweed',
+    memorization: 'Hafalan',
+    word_meaning: 'Arti',
+    tajweed_title: 'Aturan Tajweed',
+    tajweed_toggle: 'Aktifkan Tajweed',
+    tajweed_mode: 'Mode Tajweed',
+    mushaf_mode: 'Mode Mushaf',
+    mushaf_page: 'Halaman',
+    mushaf_next_page: 'Berikutnya',
+    mushaf_prev_page: 'Sebelumnya',
+    page_label: 'Halaman',
+    memorization_title: 'Hafalan',
+    memorization_mode: 'Mode Hafalan',
+    memorization_level: 'Tingkat',
+    memorized: 'Dihafal',
+    mark_memorized: 'Tandai dihafal',
+    hide_level: 'Tingkat sembunyikan',
+    show_all: 'Tampilkan semua',
+    queue_title: 'Antrian putar',
+    similar_reciters: 'Qari serupa',
+    style_filter: 'Gaya tilawah',
+    style_all: 'Semua',
+    style_murattal: 'Murattal',
+    style_murattal_desc: 'Bacaan pelan untuk belajar',
+    style_murattal_label: 'Murattal',
+    style_mujawwad: 'Mujawwad',
+    style_mujawwad_desc: 'Bacaan melodis',
+    style_mujawwad_label: 'Mujawwad',
+    style_muallim: 'Muallim',
+    style_muallim_desc: 'Gaya mengajar',
+    style_muallim_label: 'Muallim',
   },
 }
 

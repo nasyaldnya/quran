@@ -1,12 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, BookOpen, Loader2, AlertCircle } from 'lucide-react'
+import { X, BookOpen, Loader2, AlertCircle, Type, Palette, EyeOff } from 'lucide-react'
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import AyahRow from '@/components/quran/AyahRow'
 import LanguageSelector from '@/components/quran/LanguageSelector'
 import FontSizeControl from '@/components/quran/FontSizeControl'
+import WordByWord from '@/components/quran/WordByWord'
+import TajweedText from '@/components/quran/TajweedText'
+import MemorizationMode from '@/components/quran/MemorizationMode'
+import RepeatControl, { type RepeatConfig } from '@/components/quran/RepeatControl'
 import { useQuranArabic, useQuranTranslation, useQuranTafsir } from '@/hooks/useQuranText'
 import { useAudioStore } from '@/store/audioStore'
 import { useUiStore } from '@/store/uiStore'
@@ -29,6 +33,12 @@ export default function QuranTextPanel() {
   } = useUiStore()
   const { currentTrack } = useAudioStore()
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Reading mode toggles
+  const [showWordByWord, setShowWordByWord] = useState(false)
+  const [showTajweed, setShowTajweed] = useState(false)
+  const [showMemorization, setShowMemorization] = useState(false)
+  const [repeatConfig, setRepeatConfig] = useState<RepeatConfig | null>(null)
 
   // viewingSurahNumber takes priority (user clicked a card)
   // falls back to currently playing track
@@ -147,6 +157,38 @@ export default function QuranTextPanel() {
                 <LanguageSelector />
                 <FontSizeControl />
               </div>
+
+              {/* Reading mode toolbar */}
+              <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                <button onClick={() => setShowWordByWord(v => !v)}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all border ${
+                    showWordByWord ? 'bg-primary/10 text-primary border-primary/20' : 'text-muted-foreground border-border/60 hover:text-foreground'
+                  }`}>
+                  <Type className="w-3 h-3" />
+                  {t.word_by_word}
+                </button>
+                <button onClick={() => setShowTajweed(v => !v)}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all border ${
+                    showTajweed ? 'bg-primary/10 text-primary border-primary/20' : 'text-muted-foreground border-border/60 hover:text-foreground'
+                  }`}>
+                  <Palette className="w-3 h-3" />
+                  {t.tajweed}
+                </button>
+                <button onClick={() => setShowMemorization(v => !v)}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all border ${
+                    showMemorization ? 'bg-primary/10 text-primary border-primary/20' : 'text-muted-foreground border-border/60 hover:text-foreground'
+                  }`}>
+                  <EyeOff className="w-3 h-3" />
+                  {t.memorization}
+                </button>
+                {arabicData && (
+                  <RepeatControl
+                    totalAyahs={arabicData.numberOfAyahs}
+                    onRepeatChange={setRepeatConfig}
+                    currentConfig={repeatConfig}
+                  />
+                )}
+              </div>
             </div>
 
             {/* ── Surah name in Arabic ── */}
@@ -198,30 +240,47 @@ export default function QuranTextPanel() {
                       </div>
                     )}
 
-                    {arabicData.ayahs.map((ayah) => {
-                      // Match translation ayah by numberInSurah
-                      const translationAyah = translationData?.ayahs.find(
-                        (a) => a.numberInSurah === ayah.numberInSurah
-                      )
-                      const tafsirAyah = tafsirData?.ayahs.find(
-                        (a) => a.numberInSurah === ayah.numberInSurah
-                      )
+                    {/* Memorization mode replaces normal view */}
+                    {showMemorization && arabicData ? (
+                      <MemorizationMode ayahs={arabicData.ayahs} visible={showMemorization} />
+                    ) : (
+                      arabicData.ayahs.map((ayah) => {
+                        const translationAyah = translationData?.ayahs.find(
+                          (a) => a.numberInSurah === ayah.numberInSurah
+                        )
+                        const tafsirAyah = tafsirData?.ayahs.find(
+                          (a) => a.numberInSurah === ayah.numberInSurah
+                        )
 
-                      return (
-                        <AyahRow
-                          key={ayah.numberInSurah}
-                          ayah={ayah}
-                          translationAyah={translationAyah ?? null}
-                          tafsirAyah={tafsirAyah ?? null}
-                          translationDirection={translationEdition?.direction ?? 'ltr'}
-                          tafsirDirection={tafsirEdition?.direction ?? 'rtl'}
-                          hasTafsir={!!selectedTafsir && !!tafsirAyah}
-                          surahNumber={surahNumber}
-                          surahNameEn={arabicData.englishName}
-                          surahNameAr={arabicData.name}
-                        />
-                      )
-                    })}
+                        return (
+                          <div key={ayah.numberInSurah}>
+                            <AyahRow
+                              ayah={ayah}
+                              translationAyah={translationAyah ?? null}
+                              tafsirAyah={tafsirAyah ?? null}
+                              translationDirection={translationEdition?.direction ?? 'ltr'}
+                              tafsirDirection={tafsirEdition?.direction ?? 'rtl'}
+                              hasTafsir={!!selectedTafsir && !!tafsirAyah}
+                              surahNumber={surahNumber}
+                              surahNameEn={arabicData.englishName}
+                              surahNameAr={arabicData.name}
+                            />
+                            {/* Tajweed colored text */}
+                            {showTajweed && surahNumber && (
+                              <div className="px-12">
+                                <TajweedText surahNumber={surahNumber} ayahNumber={ayah.numberInSurah} visible={showTajweed} />
+                              </div>
+                            )}
+                            {/* Word-by-word */}
+                            {showWordByWord && surahNumber && (
+                              <div className="px-12">
+                                <WordByWord surahNumber={surahNumber} ayahNumber={ayah.numberInSurah} visible={showWordByWord} />
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })
+                    )}
 
                     {/* Bottom spacer */}
                     <div className="h-4" />

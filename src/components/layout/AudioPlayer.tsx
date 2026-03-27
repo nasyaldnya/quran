@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import SleepTimerButton from './SleepTimerButton'
 import QuranTextToggle from './QuranTextToggle'
 import SpeedControl from './SpeedControl'
+import QueueDrawer from './QueueDrawer'
+import RepeatControl from './RepeatControl'
 
 function Waveform() {
   return (
@@ -184,6 +186,8 @@ export default function AudioPlayer() {
             <QuranTextToggle />
             <SleepTimerButton />
             <SpeedControl />
+            <RepeatControl />
+            <QueueDrawer />
 
             <div className="w-px h-4 bg-border mx-1" />
 
@@ -235,6 +239,8 @@ export default function AudioPlayer() {
                 </div>
                 <div className="flex items-center gap-0.5">
                   <SpeedControl />
+                  <RepeatControl />
+                  <QueueDrawer />
                   <QuranTextToggle />
                   <SleepTimerButton />
                   <Button variant="ghost" size="icon-sm" onClick={clearPlayer} aria-label="Close"

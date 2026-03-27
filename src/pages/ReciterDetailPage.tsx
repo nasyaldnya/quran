@@ -12,7 +12,8 @@ import SurahListItem from '@/components/surahs/SurahListItem'
 import PageTransition from '@/components/common/PageTransition'
 import SearchBar from '@/components/common/SearchBar'
 import GeometricPattern from '@/components/common/GeometricPattern'
-import { useReciter } from '@/hooks/useReciters'
+import { useReciter, useReciters } from '@/hooks/useReciters'
+import { findSimilarReciters } from '@/lib/similarReciters'
 import { useAudioStore } from '@/store/audioStore'
 import { buildAudioUrl } from '@/lib/api'
 import { SURAH_NAMES, SURAH_NAMES_AR, REVELATION_TYPE, VERSE_COUNTS } from '@/lib/utils'
@@ -256,7 +257,43 @@ export default function ReciterDetailPage() {
             ))
           )}
         </div>
+
+        {/* Similar Reciters */}
+        <SimilarRecitersSection reciter={reciter} />
       </div>
     </PageTransition>
+  )
+}
+
+function SimilarRecitersSection({ reciter }: { reciter: any }) {
+  const { data: allReciters = [] } = useReciters()
+  const similar = useMemo(
+    () => reciter ? findSimilarReciters(reciter, allReciters, 4) : [],
+    [reciter, allReciters]
+  )
+
+  if (similar.length === 0) return null
+
+  return (
+    <div className="mt-12 pt-8 border-t border-border/40">
+      <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+        <Headphones className="w-4 h-4 text-primary" />
+        Similar Reciters
+      </h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {similar.map((r) => (
+          <Link key={r.id} to={`/reciters/${r.id}`}
+            className="group rounded-xl border border-border/60 bg-card p-3 hover:border-primary/40 hover:shadow-sage-sm transition-all">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center mb-2">
+              <Headphones className="w-4 h-4 text-primary" />
+            </div>
+            <p className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+              {r.name}
+            </p>
+            <p className="text-[10px] text-muted-foreground">{r.moshaf[0]?.surah_total ?? 0} surahs</p>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }

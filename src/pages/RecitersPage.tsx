@@ -7,6 +7,7 @@ import PageTransition from '@/components/common/PageTransition'
 import GeometricPattern from '@/components/common/GeometricPattern'
 import { useReciters } from '@/hooks/useReciters'
 import { useDebounce } from '@/hooks/useDebounce'
+import { RECITATION_STYLES, reciterHasStyle, type RecitationStyle } from '@/lib/recitationStyles'
 import { useT } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +24,7 @@ export default function RecitersPage() {
   const t = useT()
   const [search,      setSearch]      = useState('')
   const [activeFilter, setActiveFilter] = useState('All')
+  const [activeStyle, setActiveStyle] = useState<RecitationStyle | 'all'>('all')
   const debouncedSearch = useDebounce(search, 280)
 
   const { data: reciters = [], isLoading, error } = useReciters()
@@ -37,13 +39,17 @@ export default function RecitersPage() {
         return first >= lo && first <= hi
       })
     }
+    // Style filter
+    if (activeStyle !== 'all') {
+      list = list.filter((r) => r.moshaf.length > 0 && reciterHasStyle(r.moshaf, activeStyle))
+    }
     // Search filter
     if (debouncedSearch.trim()) {
       const q = debouncedSearch.toLowerCase()
       list = list.filter((r) => r.name.toLowerCase().includes(q))
     }
     return list
-  }, [reciters, activeFilter, debouncedSearch])
+  }, [reciters, activeFilter, activeStyle, debouncedSearch])
 
   return (
     <PageTransition>
@@ -103,6 +109,35 @@ export default function RecitersPage() {
                 )}
               >
                 {f}
+              </button>
+            ))}
+          </div>
+
+          {/* Style filters */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              onClick={() => setActiveStyle('all')}
+              className={cn(
+                'px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+                activeStyle === 'all'
+                  ? 'bg-primary/15 text-primary border border-primary/30'
+                  : 'bg-card text-muted-foreground border border-border hover:border-border/80 hover:text-foreground'
+              )}
+            >
+              {t.all}
+            </button>
+            {RECITATION_STYLES.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveStyle(s.id)}
+                className={cn(
+                  'px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
+                  activeStyle === s.id
+                    ? 'bg-primary/15 text-primary border border-primary/30'
+                    : 'bg-card text-muted-foreground border border-border hover:border-border/80 hover:text-foreground'
+                )}
+              >
+                {(t as any)[s.labelKey] ?? s.id}
               </button>
             ))}
           </div>

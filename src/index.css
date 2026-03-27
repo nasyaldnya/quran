@@ -148,3 +148,20 @@
     border-radius: 9999px;
   }
 }
+
+/* ── Tajweed color coding ── */
+.tajweed-text [class*="ham_wasl"]  { color: #AAAAAA; }
+.tajweed-text [class*="laam_shamsiyah"] { color: #AAAAAA; }
+.tajweed-text [class*="madda_normal"]  { color: #537FFF; }
+.tajweed-text [class*="madda_permissible"] { color: #4050FF; }
+.tajweed-text [class*="madda_obligatory"] { color: #000FB0; }
+.tajweed-text [class*="qalqalah"]  { color: #DD0008; }
+.tajweed-text [class*="ikhafa"]    { color: #D500B7; }
+.tajweed-text [class*="ghunnah"]   { color: #FF7E1E; }
+.tajweed-text [class*="idghaam_shafpieces"] { color: #169200; }
+.tajweed-text [class*="idghaam_ghunnah"]    { color: #169200; }
+.tajweed-text [class*="idghaam_wo_ghunnah"] { color: #169200; }
+.tajweed-text [class*="idghaam_mutajanisayn"] { color: #A1A100; }
+.tajweed-text [class*="idghaam_mutaqaribayn"] { color: #A1A100; }
+.tajweed-text [class*="iqlab"]     { color: #26BFFD; }
+.tajweed-text [class*="ikhafa_shafawi"] { color: #D500B7; }

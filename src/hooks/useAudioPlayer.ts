@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { Howl } from 'howler'
 import { useAudioStore } from '@/store/audioStore'
 import { useSleepTimerStore } from '@/store/sleepTimerStore'
+import { useRepeatStore } from '@/store/repeatStore'
 
 // Singleton Howl instance — survives React re-renders and route changes
 let howl: Howl | null = null
@@ -69,14 +70,29 @@ export function useAudioPlayer() {
         clearSeekInterval()
         seekInterval = setInterval(() => {
           if (howl?.playing()) {
-            setCurrentTime(howl.seek() as number)
+            const time = howl.seek() as number
+            setCurrentTime(time)
+            // Range repeat: loop back to startTime when endTime reached
+            const rpt = useRepeatStore.getState()
+            if (rpt.mode === 'range' && rpt.endTime > rpt.startTime && time >= rpt.endTime) {
+              howl.seek(rpt.startTime)
+            }
           }
-        }, 500)
+        }, 250)
       },
       onpause:  () => { setIsPlaying(false); clearSeekInterval() },
       onstop:   () => { setIsPlaying(false); clearSeekInterval() },
       onend:    () => {
         clearSeekInterval()
+
+        // Check repeat count mode first
+        const rpt = useRepeatStore.getState()
+        if (rpt.mode === 'count' && rpt.shouldLoop()) {
+          rpt.incrementCount()
+          howl?.seek(0)
+          howl?.play()
+          return
+        }
 
         // Check sleep timer — if "end of surah" mode, pause and cancel
         const sleepTimer = useSleepTimerStore.getState()
@@ -86,7 +102,7 @@ export function useAudioPlayer() {
           return
         }
 
-        // Read fresh state via getState() — avoids stale closure over destructured values
+        // Read fresh state via getState()
         const { repeatMode: rm, playNext: pn, setIsPlaying: sip } = useAudioStore.getState()
         if (rm === 'one') {
           howl?.seek(0)
@@ -95,6 +111,9 @@ export function useAudioPlayer() {
           const next = pn()
           if (!next) sip(false)
         }
+
+        // Reset count for next track
+        if (rpt.mode === 'count') rpt.resetCount()
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

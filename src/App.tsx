@@ -25,7 +25,6 @@ const PlaylistsPage    = lazy(() => import('@/pages/PlaylistsPage'))
 const ComparePage      = lazy(() => import('@/pages/ComparePage'))
 const StatsPage        = lazy(() => import('@/pages/StatsPage'))
 const MushafPage       = lazy(() => import('@/pages/MushafPage'))
-const MushafPage       = lazy(() => import('@/pages/MushafPage'))
 
 function PageLoader() {
   return (

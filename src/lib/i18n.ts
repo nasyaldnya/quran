@@ -240,6 +240,7 @@ export interface Translations {
   // New — Tajweed
   tajweed_title: string
   tajweed_toggle: string
+  tajweed_colors: string
 
   // New — Mushaf
   mushaf_page: string
@@ -1161,6 +1162,7 @@ const translations: Record<string, Translations> = {
     word_meaning: 'Significado',
     tajweed_title: 'Reglas de Tajweed',
     tajweed_toggle: 'Activar Tajweed',
+    tajweed_colors: 'Colores de Tajweed',
     tajweed_mode: 'Modo Tajweed',
     mushaf_mode: 'Modo Mushaf',
     mushaf_page: 'Página',
@@ -1345,6 +1347,7 @@ const translations: Record<string, Translations> = {
     word_meaning: 'Arti',
     tajweed_title: 'Aturan Tajweed',
     tajweed_toggle: 'Aktifkan Tajweed',
+    tajweed_colors: 'Warna Tajweed',
     tajweed_mode: 'Mode Tajweed',
     mushaf_mode: 'Mode Mushaf',
     mushaf_page: 'Halaman',

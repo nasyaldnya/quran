@@ -174,6 +174,13 @@ export interface Translations {
   compare_select_surah: string
   compare_reciter: string
   compare_choose: string
+  compare_play_both: string
+  compare_pause_both: string
+  compare_playing: string
+  compare_tips_title: string
+  compare_tip_1: string
+  compare_tip_2: string
+  compare_tip_3: string
 
   // Batch D — Analytics
   stats_label: string
@@ -404,6 +411,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'اختر السورة',
     compare_reciter: 'القارئ',
     compare_choose: 'اختر قارئاً...',
+    compare_play_both: 'تشغيل كليهما',
+    compare_pause_both: 'إيقاف كليهما',
+    compare_playing: 'قيد التشغيل',
+    compare_tips_title: 'نصائح المقارنة',
+    compare_tip_1: 'اختر قارئين مختلفين ثم اضغط تشغيل كليهما للاستماع في وقت واحد.',
+    compare_tip_2: 'اضبط مستوى الصوت لكل قارئ بشكل منفصل للتركيز على أحدهما.',
+    compare_tip_3: 'استخدم تصفح السور للمقارنة السريعة بين سور مختلفة.',
     stats_label: 'الإحصائيات',
     stats_title: 'إحصائياتي',
     stats_subtitle: 'تابع رحلتك في الاستماع للقرآن الكريم.',
@@ -599,6 +613,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'Select Surah',
     compare_reciter: 'Reciter',
     compare_choose: 'Choose a reciter...',
+    compare_play_both: 'Play Both',
+    compare_pause_both: 'Pause Both',
+    compare_playing: 'Playing',
+    compare_tips_title: 'Comparison Tips',
+    compare_tip_1: 'Select two different reciters then press Play Both to listen simultaneously.',
+    compare_tip_2: 'Adjust each volume separately to focus on one reciter.',
+    compare_tip_3: 'Use the surah navigation to quickly compare different surahs.',
     stats_label: 'Statistics',
     stats_title: 'My Statistics',
     stats_subtitle: 'Track your Quran listening journey.',
@@ -794,6 +815,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'Sélectionner une sourate',
     compare_reciter: 'Récitant',
     compare_choose: 'Choisir un récitant...',
+    compare_play_both: 'Lire les deux',
+    compare_pause_both: 'Mettre en pause',
+    compare_playing: 'En lecture',
+    compare_tips_title: 'Conseils de comparaison',
+    compare_tip_1: 'Choisissez deux récitants et appuyez sur Lire les deux pour écouter simultanément.',
+    compare_tip_2: 'Réglez le volume de chacun séparément pour vous concentrer sur un seul.',
+    compare_tip_3: 'Utilisez la navigation pour comparer rapidement différentes sourates.',
     stats_label: 'Statistiques',
     stats_title: 'Mes statistiques',
     stats_subtitle: `Suivez votre parcours d'écoute du Coran.`,
@@ -989,6 +1017,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'Sure Seçin',
     compare_reciter: 'Kari',
     compare_choose: 'Kari seçin...',
+    compare_play_both: 'İkisini de Çal',
+    compare_pause_both: 'İkisini de Duraklat',
+    compare_playing: 'Çalıyor',
+    compare_tips_title: 'Karşılaştırma İpuçları',
+    compare_tip_1: 'İki farklı kari seçin ve aynı anda dinlemek için İkisini de Çal düğmesine basın.',
+    compare_tip_2: 'Birine odaklanmak için her birinin sesini ayrı ayrı ayarlayın.',
+    compare_tip_3: 'Farklı sureleri hızlıca karşılaştırmak için sure gezintisini kullanın.',
     stats_label: 'İstatistikler',
     stats_title: 'İstatistiklerim',
     stats_subtitle: `Kur'an dinleme yolculuğunuzu takip edin.`,
@@ -1184,6 +1219,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'Seleccionar Sura',
     compare_reciter: 'Recitador',
     compare_choose: 'Elegir recitador...',
+    compare_play_both: 'Reproducir ambos',
+    compare_pause_both: 'Pausar ambos',
+    compare_playing: 'Reproduciendo',
+    compare_tips_title: 'Consejos de comparación',
+    compare_tip_1: 'Selecciona dos recitadores y pulsa Reproducir ambos para escucharlos simultáneamente.',
+    compare_tip_2: 'Ajusta el volumen de cada uno por separado para centrarte en uno.',
+    compare_tip_3: 'Usa la navegación de suras para comparar diferentes suras rápidamente.',
     stats_label: 'Estadísticas',
     stats_title: 'Mis estadísticas',
     stats_subtitle: 'Sigue tu progreso de escucha del Corán.',
@@ -1379,6 +1421,13 @@ const translations: Record<string, Translations> = {
     compare_select_surah: 'Pilih Surah',
     compare_reciter: 'Qari',
     compare_choose: 'Pilih qari...',
+    compare_play_both: 'Putar Keduanya',
+    compare_pause_both: 'Jeda Keduanya',
+    compare_playing: 'Sedang memutar',
+    compare_tips_title: 'Tips Perbandingan',
+    compare_tip_1: 'Pilih dua qari berbeda lalu tekan Putar Keduanya untuk mendengarkan secara bersamaan.',
+    compare_tip_2: 'Sesuaikan volume masing-masing secara terpisah untuk fokus pada salah satu.',
+    compare_tip_3: 'Gunakan navigasi surah untuk membandingkan surah yang berbeda dengan cepat.',
     stats_label: 'Statistik',
     stats_title: 'Statistik Saya',
     stats_subtitle: 'Lacak perjalanan mendengarkan Al-Quran Anda.',

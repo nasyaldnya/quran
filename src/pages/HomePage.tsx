@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, BookOpen, Headphones, Music2 } from 'lucide-react'
+import { ArrowRight, BookOpen, Headphones, Music2, Palette, EyeOff, GitCompare, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import ReciterCard from '@/components/reciters/ReciterCard'
@@ -231,12 +231,51 @@ function QuranBanner() {
   )
 }
 
+// ── Features Showcase ─────────────────────────────
+function FeaturesShowcase() {
+  const t = useT()
+
+  const features = [
+    { icon: Headphones, title: t.feat_reciters, desc: t.feat_reciters_desc, color: 'text-emerald-400' },
+    { icon: Palette,    title: t.feat_tajweed, desc: t.feat_tajweed_desc, color: 'text-blue-400' },
+    { icon: BookOpen,   title: t.feat_mushaf, desc: t.feat_mushaf_desc, color: 'text-amber-400' },
+    { icon: EyeOff,     title: t.feat_memorize, desc: t.feat_memorize_desc, color: 'text-purple-400' },
+    { icon: GitCompare, title: t.feat_compare, desc: t.feat_compare_desc, color: 'text-rose-400' },
+    { icon: Globe,      title: t.feat_i18n, desc: t.feat_i18n_desc, color: 'text-cyan-400' },
+  ]
+
+  return (
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }} className="text-center mb-10">
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">{t.features_title}</h2>
+        <p className="text-sm text-muted-foreground max-w-lg mx-auto">{t.features_subtitle}</p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {features.map((f, i) => (
+          <motion.div key={f.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.4 }}
+            className="group rounded-xl border border-border/60 bg-card p-5 hover:border-primary/30 hover:shadow-sage-sm transition-all duration-300">
+            <div className={`w-10 h-10 rounded-lg bg-accent border border-border/40 flex items-center justify-center mb-3 ${f.color} group-hover:scale-110 transition-transform`}>
+              <f.icon className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground mb-1">{f.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 // ── Page ──────────────────────────────────────────
 export default function HomePage() {
   return (
     <PageTransition>
       <Hero />
       <FeaturedReciters />
+      <FeaturesShowcase />
       <DailyAyah />
       <QuranBanner />
     </PageTransition>

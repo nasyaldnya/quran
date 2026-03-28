@@ -43,6 +43,43 @@
     <!-- Preconnect to APIs -->
     <link rel="preconnect" href="https://www.mp3quran.net" />
     <link rel="preconnect" href="https://api.alquran.cloud" />
+
+    <!-- Structured Data for AI & Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "mp3quran.cam",
+      "alternateName": "القرآن الكريم",
+      "url": "https://mp3quran.cam",
+      "description": "Listen to and read the Holy Quran with 500+ reciters, Tajweed color-coded text, word-by-word translation, memorization tools, 49 Mushaf editions, reciter comparison, and more.",
+      "applicationCategory": "ReligiousApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "inLanguage": ["ar", "en", "fr", "tr", "es", "id"],
+      "creator": { "@type": "Organization", "name": "mp3quran.cam", "url": "https://mp3quran.cam" },
+      "featureList": [
+        "500+ Quran reciters via Mp3Quran.net API",
+        "Tajweed color-coded Quran text via AlQuran.cloud API",
+        "Word-by-word translation and transliteration",
+        "Memorization mode with progressive word hiding",
+        "49 Mushaf editions from King Fahd Quran Printing Complex",
+        "604-page Mushaf reader with night reading mode",
+        "Dual reciter comparison with independent audio players",
+        "Juz, Hizb, and Surah navigation",
+        "Playlists, bookmarks, favorites, and listening history",
+        "Analytics dashboard with listening streaks",
+        "6 UI languages: Arabic, English, French, Turkish, Spanish, Indonesian",
+        "Keyboard shortcuts and sleep timer",
+        "Playback speed control (0.25x - 3x)"
+      ],
+      "provider": [
+        { "@type": "Organization", "name": "Mp3Quran.net", "url": "https://www.mp3quran.net", "description": "Audio recitations API" },
+        { "@type": "Organization", "name": "AlQuran.cloud", "url": "https://alquran.cloud", "description": "Quran text, Tajweed, translations, and search API" },
+        { "@type": "Organization", "name": "King Fahd Quran Printing Complex", "url": "https://qurancomplex.gov.sa", "description": "Mushaf editions and translations" }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

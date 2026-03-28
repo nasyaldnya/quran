@@ -1187,7 +1187,7 @@ const translations: Record<string, Translations> = {
     footer_kfqpc: 'Kral Fahd Kompleksi',
     footer_api_credit: 'Ses: Mp3Quran.net · Metin: AlQuran.cloud · Mushaf: Kral Fahd Kompleksi',
     features_title: 'Özellikler',
-    features_subtitle: 'Kur'an okumak ve dinlemek için ihtiyacınız olan her şey.',
+    features_subtitle: `Kur'an okumak ve dinlemek için ihtiyacınız olan her şey.`,
     feat_reciters: '500+ Kari',
     feat_reciters_desc: 'Yüzlerce dünyaca ünlü kariden dinleyin.',
     feat_tajweed: 'Renkli Tecvid',

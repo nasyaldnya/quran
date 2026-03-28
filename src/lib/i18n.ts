@@ -283,6 +283,18 @@ export interface Translations {
   mushaf_index: string
   mushaf_night: string
   mushaf_hizb: string
+
+  // Nav (more dropdown)
+  nav_more: string
+
+  // Footer
+  footer_desc: string
+  footer_nav: string
+  footer_features: string
+  footer_partners: string
+  footer_kfqpc: string
+  footer_api_credit: string
+  compare_custom_speed: string
 }
 
 // ── Translations per locale ──────────────────────────
@@ -480,6 +492,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'الفهرس',
     mushaf_night: 'الوضع الليلي',
     mushaf_hizb: 'الحزب',
+    nav_more: 'المزيد',
+    footer_desc: 'استمع وتعلم القرآن الكريم مع أكثر من 500 قارئ، والتجويد، والترجمات، وأدوات الحفظ.',
+    footer_nav: 'التصفح',
+    footer_features: 'المميزات',
+    footer_partners: 'الشركاء والمصادر',
+    footer_kfqpc: 'مجمع الملك فهد',
+    footer_api_credit: 'الصوت: Mp3Quran.net · النص: AlQuran.cloud · المصحف: مجمع الملك فهد',
+    compare_custom_speed: 'سرعة مخصصة',
     tajweed_mode: 'وضع التجويد',
     mushaf_mode: 'وضع المصحف',
     memorization_mode: 'وضع الحفظ',
@@ -683,6 +703,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'Index',
     mushaf_night: 'Night Mode',
     mushaf_hizb: 'Hizb',
+    nav_more: 'More',
+    footer_desc: 'Listen to and learn the Holy Quran with 500+ reciters, Tajweed, translations, and memorization tools.',
+    footer_nav: 'Navigation',
+    footer_features: 'Features',
+    footer_partners: 'Partners & APIs',
+    footer_kfqpc: 'King Fahd Complex',
+    footer_api_credit: 'Audio: Mp3Quran.net · Text: AlQuran.cloud · Mushaf: King Fahd Complex',
+    compare_custom_speed: 'Custom speed',
     tajweed_mode: "Tajweed Mode",
     mushaf_mode: "Mushaf Mode",
     memorization_mode: "Memorization Mode",
@@ -886,6 +914,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'Index',
     mushaf_night: 'Mode Nuit',
     mushaf_hizb: 'Hizb',
+    nav_more: 'Plus',
+    footer_desc: 'Écoutez et apprenez le Coran avec plus de 500 récitants, tajweed, traductions et outils de mémorisation.',
+    footer_nav: 'Navigation',
+    footer_features: 'Fonctionnalités',
+    footer_partners: 'Partenaires et API',
+    footer_kfqpc: 'Complexe Roi Fahd',
+    footer_api_credit: 'Audio : Mp3Quran.net · Texte : AlQuran.cloud · Mushaf : Complexe Roi Fahd',
+    compare_custom_speed: 'Vitesse personnalisée',
     tajweed_mode: "Mode Tajweed",
     mushaf_mode: "Mode Mushaf",
     memorization_mode: "Mode mémorisation",
@@ -1089,6 +1125,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'İçindekiler',
     mushaf_night: 'Gece Modu',
     mushaf_hizb: 'Hizb',
+    nav_more: 'Daha fazla',
+    footer_desc: '500+ kari, tecvid, çeviri ve ezberleme araçlarıyla Kuran dinleyin ve öğrenin.',
+    footer_nav: 'Gezinti',
+    footer_features: 'Özellikler',
+    footer_partners: 'Ortaklar ve API',
+    footer_kfqpc: 'Kral Fahd Kompleksi',
+    footer_api_credit: 'Ses: Mp3Quran.net · Metin: AlQuran.cloud · Mushaf: Kral Fahd Kompleksi',
+    compare_custom_speed: 'Özel hız',
     tajweed_mode: "Tecvid Modu",
     mushaf_mode: "Mushaf Modu",
     memorization_mode: "Ezberleme Modu",
@@ -1271,6 +1315,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'Índice',
     mushaf_night: 'Modo Nocturno',
     mushaf_hizb: 'Hizb',
+    nav_more: 'Más',
+    footer_desc: 'Escucha y aprende el Corán con más de 500 recitadores, tajweed, traducciones y herramientas de memorización.',
+    footer_nav: 'Navegación',
+    footer_features: 'Funciones',
+    footer_partners: 'Socios y APIs',
+    footer_kfqpc: 'Complejo Rey Fahd',
+    footer_api_credit: 'Audio: Mp3Quran.net · Texto: AlQuran.cloud · Mushaf: Complejo Rey Fahd',
+    compare_custom_speed: 'Velocidad personalizada',
     word_meaning: 'Significado',
     tajweed_title: 'Reglas de Tajweed',
     tajweed_toggle: 'Activar Tajweed',
@@ -1474,6 +1526,14 @@ const translations: Record<string, Translations> = {
     mushaf_index: 'Daftar Isi',
     mushaf_night: 'Mode Malam',
     mushaf_hizb: 'Hizb',
+    nav_more: 'Lainnya',
+    footer_desc: 'Dengarkan dan pelajari Al-Quran dengan 500+ qari, tajweed, terjemahan, dan alat hafalan.',
+    footer_nav: 'Navigasi',
+    footer_features: 'Fitur',
+    footer_partners: 'Mitra & API',
+    footer_kfqpc: 'Kompleks Raja Fahd',
+    footer_api_credit: 'Audio: Mp3Quran.net · Teks: AlQuran.cloud · Mushaf: Kompleks Raja Fahd',
+    compare_custom_speed: 'Kecepatan kustom',
     word_meaning: 'Arti',
     tajweed_title: 'Aturan Tajweed',
     tajweed_toggle: 'Aktifkan Tajweed',

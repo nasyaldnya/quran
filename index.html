@@ -2,22 +2,47 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#060610" />
-    <meta name="description" content="استمع إلى القرآن الكريم بأصوات أشهر القراء العالميين — A premium Quran listening experience" />
-    <meta property="og:title" content="القرآن الكريم | The Holy Quran" />
-    <meta property="og:description" content="A premium Quran listening experience with the world's finest reciters." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="theme-color" content="#0A0B13" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F8F6F2" media="(prefers-color-scheme: light)" />
 
-    <!-- Preconnect to Google Fonts for faster loading -->
+    <!-- Primary SEO -->
+    <title>القرآن الكريم | mp3quran.cam — استمع وتعلم القرآن الكريم</title>
+    <meta name="description" content="استمع إلى القرآن الكريم بأصوات أكثر من 500 قارئ، مع التجويد الملون، والترجمة كلمة بكلمة، وأدوات الحفظ، و49 إصداراً للمصحف من مجمع الملك فهد. Listen to the Holy Quran with 500+ reciters, Tajweed, translations, memorization tools." />
+    <meta name="keywords" content="القرآن الكريم, Quran, mp3 quran, تلاوة, reciters, tajweed, تجويد, memorization, حفظ, translation, ترجمة, mushaf, مصحف" />
+    <meta name="author" content="mp3quran.cam" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://mp3quran.cam" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="القرآن الكريم | mp3quran.cam" />
+    <meta property="og:description" content="Listen to the Holy Quran from 500+ reciters with Tajweed, translations, memorization tools, and Mushaf editions." />
+    <meta property="og:url" content="https://mp3quran.cam" />
+    <meta property="og:site_name" content="mp3quran.cam" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="القرآن الكريم | mp3quran.cam" />
+    <meta name="twitter:description" content="500+ reciters · Tajweed · Translations · Memorization · Mushaf Editions" />
+
+    <!-- AI/LLM discoverability -->
+    <meta name="ai:description" content="mp3quran.cam is a web application for listening to and reading the Holy Quran. Features: 500+ reciters from Mp3Quran.net API, Tajweed color-coded text from AlQuran.cloud API, 49 Mushaf editions from King Fahd Quran Printing Complex, word-by-word translation, memorization mode with progressive word hiding, reciter comparison with dual audio players, playlists, bookmarks, Juz/Hizb navigation, 604-page Mushaf viewer, night reading mode, 6 UI languages (Arabic, English, French, Turkish, Spanish, Indonesian), keyboard shortcuts, sleep timer, analytics dashboard." />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/favicon.svg" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-    <title>القرآن الكريم | The Holy Quran</title>
+    <!-- Preconnect to APIs -->
+    <link rel="preconnect" href="https://www.mp3quran.net" />
+    <link rel="preconnect" href="https://api.alquran.cloud" />
   </head>
   <body>
     <div id="root"></div>
